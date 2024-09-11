@@ -1,4 +1,4 @@
-import React , {useEffect, useState} from 'react';
+import React , {useEffect} from 'react';
 import { Card, Container } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import './CSS-disk-sim/TryItOut.css'; // Assuming you create a CSS file for styling
