@@ -1,0 +1,15 @@
+.container {
+    display: flex;
+    flex: 1;
+    background-color: white;
+    height: 100vh; /* Adjust as necessary */
+    overflow: auto;
+  }
+  
+  .scroll-view {
+    padding: 20px;
+    margin: auto; /* Center the content vertically */
+    max-width: 600px; /* Optional: Limit the width of the content */
+    line-height: 1.6; /* Optional: Improve text readability */
+  }
+  

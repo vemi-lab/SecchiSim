@@ -1,0 +1,140 @@
+/******************/
+/* Sidebar styles */
+/******************/
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -270px; /* Hidden position */
+  width: 230px;
+  height: 100%;
+  background-color: #ffffff;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  overflow-y: auto;
+  transition: left 0.5s ease; 
+}
+
+.sidebar.open {
+  left: 10px; 
+}
+
+/***************************/
+/* Hamburger button styles */
+/***************************/
+.hamburger {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 1000;
+  background-color: #6F73B3;
+  color: white;
+  border: none;
+  /* padding: 10px; */
+  font-size: 18px;
+  cursor: pointer;
+  transition: left 0.5s ease; 
+}
+
+/* .hamburger:focus {
+  outline: none;
+} */
+
+/* Update hamburger position when sidebar is open */
+.sidebar.open + .hamburger {
+  left: 225px; /* Adjust to match sidebar width + padding */
+}
+
+/* Overlay for outside clicks */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: -230px;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000; 
+}
+
+/***************/
+/* Text styles */
+/***************/
+.text {
+  text-align: center;
+  color: #000;
+  font-size: 14px;
+}
+
+/******************************/
+/* Drawer items styles */
+/******************************/
+
+.drawer-items {
+  display: flex;
+  flex-direction: column;
+  /* padding: 10px; */
+  /* margin-top: 40; */
+  gap: 25px; /* Adds space between items */
+}
+
+.drawer-item {
+  text-decoration: none;
+  color: #000;
+  padding: 10px;
+  font-size: 15px;
+  font-weight: bold;
+  transition: color 0.3s;
+}
+
+.drawer-item:hover {
+  color: #384B98;
+}
+
+.drawer-item.active {
+  background-color: #6F73B3;
+  color: white;
+  font-size: 16px;
+  border-radius: 3px;
+}
+
+/******************************/
+/* Drawer subsections styles */
+/******************************/
+
+.subsections {
+  margin-left: 20px;
+  gap: 5px; /* Adds space between items */
+}
+
+.subsection-item {
+  border-radius: 5px;
+}
+
+.subsection-item:hover {
+  color: #384B98;
+}
+
+.subsection-link {
+  text-decoration: none;
+  color: #333;
+}
+
+.subsection-item h4 {
+  font-size: 14px;
+  font-weight: 100;
+}
+
+/***************/
+/* Logo style */
+/***************/
+
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.logo {
+  width: 150px; /* Adjust the width as needed */
+  height: 150px; /* Maintain aspect ratio */
+}
