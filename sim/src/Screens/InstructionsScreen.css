@@ -14,15 +14,15 @@
   }
 
   .title {
-    position: absolute; /* Ensure it is positioned relative to the viewport */
-    top: 0;             /* Align to the top */
-    left: 0;            /* Align to the left */
-    padding: 20px;      /* Add some padding around the text */
-    z-index: 1000;      /* Ensure it is above other elements */
-    font-size: 24px;    /* Set an appropriate font size */
-    font-weight: bold;  /* Make the title stand out */
-    color: #000;        /* Choose a text color, e.g., black */
-    border-bottom-right-radius: 10px; /* Rounded corner for style */
+    position: absolute; 
+    top: 0;         
+    left: 0;         
+    padding: 20px;     
+    z-index: 1000;    
+    font-size: 24px;   
+    font-weight: bold;  
+    color: #000;        
+    border-bottom-right-radius: 10px; 
   }
   
   

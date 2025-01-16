@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import CustomDrawer from './components/CustomDrawer'; // Ensure the path is correct
+import CustomDrawer from './components/CustomDrawer'; 
 import ModuleScreen from './Screens/ModuleScreen';
 import SecchiSimScreen from './Screens/SecchiSimScreen';
 import InstructionsScreen from './Screens/InstructionsScreen';
