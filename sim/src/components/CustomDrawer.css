@@ -102,7 +102,7 @@
 
 .subsections {
   margin-left: 20px;
-  gap: 5px; /* Adds space between items */
+  gap: 5px;
 }
 
 .subsection-item {
@@ -135,6 +135,6 @@
 }
 
 .logo {
-  width: 150px; /* Adjust the width as needed */
-  height: 150px; /* Maintain aspect ratio */
+  width: 150px; 
+  height: 150px; 
 }

@@ -1,18 +1,6 @@
 import React, { useState } from 'react';
-import './QuizScreen.css'; // Import the CSS file
-
-const data = [
-  {
-    question: 'What is the capital of France?',
-    options: ['Paris', 'London', 'Berlin', 'Madrid'],
-    correct_option: 'Paris',
-  },
-  {
-    question: 'Which planet is known as the Red Planet?',
-    options: ['Mars', 'Earth', 'Jupiter', 'Venus'],
-    correct_option: 'Mars',
-  },
-];
+import './QuizScreen.css'; 
+import data from '../data/QuizDataSecchi'
 
 const Quiz = () => {
   const allQuestions = data;
