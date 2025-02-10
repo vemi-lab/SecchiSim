@@ -1,5 +1,6 @@
-.container {
+/* .container {
     display: flex;
+    margin-top: 50px;
     flex: 1;
     background-color: white;
     height: 100vh; 
@@ -8,8 +9,9 @@
   
   .scroll-view {
     padding: 20px;
+    margin-top: 30px;
     margin: auto; 
     max-width: 600px; 
     line-height: 1.6; 
-  }
+  } */
   

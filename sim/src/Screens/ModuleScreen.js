@@ -1,14 +1,16 @@
 import React from 'react';
-import './ModuleScreen.css';
+import { useParams } from 'react-router-dom';
+import quizData from '../data/quizData.json';
+import VideoScreen from './VideoScreen';
 
 export default function ModuleScreen() {
-  return (
-    <div className="container">
-      <div className="scroll-view">
-        <p>
-          This screen is a card for the video display from a json file
-        </p>
-      </div>
-    </div>
-  );
+  const { moduleId } = useParams();
+  const moduleData = quizData.find((module) => String(module.id) === moduleId);
+
+  if (!moduleData) {
+    return <h2>Module not found</h2>;
+  }
+
+  return <VideoScreen videoUrl={moduleData.videoUrl} quizData={moduleData.quiz} title={moduleData.title} />;
 }
+

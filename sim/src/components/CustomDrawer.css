@@ -4,18 +4,25 @@
 .sidebar {
   position: fixed;
   top: 0;
-  left: -270px; /* Hidden position */
-  width: 230px;
+  left: -280px;
+  width: 220px;
   height: 100%;
   background-color: #ffffff;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-  padding: 10px;
   overflow-y: auto;
-  transition: left 0.5s ease; 
+  transition: left 0.5s ease;
+  /* padding: 10px; */
 }
 
 .sidebar.open {
-  left: 10px; 
+  left: 0;
+}
+/********/
+/* Text */
+/********/
+.text {
+  text-align: center;
+  /* font-size: 12px; */
 }
 
 /***************************/
@@ -23,118 +30,169 @@
 /***************************/
 .hamburger {
   position: fixed;
-  top: 10px;
-  left: 10px;
-  z-index: 1000;
+  top: 15px;
+  left: 10px; /* Default position */
+  z-index: 1100;
   background-color: #6F73B3;
   color: white;
   border: none;
-  /* padding: 10px; */
-  font-size: 18px;
+  font-size: 20px;
   cursor: pointer;
-  transition: left 0.5s ease; 
+  border-radius: 5px;
+  /* box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.2); */
+  transition: left 0.5s ease, background-color 0.3s ease;
 }
 
-/* .hamburger:focus {
-  outline: none;
-} */
-
-/* Update hamburger position when sidebar is open */
-.sidebar.open + .hamburger {
-  left: 225px; /* Adjust to match sidebar width + padding */
+.hamburger:hover {
+  background-color: #4B4E92;
 }
 
-/* Overlay for outside clicks */
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: -230px;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1000; 
+/* Move the hamburger button when the sidebar is open */
+.sidebar.open .hamburger {
+  left: 240px; /* Positioned at the edge of the open sidebar */
 }
 
-/***************/
-/* Text styles */
-/***************/
-.text {
-  text-align: center;
-  color: #000;
-  font-size: 14px;
+/******************************/
+/* Main content adjustment */
+/******************************/
+.main-content {
+  margin-left: 40px;
+  transition: margin-left 0.5s ease;
+}
+
+.sidebar.open ~ .main-content {
+  margin-left: 250px; /* Matches sidebar width */
 }
 
 /******************************/
 /* Drawer items styles */
 /******************************/
-
 .drawer-items {
   display: flex;
   flex-direction: column;
-  /* padding: 10px; */
-  /* margin-top: 40; */
-  gap: 25px; /* Adds space between items */
+  gap: 20px; 
+  margin-left: 10px;
 }
 
 .drawer-item {
   text-decoration: none;
   color: #000;
-  padding: 10px;
-  font-size: 15px;
+  padding: 8px;
+  font-size: 16px;
   font-weight: bold;
-  transition: color 0.3s;
+  border-radius: 5px;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 .drawer-item:hover {
+  background-color: #F0F1FA;
   color: #384B98;
 }
 
 .drawer-item.active {
   background-color: #6F73B3;
   color: white;
-  font-size: 16px;
-  border-radius: 3px;
 }
 
-/******************************/
-/* Drawer subsections styles */
-/******************************/
-
 .subsections {
-  margin-left: 20px;
-  gap: 5px;
+  margin-left: 30px;
 }
 
 .subsection-item {
-  border-radius: 5px;
-}
-
-.subsection-item:hover {
-  color: #384B98;
-}
-
-.subsection-link {
   text-decoration: none;
-  color: #333;
-}
-
-.subsection-item h4 {
-  font-size: 14px;
-  font-weight: 100;
+  color: #494444;
+  /* padding: 8px; */
+  font-size: 16px;
+  border-radius: 5px;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 /***************/
 /* Logo style */
 /***************/
-
 .logo-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .logo {
-  width: 150px; 
-  height: 150px; 
+  width: 130px;
+  height: 130px;
+  margin-top: 10px;
+}
+
+/*********************/
+/* Responsive styles */
+/*********************/
+
+/* Large screens (laptops) */
+@media (min-width: 1200px) {
+  .sidebar {
+    width: 280px;
+  }
+
+  .sidebar.open ~ .main-content {
+    margin-left: 290px;
+  }
+
+  .sidebar.open + .hamburger {
+    left: 245px;
+  }
+}
+
+/* Tablets & smaller desktops */
+@media (max-width: 1199px) and (min-width: 768px) {
+  .sidebar {
+    width: 220px;
+  }
+
+  .sidebar.open ~ .main-content {
+    margin-left: 220px;
+  }
+
+  .sidebar.open + .hamburger {
+    left: 185px;
+  }
+  .text {
+    font-size: 14px; 
+  }
+
+  .drawer-item {
+    font-size: 14px; 
+  }
+
+  .logo {
+    width: 110px;
+    height: 110px;
+  }
+}
+
+/* Phones */
+@media (max-width: 767px) {
+  .sidebar {
+    width: 180px;
+  }
+
+  .sidebar.open ~ .main-content {
+    margin-left: 180px;
+  }
+
+  .sidebar.open + .hamburger {
+    left: 145px;
+  }
+
+  .text {
+    font-size: 11px; 
+  }
+
+  .drawer-item {
+    font-size: 11px; 
+  }
+
+  .logo {
+    width: 100px;
+    height: 100px;
+  }
 }
