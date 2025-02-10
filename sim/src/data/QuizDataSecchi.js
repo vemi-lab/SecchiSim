@@ -9,7 +9,8 @@ const data = [
             "Off your dock", 
             "At a place that looks nice", 
             "In a patch of algae scum"],
-        correct_option: "At the deephole"
+        correct_option: ["At the deephole"
+            , "At an established station"]
     },
     {
         // Correct answers are a, b, c, e, f, h, i, k
@@ -27,7 +28,15 @@ const data = [
             "You are with a friend",
             "You are taking the reading at approximately the same time each trip out"
         ],
-        correct_option: "The boat is anchored"
+        correct_option: ["The boat is anchored",
+            "You are there between the hours of 09:00 and 15:00",
+            "You have your same pair of glasses / contacts / eyesight correcting devices on.",
+            "You are taking the reading on the shady side of the boat",            
+            "You are taking the reading at the correct location on the lake",
+            "You are using the same scope as you usually use",
+            "You are using the same disc that you usually use",
+            "You are taking the reading at approximately the same time each trip out"
+        ]
     },
 ];
 

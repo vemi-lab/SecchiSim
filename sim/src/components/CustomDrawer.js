@@ -64,8 +64,8 @@ export default function CustomDrawer() {
                   {quizData.map((module) => {
                     const modulePath = `/module/${String(module.id)}`;
                     return (
-                      <Link key={module.id} to={modulePath}>
-                        <div className="subsection-item">
+                      <Link key={module.id} to={modulePath} className='subsection-item'>
+                        <div >
                           <h4>{module.title}</h4>
                         </div>
                       </Link>

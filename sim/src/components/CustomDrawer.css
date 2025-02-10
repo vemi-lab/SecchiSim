@@ -84,7 +84,8 @@
   transition: background-color 0.3s, color 0.3s;
 }
 
-.drawer-item:hover {
+.drawer-item:hover,
+.subsection-item:hover {
   background-color: #F0F1FA;
   color: #384B98;
 }
@@ -99,13 +100,21 @@
 }
 
 .subsection-item {
-  text-decoration: none;
-  color: #494444;
-  /* padding: 8px; */
-  font-size: 16px;
-  border-radius: 5px;
+  text-decoration: none !important;
+  font-weight: lighter !important;
+  color: #585858;
+  font-size: 14px;
   transition: background-color 0.3s, color 0.3s;
 }
+
+/* .subsection-item:hover {
+  background-color: #F0F1FA;
+  color: #384B98;
+}
+
+.subsection-item.active {
+  color: #6F73B3;
+} */
 
 /***************/
 /* Logo style */
@@ -155,11 +164,9 @@
   .sidebar.open + .hamburger {
     left: 185px;
   }
-  .text {
-    font-size: 14px; 
-  }
-
-  .drawer-item {
+  .text,
+  .drawer-item, 
+  .subsection-item {
     font-size: 14px; 
   }
 
@@ -183,11 +190,9 @@
     left: 145px;
   }
 
-  .text {
-    font-size: 11px; 
-  }
-
-  .drawer-item {
+  .text,
+  .drawer-item, 
+  .subsection-item {
     font-size: 11px; 
   }
 

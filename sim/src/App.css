@@ -2,34 +2,34 @@
 .app-container {
   display: flex;
   flex-direction: row;
-  height: 100vh; /* Full height of the viewport */
-  width: 100vw; /* Full width of the viewport */
+  height: 100vh; 
+  width: 100vw; 
   overflow: hidden;
 }
 
 /* Sidebar (Drawer) */
 .CustomDrawer {
-  flex: 0 0 250px; /* Fixed width for large screens */
+  flex: 0 0 250px; 
   background-color: #f4f4f4;
   transition: width 0.3s ease;
 }
 
+/* Adjust width for tablets */
 @media (max-width: 768px) {
   .CustomDrawer {
-    flex: 0 0 200px; /* Adjust width for tablets */
+    flex: 0 0 200px; 
   }
 }
 
+/* Collapsed width for small screens */
 @media (max-width: 480px) {
   .CustomDrawer {
-    flex: 0 0 60px; /* Collapsed width for small screens */
+    flex: 0 0 60px; 
   }
 }
 
 /* Main Content Area */
 .content {
-  flex: 1; /* Occupies remaining space */
+  flex: 1; 
   overflow-y: auto;
 }
-
-/* Remove padding from content for all screen sizes */
