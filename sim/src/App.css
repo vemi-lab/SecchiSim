@@ -1,0 +1,35 @@
+/* Base container for the app */
+.app-container {
+  display: flex;
+  flex-direction: row;
+  height: 100vh; /* Full height of the viewport */
+  width: 100vw; /* Full width of the viewport */
+  overflow: hidden;
+}
+
+/* Sidebar (Drawer) */
+.CustomDrawer {
+  flex: 0 0 250px; /* Fixed width for large screens */
+  background-color: #f4f4f4;
+  transition: width 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .CustomDrawer {
+    flex: 0 0 200px; /* Adjust width for tablets */
+  }
+}
+
+@media (max-width: 480px) {
+  .CustomDrawer {
+    flex: 0 0 60px; /* Collapsed width for small screens */
+  }
+}
+
+/* Main Content Area */
+.content {
+  flex: 1; /* Occupies remaining space */
+  overflow-y: auto;
+}
+
+/* Remove padding from content for all screen sizes */

@@ -17,7 +17,7 @@
   
   .progress {
     height: 100%;
-    background-color: #6c63ff;
+    background-color: #6F73B3;
     transition: width 0.5s;
   }
   
@@ -44,7 +44,7 @@
     width: 100%;
     padding: 10px;
     margin: 10px 0;
-    border: 2px solid #6c63ff;
+    border: 2px solid #6F73B3;
     background-color: white;
     border-radius: 5px;
     cursor: pointer;
@@ -52,25 +52,25 @@
   }
   
   .option-button:hover {
-    background-color: #6c63ff;
+    background-color: #6F73B3;
     color: white;
   }
   
   .option-button.correct {
-    background-color: #28a745;
+    background-color: #027759;
     color: white;
-    border-color: #28a745;
+    border-color: #027759;
   }
   
   .option-button.incorrect {
-    background-color: #dc3545;
+    background-color: #AA4A44;
     color: white;
-    border-color: #dc3545;
+    border-color: #AA4A44;
   }
   
   .next-button {
     padding: 10px 20px;
-    background-color: #6c63ff;
+    background-color: #6F73B3;
     color: white;
     border: none;
     border-radius: 5px;
@@ -98,7 +98,7 @@
   
   .retry-button {
     padding: 10px 20px;
-    background-color: #6c63ff;
+    background-color: #6F73B3;
     color: white;
     border: none;
     border-radius: 5px;

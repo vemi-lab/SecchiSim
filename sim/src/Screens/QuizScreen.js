@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import './QuizScreen.css'; 
-import data from '../data/QuizDataSecchi'
+import './QuizScreen.css';
 
-const Quiz = () => {
+const QuizScreen = ({ data }) => {
   const allQuestions = data;
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [currentOptionSelected, setCurrentOptionSelected] = useState(null);
@@ -98,9 +97,10 @@ const Quiz = () => {
             </button>
           </div>
         </div>
-      )}
+      )} 
     </div>
   );
 };
 
-export default Quiz;
+export default QuizScreen;
+

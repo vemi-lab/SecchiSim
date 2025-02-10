@@ -3,9 +3,9 @@ const {width, height} = Dimensions.get('window');
 
 export const COLORS = {
     light_purple: "#6F73B3",
-    light_green: '#99C3B7',
+    light_green: '#99C3B6',
     dark_purple: '#6F73B3',
-    dark_green: '#00775B',
+    dark_green: '#027759',
     
     correct: '#99C3B7',
     error: '#D95443',
