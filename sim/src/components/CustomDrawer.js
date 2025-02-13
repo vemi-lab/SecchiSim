@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './CustomDrawer.css';
 import logo from '../assets/avatar.jpg';
-import quizData from '../data/quizData.json'; // Import module data
+// import quizData from '../data/quizData.json'; // Import module data
 
 export default function CustomDrawer() {
   const [isOpen, setIsOpen] = useState(false);
@@ -25,11 +25,15 @@ export default function CustomDrawer() {
   const links = [
     { to: '/instructions', name: 'Welcome and How to?' },
     { to: '/course-material', name: 'Course Material' },
+    // { to: '/overview', name: 'Program Overview' },
+    // { to: '/lakes101a', name: 'Lakes 101a' },
+    // { to: '/lakes101b', name: 'Lakes 101b' },
     { to: '/secchi-sim', name: 'SecchiSim' },
     { to: '/messages', name: 'Messages' },
     { to: '/resources', name: 'Resources' },
     { to: '/trainings', name: 'Upcoming Trainings' },
     { to: '/video', name: 'Video' },
+    { to: '/dashboard', name: 'Dashboard'},
   ];
 
   return (
@@ -61,16 +65,32 @@ export default function CustomDrawer() {
               {/* Dynamically Render Module Subsections */}
               {link.name === 'Course Material' && isCourseMaterialOpen && (
                 <div className="subsections">
-                  {quizData.map((module) => {
+                  {/* {quizData.map((module) => {
                     const modulePath = `/module/${String(module.id)}`;
                     return (
-                      <Link key={module.id} to={modulePath} className='subsection-item'>
+                      <Link key={module.id} to={
+                      } className='subsection-item'>
                         <div >
                           <h4>{module.title}</h4>
                         </div>
                       </Link>
                     );
-                  })}
+                  })} */}
+                      <Link key="overview" to="/overview" className='subsection-item'>
+                        <div >
+                          <h4>Program Overview</h4>
+                        </div>
+                      </Link>
+                      <Link key="lakes101a" to="/lakes101a" className='subsection-item'>
+                        <div >
+                          <h4>Lakes 101a</h4>
+                        </div>
+                      </Link>
+                      <Link key="lakes101b" to="/lakes101b" className='subsection-item'>
+                        <div >
+                          <h4>Lakes 101b & Secchi Training</h4>
+                        </div>
+                      </Link>
                 </div>
               )}
             </div>
