@@ -1,7 +1,9 @@
-import React, {useRef, useState} from 'react'
-import { Form, Button, Card, Alert } from 'react-bootstrap'
-import { useAuth } from '../contexts/AuthContext'
-import { Link, useNavigate } from 'react-router-dom'
+import React, {useRef, useState} from 'react';
+import { Form, Button, Card, Alert } from 'react-bootstrap';
+import { useAuth } from '../contexts/AuthContext';
+import { Link, useNavigate } from 'react-router-dom';
+import invertLogo from '../assets/invert-logo.png';
+import './Signup.css';
 
 
 export default function Signup() {
@@ -35,8 +37,11 @@ export default function Signup() {
   return (
     <>
         <Card>
-            <Card.Body>
-                <h2 className="text-center mb-4">Sign Up</h2>
+            <Card.Body className='body'>
+                <div className="logo-container">
+                    <img src={invertLogo} alt="Logo" className="invert-lsm-logo" />
+                </div>
+                <h2 className="sign-up-header">Sign Up</h2>
                 {error && <Alert variant="danger">{error}</Alert>}
                 <Form onSubmit={handleSubmit}>
 
@@ -55,12 +60,12 @@ export default function Signup() {
                         <Form.Control type="password" ref={passwordConfirmRef} required />
                     </Form.Group>
 
-                    <Button disabled={loading} classname="w-100" type="submit">Sign Up</Button>
+                    <Button disabled={loading} className="submit-btn" type="submit">Sign Up</Button>
                 </Form>
             </Card.Body>
         </Card>
-        <div className="w-100 text-center mt-2">
-            Already have an account? <Link to="/login">Log In</Link>
+        <div className="login-div">
+            Already have an account? <Link to="/login">Login</Link>
         </div>
     </>
   )
