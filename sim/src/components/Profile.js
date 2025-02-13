@@ -4,7 +4,6 @@ import { auth, db } from "../firebase";
 import { updateEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider, signOut } from "firebase/auth";
 import { doc, getDoc, updateDoc, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import UserIcon from '../assets/UserIcon.png';
 import './Profile.css';
 
 export default function Profile() {
@@ -118,19 +117,17 @@ export default function Profile() {
                 <Form.Control type="password" ref={passwordConfirmRef} placeholder="Leave blank to keep the same" />
                 </Form.Group>
 
-                <div className="select-role">
-                    <h3 className="volunteer-header">Select Volunteer Roles</h3>
-                    {["Clean-up Volunteer", "Organizer Volunteer", "Decorator Volunteer"].map((role) => (
-                    <Form.Check
-                        key={role}
-                        type="checkbox"
-                        label={role}
-                        checked={selectedRoles.includes(role)}
-                        onChange={() => handleRoleChange(role)}
-                        className="volunteer-roles"
-                    />
-                    ))}
-                </div>
+                <h3 className="mt-3">Select Volunteer Roles</h3>
+                {["Clean-up Volunteer", "Organizer Volunteer", "Decorator Volunteer"].map((role) => (
+                <Form.Check
+                    key={role}
+                    type="checkbox"
+                    label={role}
+                    checked={selectedRoles.includes(role)}
+                    onChange={() => handleRoleChange(role)}
+                    className="volunteer-roles"
+                />
+                ))}
 
                 <Button disabled={loading} className="profile-btn" type="submit">
                 Update Profile
@@ -139,11 +136,11 @@ export default function Profile() {
             </Card.Body>
         </Card>
 
-        <div className="logout-container">
+        <div className="w-100 text-center mt-3">
             <Button className="logout-btn" onClick={handleLogout}>Logout</Button>
         </div>
-
     </div>
 
   );
 }
+
