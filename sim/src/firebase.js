@@ -1,5 +1,6 @@
-import {initializeApp} from "firebase/app";
-import {getAuth} from "firebase/auth";
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore, doc, getDoc, updateDoc, collection } from "firebase/firestore";
 
 // Initialize Firebase
 const firebaseConfig = {
@@ -12,6 +13,36 @@ const firebaseConfig = {
   measurementId: "G-6NSPKVGKQQ"
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
+export const db = getFirestore(app);
+
+// Function to get user data using email as the identifier
+export async function getUserData(userEmail) {
+  try {
+    const userDocRef = doc(collection(db, "users"), userEmail);
+    const userDocSnap = await getDoc(userDocRef);
+    if (userDocSnap.exists()) {
+      return userDocSnap.data();
+    } else {
+      console.log("No such user found!");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+  }
+}
+
+// Function to update user data (email, password, and volunteer roles)
+export async function updateUserData(userEmail, newData) {
+  try {
+    const userDocRef = doc(collection(db, "users"), userEmail);
+    await updateDoc(userDocRef, newData);
+    console.log("User data updated successfully!");
+  } catch (error) {
+    console.error("Error updating user data:", error);
+  }
+}
+
 export default app;

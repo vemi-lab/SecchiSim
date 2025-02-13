@@ -20,7 +20,7 @@ export default function Login() {
             setError('');
             setLoading(true);
             await login(emailRef.current.value, passwordRef.current.value);
-            navigate('/instructions'); // Redirect to main screen after login
+            navigate('/dashboard'); // Redirect to main screen after login
         } catch {
             setError('Failed to log in');
         }

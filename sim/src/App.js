@@ -4,8 +4,9 @@ import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import PrivateRoutes from "./PrivateRoutes";
 import Login from "./components/Login";
 import ForgotPassword from "./components/ForgotPassword";
-import Signup from "./components/Signup"
-//import Dashboard from "./components/Dashboard"
+import Signup from "./components/Signup";
+import Dashboard from "./components/Dashboard";
+import Profile from "./components/Profile";
 import SecchiSimScreen from "./Screens/SecchiSimScreen";
 import InstructionsScreen from "./Screens/InstructionsScreen";
 // import TrainingScreen from "./Screens/TrainingScreen";
@@ -17,6 +18,7 @@ import DO_1 from "./Screens/DOTraining/DO_1";
 import DO_2 from "./Screens/DOTraining/DO_2";
 import DO_3 from "./Screens/DOTraining/DO_3";
 import "./App.css";
+
 
 export default function App() {
   return (
@@ -55,5 +57,5 @@ export default function App() {
 // This component redirects to login if the user is not authenticated
 function AuthRedirect() {
   const { currentUser } = useAuth();
-  return currentUser ? <Navigate to="/login" /> : <Navigate to="/instructions" />;
+  return currentUser ? <Navigate to="/login" /> : <Navigate to="/dashboard" />;
 }
