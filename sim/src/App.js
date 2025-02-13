@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import CustomDrawer from './components/CustomDrawer'; 
 import ModuleScreen from './Screens/ModuleScreen';
-import SecchiSimScreen from './Screens/SecchiSimScreen';
+import SecchiSimScreen from './Screens/SecchiSimScreen/SecchiSimScreen';
 import InstructionsScreen from './Screens/InstructionsScreen';
 import MessagesScreen from './Screens/MessagesScreen';
 import ResourcesScreen from './Screens/ResourcesScreen';
@@ -27,7 +27,7 @@ export default function App() {
             <Route path="/messages" element={<MessagesScreen />} />
             <Route path="/resources" element={<ResourcesScreen />} />
             <Route path="/trainings" element={<TrainingScreen />} />
-            <Route path="/quizes" element={<QuizScreen />} />            
+            <Route path="/quizzes" element={<QuizScreen />} />            
             {/* <Route path="*" element={<InstructionsScreen />} /> */}
           </Routes>
         </div>
