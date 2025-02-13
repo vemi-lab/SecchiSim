@@ -2,6 +2,8 @@ import React, { useRef, useState } from 'react';
 import { Form, Button, Card, Alert } from 'react-bootstrap';
 import { useAuth } from '../contexts/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
+import LSMLogo from '../assets/lsm-logo.png';
+import './Login.css';
 
 export default function Login() {
     const emailRef = useRef();
@@ -29,8 +31,12 @@ export default function Login() {
     return (
         <>
             <Card>
-                <Card.Body>
-                    <h2 className="text-center mb-4">Log In</h2>
+                <Card.Body className='body'>
+                    <div className="logo-container">
+                        <img src={LSMLogo} alt="Logo" className="lsm-logo" />
+                    </div>
+
+                    <h2 className="log-in-header">Log In</h2>
                     {error && <Alert variant="danger">{error}</Alert>}
                     <Form onSubmit={handleSubmit}>
 
@@ -44,17 +50,17 @@ export default function Login() {
                             <Form.Control type="password" ref={passwordRef} required />
                         </Form.Group>
 
-                        <Button disabled={loading} className="w-100 mt-3" type="submit">
+                        <Button disabled={loading} className="submit-btn" type="submit">
                             Login
                         </Button>
                     </Form>
 
-                    <div className="w-100 text-center mt-3">
+                    <div className="forgor">
                         <Link to="/forgot-password">Forgot Password?</Link>
                     </div>
                 </Card.Body>
             </Card>
-            <div className="w-100 text-center mt-2">
+            <div className="sign-up-div">
                 Need an account? <Link to="/signup">Sign Up</Link>
             </div>
         </>
