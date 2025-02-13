@@ -1,44 +1,26 @@
-import React, {useState} from 'react'
-import { Card, Button, Alert } from 'react-bootstrap'
-import { useAuth } from '../contexts/AuthContext'
-import { Link, useNavigate } from 'react-router-dom'
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { FiSettings } from 'react-icons/fi';
+import user from '../assets/UserIcon.png';
+import './Dashboard.css';
 
 export default function Dashboard() {
-    const [error, setError] = useState("")
-    const {currentUser, logout} = useAuth()
-    const history = useNavigate()
+  const navigate = useNavigate();
 
-    async function handleLogout(){
-        setError('')
-
-        try {
-            await logout()
-            history('/login')
-        } catch {
-            setError('Failed to log out')
-        }
-    }
-
-
-    return (
-        <>
-        <Card>
-            <Card.Body>
-                <h2 className="text-center mb-4">Profile</h2>
-                {error && <Alert variant="danger">{error}</Alert>}
-                <strong>Email:</strong> {currentUser.email}
-                <Link to="/update-profile" className="btn btn-primary w-100 mt-3">Update Profile</Link>
-            </Card.Body>
-        </Card>
-
-        <div className="w-100 text-center mt-2">
-            <Link to="/try-it-out" className="btn btn-primary w-20 mt-3">Try It Out!</Link>
+  return (
+    <div className="dashboard-container">
+      {/* Header with Settings Icon and Profile */}
+      <div className="header">
+        <FiSettings className="setting-icon" />
+        <div onClick={() => navigate("/profile")} className="profile">
+          <img src={user} alt="User Icon" />
         </div>
-        
-        <div className="w-100 text-center mt-2">
-            <Button variant="link" onClick={handleLogout}>Log Out</Button>
-        </div>
+      </div>
 
-        </>
-    )
+      {/* Main Content */}
+      <div className="scroll-view">
+        <p>This screen will be the homepage of secchi sim.</p>
+      </div>
+    </div>
+  );
 }

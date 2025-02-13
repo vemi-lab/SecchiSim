@@ -8,3 +8,4 @@ export default function PrivateRoute({component: Component}) {
 
     return currentUser ? <Component /> : <Navigate to="/login" />
 }
+

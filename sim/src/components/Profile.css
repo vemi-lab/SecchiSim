@@ -1,0 +1,113 @@
+/* Prevent Horizontal Scrolling */
+html, body {
+    overflow-x: hidden;
+  }
+  
+  /* Centered Profile Container */
+  .profile-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #f4f4f9;
+    padding: 20px;
+    font-family: Verdana, sans-serif;
+  }
+  
+  /* Profile Card */
+  .profile-card {
+    width: 100%;
+    max-width: 450px;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Form Styles */
+  .profile-form {
+    font-weight: bold;
+    margin-top: 10px;
+  }
+  
+  /* Fix Checkbox Alignment */
+  .select-role{
+    display: flex;
+    flex-direction: column;
+  }
+  .volunteer-roles {
+    display: flex;
+    flex-direction: column; /* Stack checkboxes vertically */
+    gap: 8px;
+    margin-top: 10px;
+  }
+  
+  .volunteer-roles label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  /* Input Fields */
+  .profile-form input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  /* Update Profile Button */
+  .profile-btn {
+    width: 100%;
+    padding: 12px;
+    margin-top: 15px;
+    font-size: 16px;
+    background: #6367a3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  .profile-btn:hover {
+    background: #383b5e;
+  }
+  
+  /* Shorter Logout Button */
+  .logout-btn {
+    width: 200px; /* Make it shorter */
+    padding: 12px;
+    margin-top: 10px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+    flex: content;
+  }
+  
+  .logout-btn:hover {
+    background: #b02a37;
+  }
+  
+  /* Center Logout Button */
+  .logout-container {
+    text-align: center;
+    margin-top: 15px;
+  }
+  
+  /* Responsive Fix */
+  @media (max-width: 500px) {
+    .profile-card {
+      width: 90%;
+      padding: 15px;
+    }
+  
+    .logout-btn {
+      width: 100%; /* Full width on smaller screens */
+    }
+  }
+  
