@@ -52,6 +52,7 @@ export default function CustomDrawer() {
     { to: '/video', name: 'Video' },
     { to: '/dashboard', name: 'Dashboard' }
   ];
+  //maybe delete dashboard
 
   return (
     <div>

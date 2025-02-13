@@ -5,7 +5,7 @@ import PrivateRoutes from "./PrivateRoutes";
 import Login from "./components/Login";
 import ForgotPassword from "./components/ForgotPassword";
 import Signup from "./components/Signup"
-import Dashboard from "./components/Dashboard"
+//import Dashboard from "./components/Dashboard"
 import SecchiSimScreen from "./Screens/SecchiSimScreen";
 import InstructionsScreen from "./Screens/InstructionsScreen";
 // import TrainingScreen from "./Screens/TrainingScreen";
@@ -55,5 +55,5 @@ export default function App() {
 // This component redirects to login if the user is not authenticated
 function AuthRedirect() {
   const { currentUser } = useAuth();
-  return currentUser ? <Navigate to="/instructions" /> : <Navigate to="/login" />;
+  return currentUser ? <Navigate to="/login" /> : <Navigate to="/instructions" />;
 }
