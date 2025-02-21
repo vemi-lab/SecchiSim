@@ -2,6 +2,8 @@ import React, { useRef, useState } from 'react';
 import { Form, Button, Card, Alert } from 'react-bootstrap';
 import { useAuth } from '../contexts/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
+import { auth } from '../firebase';
+import { sendEmailVerification } from 'firebase/auth';
 import LSMLogo from '../assets/lsm-logo.png';
 import './Login.css';
 
@@ -11,6 +13,7 @@ export default function Login() {
     const { login } = useAuth();
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    const [showResend, setShowResend] = useState(false);
     const navigate = useNavigate(); // Renamed history → navigate (best practice)
 
     async function handleSubmit(e) {
@@ -19,13 +22,34 @@ export default function Login() {
         try {
             setError('');
             setLoading(true);
-            await login(emailRef.current.value, passwordRef.current.value);
-            navigate('/dashboard'); // Redirect to main screen after login
+            const userCredential = await login(emailRef.current.value, passwordRef.current.value);
+            
+            if (!userCredential.user.emailVerified) {
+                setError("Please verify your email before loggin in.");
+                setShowResend(true); //shows the resend email verifcation button
+                setLoading(false);
+                return;
+            }
+
+            navigate('/dashboard'); //allow access if only had verified
+
         } catch {
             setError('Failed to log in');
         }
 
         setLoading(false);
+    }
+
+    async function handleResendVerification() {
+        if (auth.currentUser) {
+            try {
+                await sendEmailVerification(auth.currentUser);
+                alert("Verification email sent! Check your inbox.");
+            } catch (error) {
+                setError("Error sending verification email. Try again later.");
+                console.error("Resend Verification Error:", error);
+            }
+        }
     }
 
     return (
@@ -54,6 +78,15 @@ export default function Login() {
                             Login
                         </Button>
                     </Form>
+
+                    {showResend && (
+                        <div className="resend-verification">
+                            <p>Didn't receive the email?</p>
+                            <Button onClick={handleResendVerification} className="resend-btn">
+                                Resend Verification Email
+                            </Button>
+                        </div>
+                    )}
 
                     <div className="forgor">
                         <Link to="/forgot-password">Forgot Password?</Link>
