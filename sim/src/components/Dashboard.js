@@ -1,11 +1,20 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from "react";
+import { auth } from "../firebase";
 import { FiSettings } from 'react-icons/fi';
 import user from '../assets/UserIcon.png';
 import './Dashboard.css';
 
 export default function Dashboard() {
   const navigate = useNavigate();
+
+  useEffect(() =>{
+    if (auth.currentUser && !auth.currentUser.emailVerified){
+      alert("Please verify your email before accessing the dashboard.");
+      navigate("/login");
+    }
+  }, [navigate]);
 
   return (
     <div className="dashboard-container">

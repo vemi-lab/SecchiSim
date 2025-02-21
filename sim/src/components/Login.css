@@ -56,6 +56,26 @@ form .form-control {
     border-radius: 5px;
 }
 
+/* resend verification button */
+.resend-verification {
+    margin: auto;
+}
+.resend-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #2b307c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+.resend-btn:hover {
+    background-color: #131641;
+}
+
 /* Submit button */
 .submit-btn {
     width: 100%;

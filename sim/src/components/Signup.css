@@ -57,6 +57,22 @@ form .form-control {
     border-radius: 5px;
 }
 
+/* Password checker color */
+.password-strength p {
+    font-size: 14px;
+    margin: 3px 0;
+}
+
+.valid {
+    color: green;
+    font-weight: bold;
+}
+
+.invalid {
+    color: red;
+}
+
+
 /* Submit button */
 .submit-btn {
     width: 100%;
