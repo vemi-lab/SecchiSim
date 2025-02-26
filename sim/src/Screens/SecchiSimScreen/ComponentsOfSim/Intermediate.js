@@ -7,7 +7,6 @@ const SecchiSimulator = forwardRef(({ settings, onSettingChange }, ref) => {
   const sketchRef = useRef(null);
   const [animationDepth, setAnimationDepth] = useState(settings.depth);
   const [diskPosition, setDiskPosition] = useState({ x: 400, y: 300 });
-  const [waterImage, setWaterImage] = useState(null);
 
   const handleArrowClick = (direction) => {
     if (direction === 'up') {
@@ -42,23 +41,22 @@ const SecchiSimulator = forwardRef(({ settings, onSettingChange }, ref) => {
     // Create new p5 instance
     sketchRef.current = new p5((p) => {
       p.preload = () => {
-        // Load water image
-        const img = p.loadImage('/clearLake.png');
-        setWaterImage(img);
+        utils.preload(p);
       };
 
       p.setup = () => {
         const canvas = p.createCanvas(800, 600);
         canvas.parent(canvasRef.current);
         p.colorMode(p.RGB);
+        p.background(0, 20, 40); // Set dark blue background once
       };
 
       p.draw = () => {
         p.clear();
-        // Draw the background image
-        if (waterImage) {
-          p.image(waterImage, 0, 0, p.width, p.height); // Draw the image as background
-        }
+        p.background(0, 20, 40);
+        
+        // Draw water
+        utils.drawWater(p, p.width, p.height, animationDepth, utils.CONSTANTS.MAX_DEPTH);
         
         // Calculate visibility based on depth and turbidity
         const visibility = utils.calculateVisibility(animationDepth, settings.turbidity);
