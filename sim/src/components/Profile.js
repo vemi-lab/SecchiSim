@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import { auth, db } from "../firebase";
 import { updateEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider, signOut } from "firebase/auth";
-import { doc, getDoc, updateDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, setDoc, onSnapshot } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import './Profile.css';
 
@@ -10,31 +10,44 @@ export default function Profile() {
   const emailRef = useRef();
   const passwordRef = useRef();
   const passwordConfirmRef = useRef();
-  const [volunteerRoles, setVolunteerRoles] = useState([]);
-  const [selectedRoles, setSelectedRoles] = useState([]);
+  const [volunteerRoles, setVolunteerRoles] = useState({});
+  const [isAdmin, setIsAdmin] = useState(false); //track if user is an admin
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState({ length: false, uppercase: false, numbers: false, specialChars: false });
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!auth.currentUser) return;
 
-    const fetchUserProfile = async () => {
-      const userDocRef = doc(db, "users", auth.currentUser.email);
-      const docSnap = await getDoc(userDocRef);
+    const userDocRef = doc(db, "users", auth.currentUser.email);
 
+    // Listen for real-time changes from Firestore
+    const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
       if (docSnap.exists()) {
         const userData = docSnap.data();
-        emailRef.current.value = auth.currentUser.email;
-        setSelectedRoles(userData.volunteerRoles || []);
-      } else {
-        console.log("No profile found, creating one...");
-        await setDoc(userDocRef, { email: auth.currentUser.email, volunteerRoles: [] });
+        emailRef.current.value = userData.email || "";
+        setVolunteerRoles(userData.volunteerRoles || {}); 
+        setIsAdmin(userData.isAdmin || false); // Check if the user is an admin
       }
-    };
+    });
 
-    fetchUserProfile();
+    return () => unsubscribe(); // Cleanup listener on unmount
   }, []);
+
+  const validatePassword = (password) => {
+    const strength = {
+      length: password.length >= 8,
+      uppercase: /[A-Z]/.test(password),
+      numbers: (password.match(/\d/g) || []).length >= 2,
+      specialChars: (password.match(/[^A-Za-z0-9]/g) || []).length >= 2,
+    };
+    setPasswordStrength(strength);
+  };
+
+  const isPasswordStrong = () => {
+    return Object.values(passwordStrength).every((rule) => rule === true);
+  };
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
@@ -63,11 +76,14 @@ export default function Profile() {
         if (passwordRef.current.value !== passwordConfirmRef.current.value) {
           throw new Error("Passwords do not match");
         }
+        if (!isPasswordStrong()) {
+          throw new Error("Password does not meet strength requirements.");
+        }
         await updatePassword(auth.currentUser, passwordRef.current.value);
       }
 
       // Update volunteer roles in Firestore
-      await updateDoc(userDocRef, { volunteerRoles: selectedRoles });
+      await updateDoc(userDocRef, { volunteerRoles: volunteerRoles });
 
       alert("Profile updated successfully!");
       navigate("/dashboard");
@@ -78,10 +94,24 @@ export default function Profile() {
     }
   };
 
-  const handleRoleChange = (role) => {
-    setSelectedRoles((prevRoles) =>
-      prevRoles.includes(role) ? prevRoles.filter((r) => r !== role) : [...prevRoles, role]
-    );
+
+// Admin-only function to update volunteer roles
+  const handleRoleChange = async (role) => {
+    if (!isAdmin) return; // Prevent users from updating roles
+
+    const updatedRoles = {
+      ...volunteerRoles,
+      [role]: !volunteerRoles[role], // Toggle the role
+    };
+
+    setVolunteerRoles(updatedRoles);
+
+    try {
+      const userDocRef = doc(db, "users", auth.currentUser.email);
+      await updateDoc(userDocRef, { volunteerRoles: updatedRoles });
+    } catch (error) {
+      console.error("Error updating roles:", error);
+    }
   };
 
   const handleLogout = async () => {
@@ -102,41 +132,63 @@ export default function Profile() {
             <h2>Update Profile</h2>
             {error && <Alert variant="danger">{error}</Alert>}
             <Form onSubmit={handleUpdateProfile} className="profile-form">
-                <Form.Group id="email">
+                <Form.Group id="email" className="form-group">
                 <Form.Label>Email</Form.Label>
                 <Form.Control type="email" ref={emailRef} required defaultValue={auth.currentUser?.email} />
                 </Form.Group>
 
-                <Form.Group id="password">
+                <Form.Group id="password" className="form-group">
                 <Form.Label>New Password</Form.Label>
-                <Form.Control type="password" ref={passwordRef} placeholder="Leave blank to keep the same" />
+                <Form.Control 
+                  type="password"
+                  ref={passwordRef} 
+                  placeholder="Leave blank to keep the same" 
+                  onChange={(e) => validatePassword(e.target.value)} />
                 </Form.Group>
 
-                <Form.Group id="password-confirm">
+                <Form.Group id="password-confirm" className="form-group">
                 <Form.Label>Password Confirmation</Form.Label>
                 <Form.Control type="password" ref={passwordConfirmRef} placeholder="Leave blank to keep the same" />
                 </Form.Group>
 
-                <h3 className="mt-3">Select Volunteer Roles</h3>
-                {["Clean-up Volunteer", "Organizer Volunteer", "Decorator Volunteer"].map((role) => (
-                <Form.Check
-                    key={role}
-                    type="checkbox"
-                    label={role}
-                    checked={selectedRoles.includes(role)}
-                    onChange={() => handleRoleChange(role)}
-                    className="volunteer-roles"
-                />
-                ))}
-
-                <Button disabled={loading} className="profile-btn" type="submit">
-                Update Profile
-                </Button>
+                <div className="password-strength">
+                  <p>Password must contain:</p>
+                  <ul className="password-container-list">
+                    <li style={{ color: passwordStrength.length ? "green" : "red" }}>✔ 8 characters minimum</li>
+                    <li style={{ color: passwordStrength.uppercase ? "green" : "red" }}>✔ At least 1 uppercase letter</li>
+                    <li style={{ color: passwordStrength.numbers ? "green" : "red" }}>✔ At least 2 numbers</li>
+                    <li style={{ color: passwordStrength.specialChars ? "green" : "red" }}>✔ At least 2 special characters</li>
+                  </ul>
+                </div>
             </Form>
+
+            <h3 className="volunteerHeader">Volunteer Roles</h3>
+            {Object.keys(volunteerRoles).length > 0 ? (
+              <ul className="volunteer-roles-container">
+                {Object.entries(volunteerRoles).map(([role, isChecked]) => (
+                  <li key={role}>
+                    <Form.Check
+                      type="checkbox"
+                      label={role}
+                      checked={isChecked}
+                      onChange={() => handleRoleChange(role)}
+                      disabled={!isAdmin} // Only admins can modify
+                      className="volunteer-roles"
+                    />
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No volunteer roles assigned.</p>
+            )}
+
+              <Button disabled={loading} className="profile-btn" type="submit">
+                Update Profile
+              </Button>
             </Card.Body>
         </Card>
 
-        <div className="w-100 text-center mt-3">
+        <div className="logout-sec">
             <Button className="logout-btn" onClick={handleLogout}>Logout</Button>
         </div>
     </div>
