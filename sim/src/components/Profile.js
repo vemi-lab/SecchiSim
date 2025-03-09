@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import { auth, db } from "../firebase";
-import { updateEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider, signOut } from "firebase/auth";
-import { doc, getDoc, updateDoc, setDoc, onSnapshot } from "firebase/firestore";
+import { updatePassword, signOut } from "firebase/auth";
+import { doc, updateDoc, onSnapshot } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import './Profile.css';
 
 export default function Profile() {
-  const emailRef = useRef();
+  const [userData, setUserData] = useState(null);
   const passwordRef = useRef();
   const passwordConfirmRef = useRef();
   const [volunteerRoles, setVolunteerRoles] = useState({});
@@ -26,7 +26,7 @@ export default function Profile() {
     const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
       if (docSnap.exists()) {
         const userData = docSnap.data();
-        emailRef.current.value = userData.email || "";
+        setUserData(userData);
         setVolunteerRoles(userData.volunteerRoles || {}); 
         setIsAdmin(userData.isAdmin || false); // Check if the user is an admin
       }
@@ -57,20 +57,6 @@ export default function Profile() {
     if (!auth.currentUser) return;
 
     try {
-      const credential = EmailAuthProvider.credential(
-        auth.currentUser.email,
-        prompt("Please enter your password for re-authentication:")
-      );
-      await reauthenticateWithCredential(auth.currentUser, credential);
-
-      const userDocRef = doc(db, "users", auth.currentUser.email);
-
-      // Update email if changed
-      if (emailRef.current.value !== auth.currentUser.email) {
-        await updateEmail(auth.currentUser, emailRef.current.value);
-        await updateDoc(userDocRef, { email: emailRef.current.value });
-      }
-
       // Update password if changed
       if (passwordRef.current.value) {
         if (passwordRef.current.value !== passwordConfirmRef.current.value) {
@@ -82,8 +68,8 @@ export default function Profile() {
         await updatePassword(auth.currentUser, passwordRef.current.value);
       }
 
-      // Update volunteer roles in Firestore
-      await updateDoc(userDocRef, { volunteerRoles: volunteerRoles });
+      // // Update volunteer roles in Firestore
+      // await updateDoc(userDocRef, { volunteerRoles: volunteerRoles });
 
       alert("Profile updated successfully!");
       navigate("/dashboard");
@@ -129,26 +115,37 @@ export default function Profile() {
     <div className="profile-container">
         <Card className="profile-card">
             <Card.Body>
-            <h2>Update Profile</h2>
+            <h2>Profile</h2>
             {error && <Alert variant="danger">{error}</Alert>}
+            { userData ? (
             <Form onSubmit={handleUpdateProfile} className="profile-form">
-                <Form.Group id="email" className="form-group">
-                <Form.Label>Email</Form.Label>
-                <Form.Control type="email" ref={emailRef} required defaultValue={auth.currentUser?.email} />
+              <Form.Group id="full-name">
+                <Form.Label>Name</Form.Label>
+                <Form.Control type="text" value={userData.fullName} disabled />
+              </Form.Group>
+
+                <Form.Group id="phone-number">
+                  <Form.Label>Phone Number</Form.Label>
+                  <Form.Control type="text" value={userData.phoneNumber} disabled />
+                </Form.Group>
+
+                <Form.Group id="email">
+                  <Form.Label>Email</Form.Label>
+                  <Form.Control type="email" value={auth.currentUser.email} disabled />
                 </Form.Group>
 
                 <Form.Group id="password" className="form-group">
-                <Form.Label>New Password</Form.Label>
-                <Form.Control 
-                  type="password"
-                  ref={passwordRef} 
-                  placeholder="Leave blank to keep the same" 
-                  onChange={(e) => validatePassword(e.target.value)} />
+                  <Form.Label>New Password</Form.Label>
+                  <Form.Control 
+                    type="password"
+                    ref={passwordRef} 
+                    placeholder="Leave blank to keep the same" 
+                    onChange={(e) => validatePassword(e.target.value)} />
                 </Form.Group>
 
                 <Form.Group id="password-confirm" className="form-group">
-                <Form.Label>Password Confirmation</Form.Label>
-                <Form.Control type="password" ref={passwordConfirmRef} placeholder="Leave blank to keep the same" />
+                  <Form.Label>Password Confirmation</Form.Label>
+                  <Form.Control type="password" ref={passwordConfirmRef} placeholder="Leave blank to keep the same" />
                 </Form.Group>
 
                 <div className="password-strength">
@@ -160,7 +157,10 @@ export default function Profile() {
                     <li style={{ color: passwordStrength.specialChars ? "green" : "red" }}>✔ At least 2 special characters</li>
                   </ul>
                 </div>
-            </Form>
+              </Form>
+            ) : (
+              <p>Loading...</p>
+            )}
 
             <h3 className="volunteerHeader">Volunteer Roles</h3>
             {Object.keys(volunteerRoles).length > 0 ? (
