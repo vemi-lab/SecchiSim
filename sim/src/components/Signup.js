@@ -7,13 +7,14 @@ import './Signup.css';
 
 
 export default function Signup() {
-    const emailRef = useRef()
-    const passwordRef = useRef()
-    const passwordConfirmRef = useRef()
-    const {signup} = useAuth()
-    const [error, setError] = useState("")
-    const [loading, setLoading] = useState(false)
-    const [password, setPassword] = useState('')
+    const fullNameRef = useRef();
+    const phoneRef = useRef();
+    const emailRef = useRef();
+    const { signup } = useAuth();
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [password, setPassword] = useState("");
+    const [showPasswordRules, setShowPasswordRules] = useState(false);
     const [passwordStrength, setPasswordStrength] = useState({
         length: false,
         uppercase: false,
@@ -26,7 +27,7 @@ export default function Signup() {
             length: password.length >= 8,
             uppercase: /[A-Z]/.test(password),
             numbers: (password.match(/\d/g) || []).length >= 2,
-            specialChars: (password.match(/[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/g) || []).length >= 2,
+            specialChars: (password.match(/[!@#$%^&*()_+{}[\]:;<>,.?~\\/-]/g) || []).length >= 2,
         });
     }
 
@@ -37,27 +38,26 @@ export default function Signup() {
     }
 
     async function handleSubmit(e) {
-        e.preventDefault()
-        
-        if (password !== passwordConfirmRef.current.value) {
-            return setError('Passwords do not match');
+        e.preventDefault();
+
+        if(!fullNameRef.current.value || !phoneRef.current.value) {
+            return setError("Full name and phone number are required.")
         }
-    
+
         if (!Object.values(passwordStrength).every(Boolean)) {
             return setError('Your password does not meet the required strength.');
         }
 
         try {
-            setError('')
-            setLoading(true)
-            await signup( emailRef.current.value, password)
-            alert("Account created! Please verify your email before loggin in.");
-
+            setError('');
+            setLoading(true);
+            await signup(fullNameRef, phoneRef, emailRef.current.value, password);
         } catch {
-            setError('Failed to create an account')
-            setLoading(false)
+            setError('Failed to create an account');
+            setLoading(false);
         }
     }
+
 
 
   return (
@@ -71,31 +71,40 @@ export default function Signup() {
                 {error && <Alert variant="danger">{error}</Alert>}
                 <Form onSubmit={handleSubmit}>
 
+                    <Form.Group id="full-name">
+                        <Form.Label>Full Name</Form.Label>
+                        <Form.Control type="full name" ref={fullNameRef} required />
+                    </Form.Group>
+
+                    <Form.Group id="phoneNumber">
+                        <Form.Label>Phone Number</Form.Label>
+                        <Form.Control type="phone number" ref={phoneRef} />
+                    </Form.Group>
+
                     <Form.Group id="email">
                         <Form.Label>Email</Form.Label>
                         <Form.Control type="email" ref={emailRef} required />
                     </Form.Group>
 
                     <Form.Group id="password">
-                        <Form.Label>Password</Form.Label>
-                        <Form.Control 
-                            type="password" 
-                            value={password} 
-                            onChange={handlePasswordChange}
-                            required 
-                        />
-                            <div className="password-strength">
-                                <p className={passwordStrength.length ? 'valid' : 'invalid'}>✔ At least 8 characters</p>
-                                <p className={passwordStrength.uppercase ? 'valid' : 'invalid'}>✔ At least 1 uppercase letter</p>
-                                <p className={passwordStrength.numbers ? 'valid' : 'invalid'}>✔ At least 2 numbers</p>
-                                <p className={passwordStrength.specialChars ? 'valid' : 'invalid'}> ✔At least 2 special characters</p>
-                            </div>
-                    </Form.Group>
-
-                    <Form.Group id="password-confirm">
-                        <Form.Label>Password Confirmation</Form.Label>
-                        <Form.Control type="password" ref={passwordConfirmRef} required />
-                    </Form.Group>
+                            <Form.Label>Password</Form.Label>
+                            <Form.Control 
+                                type="password" 
+                                value={password} 
+                                onChange={handlePasswordChange} 
+                                onFocus={() => setShowPasswordRules(true)} 
+                                onBlur={() => password === "" && setShowPasswordRules(false)}
+                                required 
+                            />
+                            {showPasswordRules && (
+                                <div className="password-strength">
+                                    <p className={passwordStrength.length ? 'valid' : 'invalid'}>✔ At least 8 characters</p>
+                                    <p className={passwordStrength.uppercase ? 'valid' : 'invalid'}>✔ At least 1 uppercase letter</p>
+                                    <p className={passwordStrength.numbers ? 'valid' : 'invalid'}>✔ At least 2 numbers</p>
+                                    <p className={passwordStrength.specialChars ? 'valid' : 'invalid'}>✔ At least 2 special characters</p>
+                                </div>
+                            )}
+                        </Form.Group>
 
                     <Button disabled={loading} className="submit-btn" type="submit">Sign Up</Button>
                 </Form>
