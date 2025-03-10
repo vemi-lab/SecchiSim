@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import { auth, db } from "../firebase";
 import { updatePassword, signOut } from "firebase/auth";
-import { doc, updateDoc, onSnapshot } from "firebase/firestore";
+import { doc, getDoc, updateDoc, onSnapshot } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import './Profile.css';
 
@@ -10,7 +10,7 @@ export default function Profile() {
   const [userData, setUserData] = useState(null);
   const passwordRef = useRef();
   const passwordConfirmRef = useRef();
-  const [volunteerRoles, setVolunteerRoles] = useState({});
+  const [accessRoles, setAccessRoles] = useState({});
   const [isAdmin, setIsAdmin] = useState(false); //track if user is an admin
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -20,20 +20,33 @@ export default function Profile() {
   useEffect(() => {
     if (!auth.currentUser) return;
 
-    const userDocRef = doc(db, "users", auth.currentUser.email);
+    const userDocRef = doc(db, "users", auth.currentUser.email.toLowerCase());
 
-    // Listen for real-time changes from Firestore
-    const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
-      if (docSnap.exists()) {
-        const userData = docSnap.data();
-        setUserData(userData);
-        setVolunteerRoles(userData.volunteerRoles || {}); 
-        setIsAdmin(userData.isAdmin || false); // Check if the user is an admin
-      }
+    // Fetch user data once at first load
+    getDoc(userDocRef).then((docSnap) => {
+        if (docSnap.exists()) {
+            const userData = docSnap.data();
+            setUserData(userData);
+            setAccessRoles(userData.accessRoles || {}); 
+            setIsAdmin(userData.isAdmin || false);
+        } else {
+            console.log("No user data found in Firestore!");
+        }
     });
 
-    return () => unsubscribe(); // Cleanup listener on unmount
+    // Listen for real-time updates
+    const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
+        if (docSnap.exists()) {
+            const userData = docSnap.data();
+            setUserData(userData);
+            setAccessRoles(userData.accessRoles || {}); 
+            setIsAdmin(userData.isAdmin || false);
+        }
+    });
+
+    return () => unsubscribe(); // Cleanup listener
   }, []);
+
 
   const validatePassword = (password) => {
     const strength = {
@@ -68,8 +81,8 @@ export default function Profile() {
         await updatePassword(auth.currentUser, passwordRef.current.value);
       }
 
-      // // Update volunteer roles in Firestore
-      // await updateDoc(userDocRef, { volunteerRoles: volunteerRoles });
+      // // Update access roles in Firestore
+      // await updateDoc(userDocRef, { accessRoles: accessRoles });
 
       alert("Profile updated successfully!");
       navigate("/dashboard");
@@ -81,24 +94,26 @@ export default function Profile() {
   };
 
 
-// Admin-only function to update volunteer roles
-  const handleRoleChange = async (role) => {
-    if (!isAdmin) return; // Prevent users from updating roles
+// Admin-only function to update access roles
+const handleRoleChange = async (role) => {
+  if (!isAdmin) return; // Prevent unauthorized updates
 
-    const updatedRoles = {
-      ...volunteerRoles,
-      [role]: !volunteerRoles[role], // Toggle the role
-    };
-
-    setVolunteerRoles(updatedRoles);
-
-    try {
-      const userDocRef = doc(db, "users", auth.currentUser.email);
-      await updateDoc(userDocRef, { volunteerRoles: updatedRoles });
-    } catch (error) {
-      console.error("Error updating roles:", error);
-    }
+  const updatedRoles = {
+      ...accessRoles,
+      [role]: !accessRoles[role], // Toggle role
   };
+
+  setAccessRoles(updatedRoles);
+
+  try {
+      const userDocRef = doc(db, "users", auth.currentUser.email.toLowerCase());
+      await updateDoc(userDocRef, { accessRoles: updatedRoles });
+      console.log("Access roles updated:", updatedRoles);
+  } catch (error) {
+      console.error("Error updating access roles:", error);
+  }
+};
+
 
   const handleLogout = async () => {
     try {
@@ -162,10 +177,10 @@ export default function Profile() {
               <p>Loading...</p>
             )}
 
-            <h3 className="volunteerHeader">Volunteer Roles</h3>
-            {Object.keys(volunteerRoles).length > 0 ? (
-              <ul className="volunteer-roles-container">
-                {Object.entries(volunteerRoles).map(([role, isChecked]) => (
+            <h3 className="accessHeader">Access Roles</h3>
+            {Object.keys(accessRoles).length > 0 ? (
+              <ul className="access-roles-container">
+                {Object.entries(accessRoles).map(([role, isChecked]) => (
                   <li key={role}>
                     <Form.Check
                       type="checkbox"
@@ -173,13 +188,13 @@ export default function Profile() {
                       checked={isChecked}
                       onChange={() => handleRoleChange(role)}
                       disabled={!isAdmin} // Only admins can modify
-                      className="volunteer-roles"
+                      className="access-roles"
                     />
                   </li>
                 ))}
               </ul>
             ) : (
-              <p>No volunteer roles assigned.</p>
+              <p>No access roles assigned.</p>
             )}
 
               <Button disabled={loading} className="profile-btn" type="submit">

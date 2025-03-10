@@ -1,7 +1,7 @@
 import React, {useRef, useState} from 'react';
 import { Form, Button, Card, Alert } from 'react-bootstrap';
 import { useAuth } from '../contexts/AuthContext';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import invertLogo from '../assets/invert-logo.png';
 import './Signup.css';
 
@@ -21,6 +21,8 @@ export default function Signup() {
         numbers: false,
         specialChars: false,
     });
+
+    const navigate = useNavigate();
 
     function validatePassword(password) {
         setPasswordStrength({
@@ -51,9 +53,14 @@ export default function Signup() {
         try {
             setError('');
             setLoading(true);
-            await signup(fullNameRef, phoneRef, emailRef.current.value, password);
+            await signup(emailRef.current.value, password, fullNameRef.current.value, phoneRef.current.value);
+            alert("Please check your email to verify your account before logging in.");
+            navigate("/login");
         } catch {
-            setError('Failed to create an account');
+            // console.error("Signup Error:", error);
+            setError(error.message);
+            // setLoading(false);
+        } finally {
             setLoading(false);
         }
     }
@@ -78,7 +85,7 @@ export default function Signup() {
 
                     <Form.Group id="phoneNumber">
                         <Form.Label>Phone Number</Form.Label>
-                        <Form.Control type="phone number" ref={phoneRef} />
+                        <Form.Control type="phone number" ref={phoneRef} required/>
                     </Form.Group>
 
                     <Form.Group id="email">
