@@ -2,33 +2,24 @@ import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } f
 import p5 from 'p5';
 import * as utils from '../utils/p5utils';
 
-const SecchiSimulator = forwardRef(({ settings, onSettingChange }, ref) => {
+const Clear = forwardRef(({ settings, onSettingChange }, ref) => {
   const canvasRef = useRef(null);
   const sketchRef = useRef(null);
   const [animationDepth, setAnimationDepth] = useState(settings.depth);
   const [diskPosition, setDiskPosition] = useState({ x: 400, y: 300 });
+  const [waterImage, setWaterImage] = useState(null);
 
   const handleArrowClick = (direction) => {
     if (direction === 'up') {
       // Move disk closer (larger)
-      const newDepth = Math.max(animationDepth - 0.5, utils.CONSTANTS.MIN_DEPTH);
+      const newDepth = Math.max(animationDepth - 0.05 , utils.CONSTANTS.MIN_DEPTH);
       setAnimationDepth(newDepth);
       onSettingChange('depth', newDepth);
     } else if (direction === 'down') {
       // Move disk farther (smaller)
-      const newDepth = Math.min(animationDepth + 0.5, utils.CONSTANTS.MAX_DEPTH);
+      const newDepth = Math.min(animationDepth + 0.05 , utils.CONSTANTS.MAX_DEPTH);
       setAnimationDepth(newDepth);
       onSettingChange('depth', newDepth);
-    } else if (direction === 'left') {
-      setDiskPosition(prev => ({
-        ...prev,
-        x: Math.max(prev.x - 20, 100)
-      }));
-    } else if (direction === 'right') {
-      setDiskPosition(prev => ({
-        ...prev,
-        x: Math.min(prev.x + 20, 700)
-      }));
     }
   };
 
@@ -41,44 +32,66 @@ const SecchiSimulator = forwardRef(({ settings, onSettingChange }, ref) => {
     // Create new p5 instance
     sketchRef.current = new p5((p) => {
       p.preload = () => {
-        utils.preload(p);
+        // Load water image
+        const img = p.loadImage('/clearLake.png');
+        setWaterImage(img);
       };
 
       p.setup = () => {
         const canvas = p.createCanvas(800, 600);
         canvas.parent(canvasRef.current);
         p.colorMode(p.RGB);
-        p.background(0, 20, 40); // Set dark blue background once
+        
       };
 
       p.draw = () => {
         p.clear();
-        p.background(0, 20, 40);
+         
+        // First draw the dark overlay
+        p.push();
+        p.noStroke();
+        p.fill(0, 400);
+        p.rect(0, 0, p.width, p.height);
         
-        // Draw water
-        utils.drawWater(p, p.width, p.height, animationDepth, utils.CONSTANTS.MAX_DEPTH);
+        // Create the circular cutout where we'll see the content
+        const circleX = diskPosition.x / 1.5;
+        const circleY = diskPosition.y;
+        const circleDiameter = 450;
         
-        // Calculate visibility based on depth and turbidity
+        p.erase();
+        p.circle(circleX, circleY, circleDiameter);
+        p.noErase();
+        p.pop();
+
+        // Draw content inside the cutout area
+        p.push();
+        p.clip(() => {
+          p.circle(circleX, circleY, circleDiameter);
+        });
+        
+        // Draw the background image
+        if (waterImage) {
+          p.image(waterImage, 0, 0, p.width, p.height);
+        }
+
+        // Calculate visibility and draw floating disk
         const visibility = utils.calculateVisibility(animationDepth, settings.turbidity);
-        
-        // Keep disk centered but change size based on depth
-        const centerX = diskPosition.x;
-        const centerY = p.height / 2; // Keep Y position fixed at center
-        
-        // Make disk size change more dramatically with depth
         const diskSize = p.map(animationDepth, 0, utils.CONSTANTS.MAX_DEPTH, 200, 20);
-        
+        utils.drawSecchiDisk(p, diskPosition.x / 1.5, diskPosition.y, visibility, diskSize);
+
+        p.pop();
+
+        // Draw measuring tape
+       
+
         // Draw depth scale
         p.push();
         p.stroke(255);
         p.strokeWeight(2);
-        // Draw vertical line
         p.line(p.width - 50, 100, p.width - 50, p.height - 100);
-        // Draw current depth indicator
         p.stroke(255, 0, 0);
         const depthY = p.map(animationDepth, 0, utils.CONSTANTS.MAX_DEPTH, 100, p.height - 100);
         p.line(p.width - 60, depthY, p.width - 40, depthY);
-        // Draw depth labels
         p.noStroke();
         p.fill(255);
         p.textAlign(p.RIGHT, p.CENTER);
@@ -88,9 +101,6 @@ const SecchiSimulator = forwardRef(({ settings, onSettingChange }, ref) => {
           p.text(depth + 'm', p.width - 65, y);
         }
         p.pop();
-        
-        // Draw Secchi disk
-        utils.drawSecchiDisk(p, centerX, centerY, visibility, diskSize);
       };
 
       p.mouseDragged = () => {
@@ -113,14 +123,11 @@ const SecchiSimulator = forwardRef(({ settings, onSettingChange }, ref) => {
 
   useEffect(() => {
     const handleKeyDown = (event) => {
-      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || 
-          event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+      if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
         event.preventDefault();
         
         if (event.key === 'ArrowUp') handleArrowClick('up');
         else if (event.key === 'ArrowDown') handleArrowClick('down');
-        else if (event.key === 'ArrowLeft') handleArrowClick('left');
-        else if (event.key === 'ArrowRight') handleArrowClick('right');
       }
     };
 
@@ -135,4 +142,4 @@ const SecchiSimulator = forwardRef(({ settings, onSettingChange }, ref) => {
   );
 });
 
-export default SecchiSimulator;
+export default Clear; 

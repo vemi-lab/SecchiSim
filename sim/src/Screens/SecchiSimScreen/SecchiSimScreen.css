@@ -76,3 +76,12 @@
   outline: 2px solid #4db8e8;
   outline-offset: 2px;
 } 
+
+.sim-logo{
+  width: 50px;
+  border-radius: 50%;
+}
+
+/* .headline{
+  padding-top: -2%;
+} */

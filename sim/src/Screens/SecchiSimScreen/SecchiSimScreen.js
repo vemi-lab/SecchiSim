@@ -1,7 +1,8 @@
 import React, { useState, useRef } from 'react';
-import SecchiSimulator from './ComponentsOfSim/SecchiSimulator';
+import SecchiSimulator from './ComponentsOfSim/Clear';
 import Controls from './ComponentsOfSim/Controls';
 import './SecchiSimScreen.css';
+import avatar from '../../assets/avatar.jpg';
 
 const SecchiSimScreen = () => {
   const [settings, setSettings] = useState({
@@ -20,7 +21,8 @@ const SecchiSimScreen = () => {
 
   return (
     <div className="secchi-sim-screen">
-      <h1>Secchi Disk Simulator</h1>
+      <img src={avatar} alt="Logo" className="sim-logo" />
+      <h1 className='headline'>Secchi Disk Simulator</h1>
       <div className="simulator-container">
         <SecchiSimulator 
           settings={settings} 

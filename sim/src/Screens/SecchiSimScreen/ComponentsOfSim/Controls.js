@@ -10,7 +10,7 @@ import {
     calculateSecchiDepth 
 } from '../utils/p5utils';
 
-const Controls = ({ settings, onSettingChange, onDirectionClick }) => {
+const Controls = ({ settings, onSettingChange, onDirectionClick, onDirectionRelease }) => {
   const waterQuality = calculateWaterQuality(calculateSecchiDepth(settings.turbidity));
 
   return (
@@ -27,7 +27,7 @@ const Controls = ({ settings, onSettingChange, onDirectionClick }) => {
         display: 'grid',
         gridTemplateAreas: `
           '. up .'
-          'left down right'
+          '. down .'
         `,
         gridTemplateColumns: 'repeat(3, 40px)',
         gap: '1px',
@@ -41,7 +41,9 @@ const Controls = ({ settings, onSettingChange, onDirectionClick }) => {
         transform: 'translateX(-70%)'
       }}>
         <button 
-          onClick={() => onDirectionClick('up')} 
+          onMouseDown={() => onDirectionClick('up')}
+          onMouseUp={() => onDirectionRelease('up')}
+          onMouseLeave={() => onDirectionRelease('up')}
           style={{
             gridArea: 'up',
             padding: '5px',
@@ -56,22 +58,9 @@ const Controls = ({ settings, onSettingChange, onDirectionClick }) => {
           }}
         >↑</button>
         <button 
-          onClick={() => onDirectionClick('left')} 
-          style={{
-            gridArea: 'left',
-            padding: '5px',
-            fontSize: '20px',
-            cursor: 'pointer',
-            backgroundColor: '#2FA1D6',
-            border: 'none',
-            borderRadius: '4px',
-            color: 'white',
-            width: '100%',
-            height: '100%'
-          }}
-        >←</button>
-        <button 
-          onClick={() => onDirectionClick('down')} 
+          onMouseDown={() => onDirectionClick('down')}
+          onMouseUp={() => onDirectionRelease('down')}
+          onMouseLeave={() => onDirectionRelease('down')}
           style={{
             gridArea: 'down',
             padding: '5px',
@@ -85,21 +74,43 @@ const Controls = ({ settings, onSettingChange, onDirectionClick }) => {
             height: '100%'
           }}
         >↓</button>
-        <button 
-          onClick={() => onDirectionClick('right')} 
-          style={{
-            gridArea: 'right',
-            padding: '5px',
-            fontSize: '20px',
-            cursor: 'pointer',
-            backgroundColor: '#2FA1D6',
-            border: 'none',
-            borderRadius: '4px',
-            color: 'white',
-            width: '100%',
-            height: '100%'
-          }}
-        >→</button>
+      </div>
+        
+      <div className='buttons' style={{
+        paddingTop: '10px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        gap: '10px' 
+        }}>
+         <button className='reset-button'
+            onClick={() => onSettingChange('depth', 0)}
+            style={{
+              padding: '10px',
+              cursor: 'pointer',
+              backgroundColor: '#2FA1D6',
+              border: 'none',
+              borderRadius: '4px',
+              color: 'white',
+              width: '100%',
+              height: '100%',
+              flex: '1'
+            }}
+            >Reset</button>
+     
+         <button className='submit-button'
+            onClick={() => onSettingChange('depth', 0)}
+            style={{
+              padding: '10px',
+              cursor: 'pointer',
+              backgroundColor: '#2FA1D6',
+              border: 'none',
+              borderRadius: '4px',
+              color: 'white',
+              width: '100%',
+              height: '100%',
+              flex: '1'
+            }}
+            >Submit</button>
       </div>
     </div>
   );
