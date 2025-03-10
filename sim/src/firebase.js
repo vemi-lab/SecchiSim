@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getFirestore, doc, getDoc, updateDoc, collection } from "firebase/firestore";
+import { getAuth, setPersistence, browserLocalPersistence } from "firebase/auth";
+import { getFirestore, doc, getDoc, updateDoc } from "firebase/firestore";
 
 // Initialize Firebase
 const firebaseConfig = {
@@ -18,10 +18,15 @@ const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
+// Ensure Firebase authentication session persists
+setPersistence(auth, browserLocalPersistence)
+    .then(() => console.log("Auth persistence enabled"))
+    .catch((error) => console.error("Error setting persistence:", error));
+
 // Function to get user data using email as the identifier
 export async function getUserData(userEmail) {
   try {
-    const userDocRef = doc(collection(db, "users"), userEmail);
+    const userDocRef = doc(db, "users", userEmail);
     const userDocSnap = await getDoc(userDocRef);
     if (userDocSnap.exists()) {
       return userDocSnap.data();
@@ -34,10 +39,10 @@ export async function getUserData(userEmail) {
   }
 }
 
-// Function to update user data (email, password, and volunteer roles)
+// Function to update user data (email, password, and access roles)
 export async function updateUserData(userEmail, newData) {
   try {
-    const userDocRef = doc(collection(db, "users"), userEmail);
+    const userDocRef = doc(db, "users", userEmail);
     await updateDoc(userDocRef, newData);
     console.log("User data updated successfully!");
   } catch (error) {

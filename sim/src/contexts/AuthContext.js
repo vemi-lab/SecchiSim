@@ -25,23 +25,20 @@ export function AuthProvider({children}) {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
         
-        // Send email verification
         await sendEmailVerification(user);
-    
-        // Update Firebase Auth profile with full name
         await updateProfile(user, { displayName: fullName });
     
-        // Save user details to Firestore
-        await setDoc(doc(db, "users", user.email), {
-          fullName,
-          phoneNumber,
-          email: user.email,
-          volunteerRoles: {}, // Default empty roles
-          isAdmin: false, // Default non-admin
+        await setDoc(doc(db, "users", email), {
+            fullName: fullName,
+            phoneNumber: phoneNumber,
+            email: email,
+            accessRoles: {}, // Default empty object
+            isAdmin: false, 
         });
     
         return userCredential;
     }
+    
 
     function login(email, password) {
         return signInWithEmailAndPassword(auth, email, password)
@@ -68,14 +65,14 @@ export function AuthProvider({children}) {
     // }
 
     useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged(user => {
+        const unsubscribe = auth.onAuthStateChanged(async (user) => {
             if (user) {
-                if (user.emailVerified){
-                    setCurrentUser(user)
+                await user.reload(); // force refresh state
+                if (!user.emailVerified){
+                    alert("Account created!");
+                    setCurrentUser(null);
                 } else {
-                    setCurrentUser(null); //prevent unverifed users from accessing this app
-                    alert("Account created! Please verify your email before logging in.");
-                    signOut(auth); //log them out
+                setCurrentUser(user); //set the authentificated user properly
                 }
             } else {
                 setCurrentUser(null);

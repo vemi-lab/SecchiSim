@@ -3,7 +3,7 @@ import { Form, Button, Card, Alert } from 'react-bootstrap';
 import { useAuth } from '../contexts/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { auth } from '../firebase';
-import { sendEmailVerification } from 'firebase/auth';
+//import { sendEmailVerification } from 'firebase/auth';
 import LSMLogo from '../assets/lsm-logo.png';
 import './Login.css';
 
@@ -13,44 +13,50 @@ export default function Login() {
     const { login } = useAuth();
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
-    const [showResend, setShowResend] = useState(false);
+    // const [showResend, setShowResend] = useState(false);
     const navigate = useNavigate(); // Renamed history → navigate (best practice)
 
     async function handleSubmit(e) {
         e.preventDefault();
+        setError('');
+        setLoading(true);
 
         try {
-            setError('');
-            setLoading(true);
-            const userCredential = await login(emailRef.current.value, passwordRef.current.value);
+            await auth.currentUser.reload();
+            await login(emailRef.current.value, passwordRef.current.value);
+
+            await auth.currentUser.reload();
+            const user = auth.currentUser;
             
-            if (!userCredential.user.emailVerified) {
-                setError("Please verify your email before loggin in.");
-                setShowResend(true); //shows the resend email verifcation button
+            if (!user || !user.emailVerified) {
+                setError("Please verify your email before logging in.");
+                // setShowResend(true);
                 setLoading(false);
+                await auth.currentUser.reload();
                 return;
             }
 
             navigate('/dashboard'); //allow access if only had verified
 
         } catch {
+            console.error("Login Error:", error);
             setError('Failed to log in');
         }
 
         setLoading(false);
     }
 
-    async function handleResendVerification() {
-        if (auth.currentUser) {
-            try {
-                await sendEmailVerification(auth.currentUser);
-                alert("Verification email sent! Check your inbox.");
-            } catch (error) {
-                setError("Error sending verification email. Try again later.");
-                console.error("Resend Verification Error:", error);
-            }
-        }
-    }
+    // async function handleResendVerification() {
+    //     if (auth.currentUser) {
+    //         try {
+    //             await sendEmailVerification(auth.currentUser);
+    //             alert("Verification email sent! Check your inbox.");
+    //         } catch (error) {
+    //             setError("Error sending verification email. Try again later.");
+    //             console.error("Resend Verification Error:", error);
+    //         }
+    //     }
+    // }
 
     return (
         <>
@@ -79,14 +85,14 @@ export default function Login() {
                         </Button>
                     </Form>
 
-                    {showResend && (
+                    {/* {showResend && (
                         <div className="resend-verification">
                             <p>Didn't receive the email?</p>
                             <Button onClick={handleResendVerification} className="resend-btn">
                                 Resend Verification Email
                             </Button>
                         </div>
-                    )}
+                    )} */}
 
                     <div className="forgor">
                         <Link to="/forgot-password">Forgot Password?</Link>
