@@ -7,11 +7,12 @@ import { useNavigate } from "react-router-dom";
 import './Profile.css';
 
 export default function Profile() {
-  const [userData, setUserData] = useState(null);
+  const [userData, setUserData] = useState({});
   const passwordRef = useRef();
   const passwordConfirmRef = useRef();
   const [accessRoles, setAccessRoles] = useState({});
   const [isAdmin, setIsAdmin] = useState(false); //track if user is an admin
+  const [isActive, setIsActive] = useState(true);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState({ length: false, uppercase: false, numbers: false, specialChars: false });
@@ -29,6 +30,7 @@ export default function Profile() {
             setUserData(userData);
             setAccessRoles(userData.accessRoles || {}); 
             setIsAdmin(userData.isAdmin || false);
+            setIsActive(userData.isActive || true );
         } else {
             console.log("No user data found in Firestore!");
         }
@@ -41,6 +43,7 @@ export default function Profile() {
             setUserData(userData);
             setAccessRoles(userData.accessRoles || {}); 
             setIsAdmin(userData.isAdmin || false);
+            setIsActive(userData.isActive || true );
         }
     });
 
@@ -81,8 +84,8 @@ export default function Profile() {
         await updatePassword(auth.currentUser, passwordRef.current.value);
       }
 
-      // // Update access roles in Firestore
-      // await updateDoc(userDocRef, { accessRoles: accessRoles });
+      const userDocRef = doc(db, "users", auth.currentUser.email);
+      await updateDoc(userDocRef, { accessRoles });
 
       alert("Profile updated successfully!");
       navigate("/dashboard");
@@ -97,6 +100,7 @@ export default function Profile() {
 // Admin-only function to update access roles
 const handleRoleChange = async (role) => {
   if (!isAdmin) return; // Prevent unauthorized updates
+  if (isActive) return;
 
   const updatedRoles = {
       ...accessRoles,
@@ -132,50 +136,50 @@ const handleRoleChange = async (role) => {
             <Card.Body>
             <h2>Profile</h2>
             {error && <Alert variant="danger">{error}</Alert>}
-            { userData ? (
-            <Form onSubmit={handleUpdateProfile} className="profile-form">
-              <Form.Group id="full-name">
-                <Form.Label>Name</Form.Label>
-                <Form.Control type="text" value={userData.fullName} disabled />
-              </Form.Group>
+              {userData && userData.personal ? (
+                  <Form onSubmit={handleUpdateProfile} className="profile-form">
+                      <Form.Group id="full-name">
+                          <Form.Label>Full Name</Form.Label>
+                          <Form.Control type="text" value={userData.personal.fullName} disabled />
+                      </Form.Group>
 
-                <Form.Group id="phone-number">
-                  <Form.Label>Phone Number</Form.Label>
-                  <Form.Control type="text" value={userData.phoneNumber} disabled />
-                </Form.Group>
+                      <Form.Group id="phone-number">
+                          <Form.Label>Phone Number</Form.Label>
+                          <Form.Control type="text" value={userData.personal.phoneNumber} disabled />
+                      </Form.Group>
 
-                <Form.Group id="email">
-                  <Form.Label>Email</Form.Label>
-                  <Form.Control type="email" value={auth.currentUser.email} disabled />
-                </Form.Group>
+                      <Form.Group id="email">
+                          <Form.Label>Email</Form.Label>
+                          <Form.Control type="email" value={userData.personal.email} disabled />
+                      </Form.Group>
 
-                <Form.Group id="password" className="form-group">
-                  <Form.Label>New Password</Form.Label>
-                  <Form.Control 
-                    type="password"
-                    ref={passwordRef} 
-                    placeholder="Leave blank to keep the same" 
-                    onChange={(e) => validatePassword(e.target.value)} />
-                </Form.Group>
+                      <Form.Group id="password" className="form-group">
+                        <Form.Label>New Password</Form.Label>
+                        <Form.Control 
+                          type="password"
+                          ref={passwordRef} 
+                          placeholder="Leave blank to keep the same" 
+                          onChange={(e) => validatePassword(e.target.value)} />
+                      </Form.Group>
 
-                <Form.Group id="password-confirm" className="form-group">
-                  <Form.Label>Password Confirmation</Form.Label>
-                  <Form.Control type="password" ref={passwordConfirmRef} placeholder="Leave blank to keep the same" />
-                </Form.Group>
+                      <Form.Group id="password-confirm" className="form-group">
+                        <Form.Label>Password Confirmation</Form.Label>
+                        <Form.Control type="password" ref={passwordConfirmRef} placeholder="Leave blank to keep the same" />
+                      </Form.Group>
 
-                <div className="password-strength">
-                  <p>Password must contain:</p>
-                  <ul className="password-container-list">
-                    <li style={{ color: passwordStrength.length ? "green" : "red" }}>✔ 8 characters minimum</li>
-                    <li style={{ color: passwordStrength.uppercase ? "green" : "red" }}>✔ At least 1 uppercase letter</li>
-                    <li style={{ color: passwordStrength.numbers ? "green" : "red" }}>✔ At least 2 numbers</li>
-                    <li style={{ color: passwordStrength.specialChars ? "green" : "red" }}>✔ At least 2 special characters</li>
-                  </ul>
-                </div>
-              </Form>
-            ) : (
-              <p>Loading...</p>
-            )}
+                      <div className="password-strength">
+                        <p>Password must contain:</p>
+                        <ul className="password-container-list">
+                          <li style={{ color: passwordStrength.length ? "green" : "red" }}>✔ 8 characters minimum</li>
+                          <li style={{ color: passwordStrength.uppercase ? "green" : "red" }}>✔ At least 1 uppercase letter</li>
+                          <li style={{ color: passwordStrength.numbers ? "green" : "red" }}>✔ At least 2 numbers</li>
+                          <li style={{ color: passwordStrength.specialChars ? "green" : "red" }}>✔ At least 2 special characters</li>
+                        </ul>
+                      </div>
+                  </Form>
+              ) : (
+                  <p>Loading...</p>
+              )}
 
             <h3 className="accessHeader">Access Roles</h3>
             {Object.keys(accessRoles).length > 0 ? (

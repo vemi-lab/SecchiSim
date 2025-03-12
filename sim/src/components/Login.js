@@ -22,17 +22,18 @@ export default function Login() {
         setLoading(true);
 
         try {
-            await auth.currentUser.reload();
             await login(emailRef.current.value, passwordRef.current.value);
-
-            await auth.currentUser.reload();
+            await new Promise((resolve) => setTimeout(resolve, 500)); // Give Firebase time to update auth state
             const user = auth.currentUser;
+
+            if (user) {
+                await user.reload(); //reload only if user is logged in
+            }
             
             if (!user || !user.emailVerified) {
                 setError("Please verify your email before logging in.");
                 // setShowResend(true);
                 setLoading(false);
-                await auth.currentUser.reload();
                 return;
             }
 

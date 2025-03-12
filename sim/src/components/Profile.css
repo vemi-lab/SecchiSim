@@ -26,15 +26,15 @@
   
   .profile-form label {
     font-weight: bold;
-    margin-top: 10px;
   }
   
   .profile-form input {
     width: 100%;
     padding: 10px 3px;
-    margin: auto;
+    margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    color:#373636;
   }
 
   .password-strength{

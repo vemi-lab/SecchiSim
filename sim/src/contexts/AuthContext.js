@@ -27,13 +27,27 @@ export function AuthProvider({children}) {
         
         await sendEmailVerification(user);
         await updateProfile(user, { displayName: fullName });
+
+        //default access roles
+        const defaultAccessRoles = {
+            "Secchi Simulator": true,
+            "Secchi Videos": true,
+            "Quizzes": true,
+            "Dissolved Oxygen": false,
+            "Baseline": false,
+            "Epilimnetic Core Tube Sampling": false,
+            "Grab Sampler (Kemmerer / Van Dorn": false,
+        }
     
         await setDoc(doc(db, "users", email), {
-            fullName: fullName,
-            phoneNumber: phoneNumber,
-            email: email,
-            accessRoles: {}, // Default empty object
+            personal: {
+                fullName: fullName,
+                phoneNumber: phoneNumber,
+                email: email
+            },
+            accessRoles: defaultAccessRoles, // Default empty object
             isAdmin: false, 
+            isActive: true,
         });
     
         return userCredential;
