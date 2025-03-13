@@ -1,8 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Tutorial from './Tutorial';
 
-const Instructions = () => {
+const Instructions = ({ setCurrentPage }) => {
   return (
     <div>
       <h1>Instructions</h1>
@@ -15,10 +14,11 @@ const Instructions = () => {
         Before you start, read the tutorial 
       </h3>
 
-      <Link to="tutorial">
+      {/* Link to navigate to the Tutorial */}
+      <Link to="/secchi-sim/tutorial">
         <button style={{ padding: '10px 20px', cursor: 'pointer' }}>Tutorial</button>
       </Link>
-      
+
       {/* Table with buttons */}
       <table style={{ width: '100%', marginTop: '20px', borderCollapse: 'collapse' }}>
         <thead>
@@ -31,9 +31,7 @@ const Instructions = () => {
         <tbody>
           <tr>
             <td style={{ border: '1px solid #ccc', padding: '10px' }}>
-              <Link to="/clear">
-                <button style={{ padding: '10px 20px', cursor: 'pointer' }}>Clear</button>
-              </Link>
+              <button onClick={() => setCurrentPage('clear')} style={{ padding: '10px 20px', cursor: 'pointer' }}>Clear</button>
             </td>
             <td style={{ border: '1px solid #ccc', padding: '10px' }}>
                 Bluish color, with readings deeper than 4 meters
@@ -44,9 +42,7 @@ const Instructions = () => {
           </tr>
           <tr>
             <td style={{ border: '1px solid #ccc', padding: '10px' }}>
-              <Link to="/intermediate">
-                <button style={{ padding: '10px 20px', cursor: 'pointer' }}>Intermediate</button>
-              </Link>
+              <button onClick={() => setCurrentPage('intermediate')} style={{ padding: '10px 20px', cursor: 'pointer' }}>Intermediate</button>
             </td>
             <td style={{ border: '1px solid #ccc', padding: '10px' }}>
                 Blue or green-brown, with readings between 4 and 7 meters
@@ -57,9 +53,7 @@ const Instructions = () => {
            </tr>
            <tr>
             <td style={{ border: '1px solid #ccc', padding: '10px' }}>
-              <Link to="/clear">
-                <button style={{ padding: '10px 20px', cursor: 'pointer' }}>Productive</button>
-              </Link>
+              <button onClick={() => setCurrentPage('productive')} style={{ padding: '10px 20px', cursor: 'pointer' }}>Productive</button>
             </td>
             <td style={{ border: '1px solid #ccc', padding: '10px' }}>
                 Green Background, high algae content, readings shallower than 3 meters
@@ -70,9 +64,7 @@ const Instructions = () => {
           </tr>
           <tr>
             <td style={{ border: '1px solid #ccc', padding: '10px' }}>
-              <Link to="/intermediate">
-                <button style={{ padding: '10px 20px', cursor: 'pointer' }}>Dystrophic</button>
-              </Link>
+              <button onClick={() => setCurrentPage('dystrophic')} style={{ padding: '10px 20px', cursor: 'pointer' }}>Dystrophic</button>
             </td>
             <td style={{ border: '1px solid #ccc', padding: '10px' }}>
                 Distinct tea or rootbeer color, readings shallower than 3 meters
@@ -83,9 +75,7 @@ const Instructions = () => {
           </tr>
           <tr>
             <td style={{ border: '1px solid #ccc', padding: '10px' }}>
-              <Link to="/intermediate">
-                <button style={{ padding: '10px 20px', cursor: 'pointer' }}>Dystrophic Productive</button>
-              </Link>
+              <button onClick={() => setCurrentPage('dystrophicProductive')} style={{ padding: '10px 20px', cursor: 'pointer' }}>Dystrophic Productive</button>
             </td>
             <td style={{ border: '1px solid #ccc', padding: '10px' }}>
                 Green-brown and murky, readings shallower than 3 meters

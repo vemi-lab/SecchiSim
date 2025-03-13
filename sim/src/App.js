@@ -8,7 +8,8 @@ import MessagesScreen from './Screens/MessagesScreen';
 import ResourcesScreen from './Screens/ResourcesScreen';
 import TrainingScreen from './Screens/TrainingScreen';
 import VideoScreen from './Screens/VideoScreen';
-import QuizScreen from './Screens/QuizScreen'
+import QuizScreen from './Screens/QuizScreen';
+import Tutorial from './Screens/SecchiSimScreen/ComponentsOfSim/Tutorial';
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
             <Route path="/instructions" element={<InstructionsScreen />} />
             <Route path="/course-material" element={<ModuleScreen />} />
             <Route path="/secchi-sim" element={<SecchiSimScreen />} />
+            <Route path="/secchi-sim/tutorial" element={<Tutorial />} />
             <Route path="/messages" element={<MessagesScreen />} />
             <Route path="/resources" element={<ResourcesScreen />} />
             <Route path="/trainings" element={<TrainingScreen />} />

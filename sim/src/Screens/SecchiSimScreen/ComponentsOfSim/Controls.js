@@ -46,8 +46,8 @@ const Controls = ({ settings, onSettingChange, onDirectionClick, onDirectionRele
           onMouseLeave={() => onDirectionRelease('up')}
           style={{
             gridArea: 'up',
-            padding: '5px',
-            fontSize: '20px',
+            padding: '7.5px',
+            fontSize: '25px',
             cursor: 'pointer',
             backgroundColor: '#2FA1D6',
             border: 'none',
@@ -63,8 +63,8 @@ const Controls = ({ settings, onSettingChange, onDirectionClick, onDirectionRele
           onMouseLeave={() => onDirectionRelease('down')}
           style={{
             gridArea: 'down',
-            padding: '5px',
-            fontSize: '20px',
+            padding: '7.5px',
+            fontSize: '25px',
             cursor: 'pointer',
             backgroundColor: '#2FA1D6',
             border: 'none',

@@ -1,8 +1,11 @@
 import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
+import { useNavigate } from 'react-router-dom';
 import p5 from 'p5';
 import * as utils from '../utils/p5utils';
+import Controls from './Controls';
 
 const Clear = forwardRef(({ settings, onSettingChange }, ref) => {
+  const navigate = useNavigate();
   const canvasRef = useRef(null);
   const sketchRef = useRef(null);
   const [animationDepth, setAnimationDepth] = useState(settings.depth);
@@ -31,6 +34,8 @@ const Clear = forwardRef(({ settings, onSettingChange }, ref) => {
   }));
 
   useEffect(() => {
+    // Check if the component is mounted
+    console.log('Clear component mounted');
     // Create new p5 instance
     sketchRef.current = new p5((p) => {
       p.preload = () => {
@@ -144,10 +149,48 @@ const Clear = forwardRef(({ settings, onSettingChange }, ref) => {
   }, [settings.turbidity, diskPosition, animationDepth, velocity]);
 
   return (
-    <div className="secchi-simulator-container" style={{ position: 'relative', width: '800px', height: '600px' }}>
-      <div ref={canvasRef} className="secchi-simulator" style={{ outline: 'none' }} />
+    <div className="clear-lake-container">
+      <button onClick={() => navigate('/')} style={{ marginBottom: '20px' }}>Back to Simulator</button>
+      <div className="simulation-area">
+        <div className="canvas-wrapper" style={{ position: 'relative', width: '800px', height: '600px' }}>
+          <div ref={canvasRef} className="secchi-simulator" style={{ outline: 'none' }} />
+        </div>
+        <div className="controls-wrapper" style={{ marginLeft: '20px' }}>
+          <Controls 
+            settings={settings}
+            onSettingChange={onSettingChange}
+            onDirectionClick={handleArrowClick}
+            onDirectionRelease={handleArrowRelease}
+            simulatorRef={ref}
+          />
+        </div>
+      </div>
+      <style jsx>{`
+        .clear-lake-container {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          width: 100%;
+          height: 100%;
+          padding: 20px;
+        }
+        .simulation-area {
+          display: flex;
+          align-items: flex-start; /* Align items at the top */
+        }
+        .canvas-wrapper {
+          border: 1px solid #ccc;
+          border-radius: 8px;
+          overflow: hidden;
+        }
+        .controls-wrapper {
+          display: flex;
+          flex-direction: column; /* Stack controls vertically */
+          width: 200px; /* Set a fixed width for the controls */
+        }
+      `}</style>
     </div>
   );
 });
 
-export default Clear; 
+export default Clear;
