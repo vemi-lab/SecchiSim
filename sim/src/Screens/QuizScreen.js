@@ -1,5 +1,6 @@
-// QuizScreen.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { auth, db } from '../firebase';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import './QuizScreen.css';
 
 const QuizScreen = ({ data, watchAgain }) => {
@@ -10,6 +11,37 @@ const QuizScreen = ({ data, watchAgain }) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [score, setScore] = useState(0);
   const [showScoreModal, setShowScoreModal] = useState(false);
+  const [userHasAccess, setUserHasAccess] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  //check user access and revoke roles if needed
+  useEffect(() => {
+    async function checkAccess() {
+      if (!auth.currentUser) return;
+      const userDocRef = doc(db, "users", auth.currentUser.email);
+      const userDocSnap = await getDoc(userDocRef);
+
+      if (userDocSnap.exists()) {
+        const userData = userDocSnap.data();
+        const allSecchiVideosCompleted = ["ProgramOverview", "Lakes101a", "Lakes101b"]
+          .every(course => userData.completedCourses?.[course]);
+        const allQuizzesCompleted = userData.completedCourses?.["QuizDataSecchi"];
+
+        //if all Secchi Videos & Quizzes are completed, remove access
+        if (allSecchiVideosCompleted && allQuizzesCompleted) {
+          await updateDoc(userDocRef, {
+            [`accessRoles.Secchi Videos`]: false,
+            [`accessRoles.Quizzes`]: false
+          });
+        }
+
+        setUserHasAccess(userData.accessRoles?.["Quizzes"] && !userData.completedCourses?.["QuizDataSecchi"]);
+      }
+      setLoading(false);
+    }
+
+    checkAccess();
+  }, []);
 
   const handleOptionSelect = (option) => {
     setSelectedOptions((prevSelected) =>
@@ -19,7 +51,8 @@ const QuizScreen = ({ data, watchAgain }) => {
     );
   };
 
-  const handleNext = () => {
+  // Validate selections when "Next" is clicked
+  const handleNext = async () => {
     if (!isSubmitted) {
       const correct_options = allQuestions[currentQuestionIndex].correct_option;
       setCorrectOptions(correct_options);
@@ -35,6 +68,28 @@ const QuizScreen = ({ data, watchAgain }) => {
     } else {
       if (currentQuestionIndex === allQuestions.length - 1) {
         setShowScoreModal(true);
+
+        const userDocRef = doc(db, "users", auth.currentUser.email);
+        await updateDoc(userDocRef, {
+          ['completedCourses.QuizDataSecchi']: true
+        });
+
+        //re-check access
+        const userDocSnap = await getDoc(userDocRef);
+        if (userDocSnap.exists()) {
+          const userData = userDocSnap.data();
+          const allSecchiVideosCompleted = ["ProgramOverview", "Lakes101a", "Lakes101b"]
+            .every(course => userData.completedCourses?.[course]);
+          const allQuizzesCompleted = userData.completedCourses?.["QuizDataSecchi"];
+
+          if (allSecchiVideosCompleted && allQuizzesCompleted) {
+            await updateDoc(userDocRef, {
+              [`accessRoles.Secchi Videos`]: false,
+              [`accessRoles.Quizzes`]: false
+            });
+          }
+        }
+
       } else {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
         setSelectedOptions([]);
@@ -50,6 +105,14 @@ const QuizScreen = ({ data, watchAgain }) => {
     const quizPassed = score > passingScore;
     watchAgain(quizPassed);
   };
+
+  if (loading){
+    return <p>Loading...</p>
+  }
+
+  if (!userHasAccess) {
+    return <p>Access denied. You have completed this quiz.</p>;
+  }
 
   return (
     <div className="quiz-container">

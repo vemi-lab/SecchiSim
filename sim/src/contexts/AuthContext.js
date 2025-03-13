@@ -32,12 +32,20 @@ export function AuthProvider({children}) {
         const defaultAccessRoles = {
             "Secchi Simulator": true,
             "Secchi Videos": true,
-            "Quizzes": true,
-            "Dissolved Oxygen": false,
-            "Baseline": false,
-            "Epilimnetic Core Tube Sampling": false,
-            "Grab Sampler (Kemmerer / Van Dorn": false,
+            "Quizzes": true
+            // "Dissolved Oxygen": false,
+            // "Baseline": false,
+            // "Epilimnetic Core Tube Sampling": false,
+            // "Grab Sampler (Kemmerer / Van Dorn": false,
         }
+
+
+        const initialProgress = {
+            "Lakes101a": false,
+            "Lakes101b": false,
+            "ProgramOverview": false,
+            "Secchi Quiz": false
+        };
     
         await setDoc(doc(db, "users", email), {
             personal: {
@@ -45,7 +53,8 @@ export function AuthProvider({children}) {
                 phoneNumber: phoneNumber,
                 email: email
             },
-            accessRoles: defaultAccessRoles, // Default empty object
+            accessRoles: defaultAccessRoles,
+            completedCourses: initialProgress,
             isAdmin: false, 
             isActive: true,
         });
