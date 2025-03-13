@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import {auth, db} from '../../firebase';
+import {doc, getDoc, updateDoc} from 'firebase/firestore';
 import Quiz from '../QuizScreen';
 import '../VideoScreen.css';
 import QuizDataSecchi from '../../data/QuizDataSecchi';
@@ -6,10 +8,45 @@ import Player from '@vimeo/player';
 
 export default function Time() {
   const [isVideoFinished, setIsVideoFinished] = useState(false);
+  const [userHasAccess, setUserHasAccess] = useState(false);
+  const [loading, setLoading] = useState(true);
   const playerRef = useRef(null);
   const iframeRef = useRef(null);
   const currentTimeRef = useRef(0);
   const durationRef = useRef(null);
+
+  useEffect(() => {
+      async function checkAccess() {
+        if (!auth.currentUser) return;
+        const userDocRef = doc(db, "users", auth.currentUser.email);
+        const userDocSnap = await getDoc(userDocRef);
+  
+        if (userDocSnap.exists()) {
+          const userData = userDocSnap.data();
+          const hasSecchiVideos = userData.accessRoles?.["Secchi Videos"];
+          const isCompleted = userData.completedCourses?.["Lakes101a"];
+  
+          setUserHasAccess(hasSecchiVideos && !isCompleted);
+
+          //check if all required videos and quizzes are completed
+          const allSecchiVideosCompleted = ["ProgramOverview", "Lakes101a", "Lakes101b"]
+            .every(course => userData.completedCourses?.[course]);
+          const allQuizzesCompleted = userData.completedCourses?.["QuizDataSecchi"];
+
+
+          //if basic videos and quizzes are compeleted, remove access
+          if (allSecchiVideosCompleted && allQuizzesCompleted) {
+            await updateDoc(userDocRef, {
+              [`accessRoles.Secchi Videos`]: false,
+              [`accessRoles.Quizzes`]: false
+            });
+          }
+        }
+        setLoading(false);
+      }
+  
+      checkAccess();
+    }, []);
 
   useEffect(() => {
     if (iframeRef.current) {
@@ -22,7 +59,14 @@ export default function Time() {
       });
 
       // Listen for video end
-      const handleEnded = () => setIsVideoFinished(true);
+      const handleEnded = async () => { 
+        setIsVideoFinished(true);
+
+        const userDocRef = doc(db, "users", auth.currentUser.email);
+        await updateDoc(userDocRef, {
+          "completedCourses.Lakes101a": true
+        });
+      };
       player.on('ended', handleEnded);
 
       // Prevent seeking
@@ -51,7 +95,15 @@ export default function Time() {
         playerRef.current = null;
       };
     }
-  }, [isVideoFinished]);
+  }, [isVideoFinished, userHasAccess]);
+
+  if (loading) {
+    return <p>Loading...</p>
+  }
+
+  if (!userHasAccess) {
+    return <p>Access Denied. You have completed this course.</p>
+  }
 
   return (
     <div className="module-screen-container">
