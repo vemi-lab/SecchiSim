@@ -25,7 +25,7 @@ const data = [
         "Check the accuracy of the depth calibration markers on the sensor/probe cable.",
         "Calibrate the meter, in accordance with the instructions provided for your instrument.",
         "Ensure that the sponge in the probe/sensor calibration sleeve is moist (but there is no standing water)."
-    ]
+      ]
     },
     {
       question: "The environment in which you calibrate your DO meter can be critical to a successful and accurate calibration process. Which of the following environments is optimum for calibration?",
@@ -115,7 +115,8 @@ const data = [
         "Two sets.",
         "Three sets."
       ],
-      correct_option: ["Three sets."]
+      correct_option: ["Three sets."],
+      image: require("../assets/DIM.jpg")
     },
     {
       question: "Based on the instructions for taking duplicate readings, which of the following choice of duplicate readings and depths would be BEST for taking duplicate readings?",
@@ -127,7 +128,8 @@ const data = [
         "e. 0 (surface), 4 and 17 meters.",
         "Options c. & d. are equally good"
       ],
-      correct_option: ["c. 2, 13, and 18 meters."]
+      correct_option: ["c. 2, 13, and 18 meters."], 
+      image: require("../assets/DIM.jpg")
     },
     {
       question: "If, after performing a profile and then measuring your QA/QC duplicates, one of your duplicates come back 0.6 degrees Celsius colder and 0.3 mg/L higher than the original readings, what should you do?",
@@ -137,7 +139,8 @@ const data = [
         "Check the depth, and Try retaking the reading, potentially waiting longer for the probe to stabilize. If it still hasn’t improved, consider the possible factors that may have contributed to the discrepancy, and make a note in the comments section of the field sheet (e.g. weather change, strong wind/anchor dragged/drifted from deep hole, unstable water depth). Attempt to take an additional reading at a different more stable depth if you are able to do so.",
         "Call someone for help."
       ],
-      correct_option: ["Check the depth, and Try retaking the reading, potentially waiting longer for the probe to stabilize. If it still hasn’t improved, consider the possible factors that may have contributed to the discrepancy, and make a note in the comments section of the field sheet (e.g. weather change, strong wind/anchor dragged/drifted from deep hole, unstable water depth). Attempt to take an additional reading at a different more stable depth if you are able to do so."]
+      correct_option: ["Check the depth, and Try retaking the reading, potentially waiting longer for the probe to stabilize. If it still hasn’t improved, consider the possible factors that may have contributed to the discrepancy, and make a note in the comments section of the field sheet (e.g. weather change, strong wind/anchor dragged/drifted from deep hole, unstable water depth). Attempt to take an additional reading at a different more stable depth if you are able to do so."],
+      image: require("../assets/DIM.jpg")
     },
     {
       question: "Which of the temperature and DO profiles displayed above would be typical for Maine lakes shortly following ice-out in the spring?",
@@ -146,7 +149,8 @@ const data = [
         "B",
         "C"
       ],
-      correct_option: ["B"]
+      correct_option: ["B"],
+      image: require("../assets/DO_Profiles.png")
     },
     {
       question: "Which of the temperature and DO profiles displayed above would be typical during the late summer for a lake that is thermally stratified, and is relatively “productive”, as indicated by relatively shallow Secchi readings, and relatively high concentrations of phosphorus and chlorophyll (algal pigment)?",
@@ -155,7 +159,8 @@ const data = [
         "B",
         "C"
       ],
-      correct_option: ["C"]
+      correct_option: ["C"],
+      image: require("../assets/DO_Profiles.png")
     },
     {
       question: "Which of the temperature and DO profiles displayed above would be typical during the late summer for a lake that is thermally stratified, and generally has relatively deep Secchi readings,  relatively low concentrations of phosphorus and chlorophyll?",
@@ -164,7 +169,8 @@ const data = [
         "B",
         "C"
       ],
-      correct_option: ["A"]
+      correct_option: ["A"],
+      image: require("../assets/DO_Profiles.png")
     },
     {
       question: "Which of the following conditions in the lake could result in DO readings near the surface that are significantly “super-saturated” (greater than 100%)? Please select all that are true.",

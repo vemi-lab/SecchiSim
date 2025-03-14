@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Quiz from '../QuizScreen';
 import '../VideoScreen.css';
-import QuizDataSecchi from '../../data/QuizDataSecchi';
+import QuizDataSecchi from '../../data/DO_1';
 import Player from '@vimeo/player';
 
 export default function Time() {
@@ -55,16 +55,16 @@ export default function Time() {
 
   return (
     <div className="module-screen-container">
-      <h1 className="screen-title">LSM Secchi Transparency Training Part 2</h1>      
+      <h1 className="screen-title">LSM Dissolved Oxygen Training Part 1</h1>
       {!isVideoFinished ? (
         <div className='video-container'>
           <iframe
             ref={iframeRef}
             className='video-frame'
-            src="https://player.vimeo.com/video/574049754?h=e307bbaa39&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479"
+            src="https://player.vimeo.com/video/577625886?h=9ef2eb463b&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479"
             frameBorder="0"
             allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
-            title="LSM Secchi Transparency Training Part 2"
+            title="LSM Dissolved Oxygen Training Part 1"
           ></iframe>
         </div>
       ) : (

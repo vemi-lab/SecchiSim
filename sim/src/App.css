@@ -1,18 +1,19 @@
 /* Base container for the app */
 .app-container {
+  width: 100%;
+  height: 100%;
   display: flex;
-  flex-direction: row;
-  height: 100vh; 
-  width: 100vw; 
-  overflow: hidden;
+  /* justify-content: center;
+  align-items: center; */
 }
 
+
 /* Sidebar (Drawer) */
-.CustomDrawer {
+/* .CustomDrawer {
   flex: 0 0 250px; 
   background-color: #f4f4f4;
   transition: width 0.3s ease;
-}
+} */
 
 /* Adjust width for tablets */
 @media (max-width: 768px) {

@@ -31,7 +31,7 @@ const QuizScreen = ({ data }) => {
         selectedOptions.every((opt) => correct_options.includes(opt));
 
       if (isCorrect) {
-        setScore(score + 1);
+        setScore((prevScore) => prevScore + 1);
       }
     } else {
       if (currentQuestionIndex === allQuestions.length - 1) {
