@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import './CustomDrawer.css';
+import '../App.css';
 import logo from '../assets/avatar.jpg';
 
 export default function CustomDrawer() {
@@ -69,10 +69,9 @@ export default function CustomDrawer() {
               {/* Course Material Subsections */}
               {link.name === 'Course Material' && isCourseMaterialOpen && (
                 <div className="subsections">
-
                   {/* Secchi Subsection */}
                   <div className="subsection-header" onClick={() => toggleSubsection('Secchi')}>
-                    <h4 style={{fontSize: '14px' }}>Secchi</h4>
+                    <h4>Secchi</h4>
                   </div>
                   {isSecchiOpen && (
                     <div className="subsections">
@@ -96,7 +95,7 @@ export default function CustomDrawer() {
 
                   {/* Dissolved Oxygen Subsection */}
                   <div className="subsection-header" onClick={() => toggleSubsection('Dissolved Oxygen')}>
-                    <h4 style={{fontSize: '14px' }}>Dissolved Oxygen</h4>
+                    <h4>Dissolved Oxygen</h4>
                   </div>
                   {isDissolvedoxygenOpen && (
                     <div className="subsections">

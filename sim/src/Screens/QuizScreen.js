@@ -1,31 +1,30 @@
+// QuizScreen.js
 import React, { useState } from 'react';
 import './QuizScreen.css';
 
-const QuizScreen = ({ data }) => {
+const QuizScreen = ({ data, watchAgain }) => {
   const allQuestions = data;
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [selectedOptions, setSelectedOptions] = useState([]); 
+  const [selectedOptions, setSelectedOptions] = useState([]);
   const [correctOptions, setCorrectOptions] = useState([]);
-  const [isSubmitted, setIsSubmitted] = useState(false); 
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [score, setScore] = useState(0);
   const [showScoreModal, setShowScoreModal] = useState(false);
 
   const handleOptionSelect = (option) => {
     setSelectedOptions((prevSelected) =>
       prevSelected.includes(option)
-        ? prevSelected.filter((item) => item !== option) // Deselect if already selected
-        : [...prevSelected, option] // Select if not already selected
+        ? prevSelected.filter((item) => item !== option)
+        : [...prevSelected, option]
     );
   };
 
-  // Validate selections when "Next" is clicked
   const handleNext = () => {
     if (!isSubmitted) {
       const correct_options = allQuestions[currentQuestionIndex].correct_option;
       setCorrectOptions(correct_options);
       setIsSubmitted(true);
 
-      // Check if the selected options match the correct options exactly
       const isCorrect =
         selectedOptions.length === correct_options.length &&
         selectedOptions.every((opt) => correct_options.includes(opt));
@@ -45,13 +44,11 @@ const QuizScreen = ({ data }) => {
     }
   };
 
-  const restartQuiz = () => {
+  const handleQuizCompletion = () => {
     setShowScoreModal(false);
-    setCurrentQuestionIndex(0);
-    setScore(0);
-    setSelectedOptions([]);
-    setCorrectOptions([]);
-    setIsSubmitted(false);
+    const passingScore = allQuestions.length / 2;
+    const quizPassed = score > passingScore;
+    watchAgain(quizPassed);
   };
 
   return (
@@ -59,9 +56,7 @@ const QuizScreen = ({ data }) => {
       <div className="progress-bar">
         <div
           className="progress"
-          style={{
-            width: `${((currentQuestionIndex + 1) / allQuestions.length) * 100}%`,
-          }}
+          style={{ width: `${((currentQuestionIndex + 1) / allQuestions.length) * 100}%` }}
         ></div>
       </div>
       <div className="question-container">
@@ -74,10 +69,9 @@ const QuizScreen = ({ data }) => {
         <div className="options-container">
           {allQuestions[currentQuestionIndex].options.map((option) => {
             let buttonClass = "";
-
             if (isSubmitted) {
               if (correctOptions.includes(option)) {
-                buttonClass = selectedOptions.includes(option) ? "correct" : "unselected-correct"; 
+                buttonClass = selectedOptions.includes(option) ? "correct" : "unselected-correct";
               } else if (selectedOptions.includes(option)) {
                 buttonClass = "incorrect";
               }
@@ -105,11 +99,9 @@ const QuizScreen = ({ data }) => {
         <div className="modal">
           <div className="modal-content">
             <h2>{score > allQuestions.length / 2 ? 'Congratulations!' : 'Oops!'}</h2>
-            <p>
-              Your Score: {score} / {allQuestions.length}
-            </p>
-            <button className="retry-button" onClick={restartQuiz}>
-              Retry Quiz
+            <p>Your Score: {score} / {allQuestions.length}</p>
+            <button className="retry-button" onClick={handleQuizCompletion}>
+              {score > allQuestions.length / 2 ? 'Continue' : 'Watch Video Again'}
             </button>
           </div>
         </div>
