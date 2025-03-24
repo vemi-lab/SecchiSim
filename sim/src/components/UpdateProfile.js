@@ -25,7 +25,7 @@ export default function Signup() {
         setLoading(true)
         setError("")
 
-        const credential = EmailAuthProvider.credential(currentUser.email, prompt('Please enter your password for re-authentication:'));
+        const credential = EmailAuthProvider.credential(currentUser.email, prompt('Please enter your old password for re-authentication:'));
         try {
             await reauthenticateWithCredential(currentUser, credential);
 

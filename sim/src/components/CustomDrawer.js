@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import './CustomDrawer.css';
+import '../App.css';
 import logo from '../assets/avatar.jpg';
-// import quizData from '../data/quizData.json'; // Import module data
 
 export default function CustomDrawer() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeLink, setActiveLink] = useState('');
   const [isCourseMaterialOpen, setIsCourseMaterialOpen] = useState(false);
+  const [isSecchiOpen, setIsSecchiOpen] = useState(false);
+  const [isDissolvedoxygenOpen, setIsDissolvedoxygenOpen] = useState(false);
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -22,18 +23,20 @@ export default function CustomDrawer() {
     }
   };
 
+  const toggleSubsection = (subsection) => {
+    if (subsection === 'Secchi') {
+      setIsSecchiOpen(!isSecchiOpen);
+    } else if (subsection === 'Dissolved Oxygen') {
+      setIsDissolvedoxygenOpen(!isDissolvedoxygenOpen);
+    }
+  };
+
   const links = [
     { to: '/instructions', name: 'Welcome and How to?' },
-    { to: '/course-material', name: 'Course Material' },
-    // { to: '/overview', name: 'Program Overview' },
-    // { to: '/lakes101a', name: 'Lakes 101a' },
-    // { to: '/lakes101b', name: 'Lakes 101b' },
-    { to: '/secchi-sim', name: 'SecchiSim' },
-    { to: '/messages', name: 'Messages' },
-    { to: '/resources', name: 'Resources' },
+    { to: '/course-material', name: 'Course Material', hasSubsections: true },
     { to: '/trainings', name: 'Upcoming Trainings' },
     { to: '/video', name: 'Video' },
-    { to: '/dashboard', name: 'Dashboard'},
+    { to: '/dashboard', name: 'Dashboard' },
   ];
 
   return (
@@ -62,41 +65,61 @@ export default function CustomDrawer() {
                 {link.name}
               </Link>
 
-              {/* Dynamically Render Module Subsections */}
+              {/* Course Material Subsections */}
               {link.name === 'Course Material' && isCourseMaterialOpen && (
                 <div className="subsections">
-                  {/* {quizData.map((module) => {
-                    const modulePath = `/module/${String(module.id)}`;
-                    return (
-                      <Link key={module.id} to={
-                      } className='subsection-item'>
-                        <div >
-                          <h4>{module.title}</h4>
+                  {/* Secchi Subsection */}
+                  <div className="subsection-header" onClick={() => toggleSubsection('Secchi')}>
+                    <h4>Secchi</h4>
+                  </div>
+                  {isSecchiOpen && (
+                    <div className="subsections">
+                      <Link key="secchi_1" to="/secchi_1" className='subsection-item'>
+                        <div>
+                          <h4>Secchi 1</h4>
                         </div>
                       </Link>
-                    );
-                  })} */}
-                      <Link key="overview" to="/overview" className='subsection-item'>
-                        <div >
-                          <h4>Program Overview</h4>
+                      <Link key="secchi_2" to="/secchi_2" className='subsection-item'>
+                        <div>
+                          <h4>Secchi 2</h4>
                         </div>
                       </Link>
-                      <Link key="lakes101a" to="/lakes101a" className='subsection-item'>
-                        <div >
-                          <h4>Lakes 101a</h4>
+                      <Link key="secchi_3" to="/secchi_3" className='subsection-item'>
+                        <div>
+                          <h4>Secchi 3</h4>
                         </div>
                       </Link>
-                      <Link key="lakes101b" to="/lakes101b" className='subsection-item'>
-                        <div >
-                          <h4>Lakes 101b & Secchi Training</h4>
+                    </div>
+                  )}
+
+                  {/* Dissolved Oxygen Subsection */}
+                  <div className="subsection-header" onClick={() => toggleSubsection('Dissolved Oxygen')}>
+                    <h4>Dissolved Oxygen</h4>
+                  </div>
+                  {isDissolvedoxygenOpen && (
+                    <div className="subsections">
+                      <Link key="do_1" to="/do_1" className='subsection-item'>
+                        <div>
+                          <h4>DO 1</h4>
                         </div>
                       </Link>
+                      <Link key="do_2" to="/do_2" className='subsection-item'>
+                        <div>
+                          <h4>DO 2</h4>
+                        </div>
+                      </Link>
+                      <Link key="do_3" to="/do_3" className='subsection-item'>
+                        <div>
+                          <h4>DO 3</h4>
+                        </div>
+                      </Link>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
           ))}
         </nav>
-
       </div>
 
       {/* Hamburger Menu Icon */}
@@ -112,4 +135,3 @@ export default function CustomDrawer() {
     </div>
   );
 }
-

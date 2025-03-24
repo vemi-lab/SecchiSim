@@ -13,9 +13,12 @@ import ResourcesScreen from "./Screens/ResourcesScreen";
 import TrainingScreen from "./Screens/TrainingScreen";
 import Time from "./Screens/time";
 import CourseMaterialScreen from "./Screens/CourseMaterialScreen";
-import ProgramOverview from "./Screens/SecchiTraining/ProgramOverview";
-import Lakes101a from "./Screens/SecchiTraining/Lakes101a";
-import Lakes101b from "./Screens/SecchiTraining/Lakes101b";
+import Secchi_1 from "./Screens/SecchiTraining/Secchi_1";
+import Secchi_2 from "./Screens/SecchiTraining/Secchi_2";
+import Secchi_3 from "./Screens/SecchiTraining/Secchi_3";
+import DO_1 from "./Screens/DOTraining/DO_1";
+import DO_2 from "./Screens/DOTraining/DO_2";
+import DO_3 from "./Screens/DOTraining/DO_3";
 import "./App.css";
 
 export default function App() {
@@ -36,9 +39,12 @@ export default function App() {
             <Route path="/instructions" element={<InstructionsScreen />} />
             <Route path="/video" element={<Time />} />
             <Route path="/course-material" element={<CourseMaterialScreen />} />
-            <Route path="/overview" element={<ProgramOverview />} />
-            <Route path="/lakes101a" element={<Lakes101a />} />
-            <Route path="/lakes101b" element={<Lakes101b />} />
+            <Route path="/secchi_1" element={<Secchi_1 />} />
+            <Route path="/secchi_2" element={<Secchi_2 />} />
+            <Route path="/secchi_3" element={<Secchi_3 />} />
+            <Route path="/do_1" element={<DO_1 />} />
+            <Route path="/do_2" element={<DO_2 />} />
+            <Route path="/do_3" element={<DO_3 />} />
             <Route path="/secchi-sim" element={<SecchiSimScreen />} />
             <Route path="/messages" element={<MessagesScreen />} />
             <Route path="/resources" element={<ResourcesScreen />} />

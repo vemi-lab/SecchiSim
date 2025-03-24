@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Quiz from './QuizScreen';
 import Player from '@vimeo/player';
+import DO_data from '../data/DO_1'
 
 export default function VideoScreen({ videoUrl, quizData, title }) {
   const [isVideoFinished, setIsVideoFinished] = useState(false);
@@ -71,7 +72,8 @@ export default function VideoScreen({ videoUrl, quizData, title }) {
           ></iframe>
         </div>
       ) : (
-        <Quiz data={quizData} />
+        <Quiz data={DO_data} />
+
       )}
     </div>
   );

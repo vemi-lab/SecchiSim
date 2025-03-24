@@ -3,12 +3,10 @@ import './MessagesScreen.css';
 
 export default function MessagesScreen() {
   return (
-    <div className="container">
-      <div className="scroll-view">
+    <div className="module-screen-container">
         <p>
           Here you will find the Messages and other notifications
         </p>
-      </div>
     </div>
   );
 }
