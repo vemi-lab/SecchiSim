@@ -74,28 +74,28 @@ export const drawSecchiDisk = (p, x, y, visibility, size = CONSTANTS.DISK_DIAMET
   p.endShape(p.CLOSE);
   p.pop();
   
-  // Draw tick marks with larger dimensions
-  for(let i = 1; i <= CONSTANTS.MAX_DEPTH; i++) {
-    const tickX = p.map(i, 0, CONSTANTS.MAX_DEPTH, tapeEnd, tapeStart);
-    p.stroke(255, opacity);
-    p.strokeWeight(3); // Increased stroke weight for tick marks
-    p.line(tickX, -tapeWidth, tickX, tapeWidth);
+  // // Draw tick marks with larger dimensions
+  // for(let i = 1; i <= CONSTANTS.MAX_DEPTH; i++) {
+  //   const tickX = p.map(i, 0, CONSTANTS.MAX_DEPTH, tapeEnd, tapeStart);
+  //   p.stroke(255, opacity);
+  //   p.strokeWeight(3); // Increased stroke weight for tick marks
+  //   p.line(tickX, -tapeWidth, tickX, tapeWidth);
     
-    // Add numbers with larger text
-    if(y > 0.68) {
-      p.textSize(size * 0.12); // Increased text size
-      p.fill(255, opacity);
-      p.noStroke();
-      p.textAlign(p.CENTER, p.BOTTOM);
-      p.text(i, tickX, tapeWidth * 2);
-    } else {
-      p.textSize(size * 0.12); // Increased text size
-      p.fill(255, opacity);
-      p.noStroke();
-      p.textAlign(p.CENTER, p.TOP);
-      p.text(i, tickX, -tapeWidth * 2);
-    }
-  }
+  //   // Add numbers with larger text
+  //   if(y > 0.68) {
+  //     p.textSize(size * 0.12); // Increased text size
+  //     p.fill(255, opacity);
+  //     p.noStroke();
+  //     p.textAlign(p.CENTER, p.BOTTOM);
+  //     p.text(i, tickX, tapeWidth * 2);
+  //   } else {
+  //     p.textSize(size * 0.12); // Increased text size
+  //     p.fill(255, opacity);
+  //     p.noStroke();
+  //     p.textAlign(p.CENTER, p.TOP);
+  //     p.text(i, tickX, -tapeWidth * 2);
+  //   }
+  // }
   p.pop();
   
   // Draw the larger disk

@@ -94,10 +94,7 @@ const Clear = forwardRef(({ settings, onSettingChange }, ref) => {
         utils.drawSecchiDisk(p, diskPosition.x / 1.5, diskPosition.y, visibility, diskSize);
 
         p.pop();
-
-        // Draw measuring tape
        
-
         // Draw depth scale
         p.push();
         p.stroke(255);
@@ -150,7 +147,7 @@ const Clear = forwardRef(({ settings, onSettingChange }, ref) => {
 
   return (
     <div className="clear-lake-container">
-      <button onClick={() => navigate('/')} style={{ marginBottom: '20px' }}>Back to Simulator</button>
+      <button onClick={() => navigate('/secchi-sim')} style={{ marginBottom: '20px' }}>Back to Simulator</button>
       <div className="simulation-area">
         <div className="canvas-wrapper" style={{ position: 'relative', width: '800px', height: '600px' }}>
           <div ref={canvasRef} className="secchi-simulator" style={{ outline: 'none' }} />

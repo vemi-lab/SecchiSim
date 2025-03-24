@@ -4,6 +4,9 @@ import Clear from './ComponentsOfSim/Clear';
 import Instructions from './ComponentsOfSim/Instructions';
 import Tutorial from './ComponentsOfSim/Tutorial';
 import Intermediate from './ComponentsOfSim/Intermediate';
+import Productive from './ComponentsOfSim/Productive';
+import Dystrophic from './ComponentsOfSim/Dystrophic';
+import DystrophicProductive from './ComponentsOfSim/DystrophicProductive';
 import avatar from '../../assets/avatar.jpg';
 import './SecchiSimScreen.css';
 
@@ -29,9 +32,15 @@ const SecchiSimScreen = () => {
       case 'clear':
         return <Clear settings={settings} onSettingChange={handleSettingChange} ref={simulatorRef} />;
       case 'tutorial':
-        return <Tutorial />;
+        return <Tutorial settings={settings} onSettingChange={handleSettingChange} ref={simulatorRef}/>;
       case 'intermediate':
-        return <Intermediate />;
+        return <Intermediate settings={settings} onSettingChange={handleSettingChange} ref={simulatorRef}/>;
+      case 'productive':
+        return <Productive settings={settings} onSettingChange={handleSettingChange} ref={simulatorRef}/>;
+       case 'dystrophic':
+        return <Dystrophic settings={settings} onSettingChange={handleSettingChange} ref={simulatorRef}/>;
+      case 'dystrophicproductive':
+        return <DystrophicProductive settings={settings} onSettingChange={handleSettingChange} ref={simulatorRef}/>;
       case 'instructions':
       default:
         return <Instructions setCurrentPage={setCurrentPage} />;
@@ -45,6 +54,7 @@ const SecchiSimScreen = () => {
       <div className="simulator-container">
         {renderPage()}
       </div>
+      
     </div>
   );
 };
