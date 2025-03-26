@@ -14,8 +14,18 @@ export default function CustomDrawer() {
     setIsOpen(!isOpen);
   };
 
-  const handleLinkClick = (linkName) => {
+  // Function to handle opening external links in a new tab
+  const openInNewTab = (url) => {
+    window.open(url, "_blank", "noreferrer");
+  };
+
+  const handleLinkClick = (linkName, linkTo) => {
     setActiveLink(linkName);
+
+    // Special handling for 'Upcoming Trainings' to open in a new tab
+    if (linkName === 'Upcoming Trainings') {
+      openInNewTab(linkTo); // Open external link in a new tab
+    }
 
     if (linkName === 'Course Material') {
       setIsCourseMaterialOpen(!isCourseMaterialOpen);
@@ -34,8 +44,8 @@ export default function CustomDrawer() {
 
   const links = [
     { to: '/instructions', name: 'Welcome and How to?' },
-    { to: '/course-material', name: 'Course Material', hasSubsections: true },
-    { to: '/trainings', name: 'Upcoming Trainings' },
+    { name: 'Course Material', hasSubsections: true },
+    { to: 'https://lookerstudio.google.com/embed/reporting/5c1a4a70-ef70-4e71-9722-3847e75464e2/page/apkeE', name: 'Upcoming Trainings', isExternal: true },
     { to: '/video', name: 'Video' },
     { to: '/dashboard', name: 'Dashboard' },
   ];
@@ -58,13 +68,23 @@ export default function CustomDrawer() {
         <nav className="drawer-items">
           {links.map((link) => (
             <div key={link.to}>
-              <Link
-                to={link.to}
-                className={`drawer-item ${activeLink === link.name ? 'active' : ''}`}
-                onClick={() => handleLinkClick(link.name)}
-              >
-                {link.name}
-              </Link>
+              {/* If the link is external (Upcoming Trainings), use a button to open it in a new tab */}
+              {link.isExternal ? (
+                <button
+                  className={`drawer-item-button ${activeLink === link.name ? 'active' : ''}`}
+                  onClick={() => handleLinkClick(link.name, link.to)}
+                >
+                  {link.name}
+                </button>
+              ) : (
+                <Link
+                  to={link.to}
+                  className={`drawer-item ${activeLink === link.name ? 'active' : ''}`}
+                  onClick={() => handleLinkClick(link.name, link.to)}
+                >
+                  {link.name}
+                </Link>
+              )}
 
               {/* Course Material Subsections */}
               {link.name === 'Course Material' && isCourseMaterialOpen && (
@@ -136,3 +156,4 @@ export default function CustomDrawer() {
     </div>
   );
 }
+

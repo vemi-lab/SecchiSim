@@ -8,11 +8,8 @@ import Signup from "./components/Signup"
 import Dashboard from "./components/Dashboard"
 import SecchiSimScreen from "./Screens/SecchiSimScreen";
 import InstructionsScreen from "./Screens/InstructionsScreen";
-import MessagesScreen from "./Screens/MessagesScreen";
-import ResourcesScreen from "./Screens/ResourcesScreen";
-import TrainingScreen from "./Screens/TrainingScreen";
+// import TrainingScreen from "./Screens/TrainingScreen";
 import Time from "./Screens/time";
-import CourseMaterialScreen from "./Screens/CourseMaterialScreen";
 import Secchi_1 from "./Screens/SecchiTraining/Secchi_1";
 import Secchi_2 from "./Screens/SecchiTraining/Secchi_2";
 import Secchi_3 from "./Screens/SecchiTraining/Secchi_3";
@@ -38,7 +35,6 @@ export default function App() {
           <Route element={<PrivateRoutes />}>
             <Route path="/instructions" element={<InstructionsScreen />} />
             <Route path="/video" element={<Time />} />
-            <Route path="/course-material" element={<CourseMaterialScreen />} />
             <Route path="/secchi_1" element={<Secchi_1 />} />
             <Route path="/secchi_2" element={<Secchi_2 />} />
             <Route path="/secchi_3" element={<Secchi_3 />} />
@@ -46,9 +42,7 @@ export default function App() {
             <Route path="/do_2" element={<DO_2 />} />
             <Route path="/do_3" element={<DO_3 />} />
             <Route path="/secchi-sim" element={<SecchiSimScreen />} />
-            <Route path="/messages" element={<MessagesScreen />} />
-            <Route path="/resources" element={<ResourcesScreen />} />
-            <Route path="/trainings" element={<TrainingScreen />} />
+            {/* <Route path="/trainings" element={<TrainingScreen />} /> */}
             <Route path="/dashboard" element={<Dashboard />} />
 
           </Route>

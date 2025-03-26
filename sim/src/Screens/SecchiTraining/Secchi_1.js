@@ -43,7 +43,7 @@ export default function Time({setSecchi1Passed, setDo1Passed, moduleKey }) {
 
   const handleWatchAgain = (quizPassed) => {
     if (!quizPassed) {
-      if (retryCount >= 1) {
+      if (retryCount >= 2) {
         setModuleDisabled(true);
       } else {
         setRetryCount(retryCount + 1);
