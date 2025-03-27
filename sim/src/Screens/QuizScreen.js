@@ -69,26 +69,29 @@ const QuizScreen = ({ data, watchAgain }) => {
       if (currentQuestionIndex === allQuestions.length - 1) {
         setShowScoreModal(true);
 
-        const userDocRef = doc(db, "users", auth.currentUser.email);
-        await updateDoc(userDocRef, {
-          ['completedCourses.QuizDataSecchi']: true
-        });
-
-        //re-check access
-        const userDocSnap = await getDoc(userDocRef);
-        if (userDocSnap.exists()) {
-          const userData = userDocSnap.data();
-          const allSecchiVideosCompleted = ["ProgramOverview", "Lakes101a", "Lakes101b"]
-            .every(course => userData.completedCourses?.[course]);
-          const allQuizzesCompleted = userData.completedCourses?.["QuizDataSecchi"];
-
-          if (allSecchiVideosCompleted && allQuizzesCompleted) {
-            await updateDoc(userDocRef, {
-              [`accessRoles.Secchi Videos`]: false,
-              [`accessRoles.Quizzes`]: false
-            });
-          }
+        if (auth.currentUser) {
+          const userDocRef = doc(db, "users", auth.currentUser.email);
+          const year = new Date().getFullYear().toString() //nsure yearly colleciton
+          const scoresDocRef = doc(db, `users/${auth.currentUser.email}/${year}`, "Scores");
+          const quizzesDocRef = doc(db, `users/${auth.currentUser.email}/${year}`, "Quizzes");
+          const quizName = data.quizName || "Unknown Quiz"; //makes sure quizName exists
         }
+
+        try {
+          await updateDoc(quizzesDocRef, {
+            [quizName]: true,
+          });
+
+          await updateDoc(scoresDocRef, {
+            [`${quizName}_${Date.now()}`]: score
+          })
+
+          console.log("Quiz completion and score updated in Firestore.")
+        } catch (error) {
+          console.error("Error updating quiz completion and score in Firestore:", error);
+          
+        }
+
 
       } else {
         setCurrentQuestionIndex(currentQuestionIndex + 1);

@@ -8,7 +8,7 @@ import {
     sendEmailVerification,
     updateProfile
 } from 'firebase/auth'
-import { doc, setDoc } from "firebase/firestore"
+import { doc, getDoc, setDoc } from "firebase/firestore"
 
 const AuthContext = React.createContext()
 
@@ -28,24 +28,32 @@ export function AuthProvider({children}) {
         await sendEmailVerification(user);
         await updateProfile(user, { displayName: fullName });
 
+        const currentYear = new Date().getFullYear().toString(); //if 2026, then collection title is 2026
+
         //default access roles
         const defaultAccessRoles = {
             "Secchi Simulator": true,
             "Secchi Videos": true,
             "Quizzes": true
-            // "Dissolved Oxygen": false,
-            // "Baseline": false,
-            // "Epilimnetic Core Tube Sampling": false,
-            // "Grab Sampler (Kemmerer / Van Dorn": false,
-        }
-
-
-        const initialProgress = {
-            "Lakes101a": false,
-            "Lakes101b": false,
-            "ProgramOverview": false,
-            "Secchi Quiz": false
         };
+
+
+        const initialQuizProgress = {
+            "Secchi_1": false,
+            "Secchi_2": false,
+            "Secchi_3": false
+        };
+
+        const initalQuizScores = {
+            "Secchi_1": {},
+            "Secchi_2": {},
+            "Secchi_3": {}
+        };
+
+        // new yearly collection with quizzes, scores, and roles documents
+        await setDoc(doc (db, currentYear, "Quizzes"), initialQuizProgress);
+        await setDoc(doc (db, currentYear, "Scores"), initalQuizScores);
+        await setDoc(doc (db, currentYear, "Roles"), defaultAccessRoles);
     
         await setDoc(doc(db, "users", email), {
             personal: {
@@ -53,10 +61,8 @@ export function AuthProvider({children}) {
                 phoneNumber: phoneNumber,
                 email: email
             },
-            accessRoles: defaultAccessRoles,
-            completedCourses: initialProgress,
-            isAdmin: false, 
-            isActive: true,
+            isAdmin: false,
+            isActive: true
         });
     
         return userCredential;
