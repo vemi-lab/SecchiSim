@@ -46,6 +46,7 @@ export default function App() {
             <Route path="/do_3" element={<DO_3 />} />
             {/* <Route path="/trainings" element={<TrainingScreen />} /> */}
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/profile" element={<Profile />} />
 
           </Route>
         </Routes>
