@@ -68,7 +68,7 @@ export default function Time() {
           ></iframe>
         </div>
       ) : (
-        <Quiz data={QuizDataSecchi} />
+        <Quiz data={{ ...QuizDataSecchi, quizName: "Secchi_1" }} watchAgain={handleWatchAgain} />
       )}
     </div>
   );

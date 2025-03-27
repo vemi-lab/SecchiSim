@@ -7,7 +7,7 @@ import Player from '@vimeo/player';
 
 export default function Time({setSecchi1Passed, setDo1Passed, moduleKey }) {
   const [isVideoFinished, setIsVideoFinished] = useState(false);
-  const [retryCount, setRetryCount] = useState(0);
+  const [retryCount, setRetryCount] = useState(4);
   const [showQuiz, setShowQuiz] = useState(false);
   const playerRef = useRef(null);
   const iframeRef = useRef(null);
@@ -46,16 +46,16 @@ export default function Time({setSecchi1Passed, setDo1Passed, moduleKey }) {
       if (retryCount >= 1) {
         setModuleDisabled(true);
       } else {
-        setRetryCount(retryCount + 1);
+        setRetryCount(retryCount - 1);
         restartVideo();
       }
-    } else {
-      if(moduleKey === "/secchi_1"){
-        setSecchi1Passed(true);
-      } else if (moduleKey === "/do_1"){
-        setDo1Passed(true);
+    // } else {
+    //   if(moduleKey === "/secchi_1"){
+    //     setSecchi1Passed(true);
+    //   } else if (moduleKe7y === "/do_1"){
+    //     setDo1Passed(true);
+    //   }
       }
-    }
   };
 
   if (moduleDisabled) {
@@ -86,7 +86,7 @@ export default function Time({setSecchi1Passed, setDo1Passed, moduleKey }) {
           ></iframe>
         </div>
       ) : (
-        <Quiz data={QuizDataSecchi} watchAgain={handleWatchAgain} />
+        <Quiz data={{ ...QuizDataSecchi, quizName: "Secchi_1" }} watchAgain={handleWatchAgain} />
       )}
     </div>
   );
