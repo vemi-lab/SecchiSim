@@ -50,6 +50,8 @@ export function AuthProvider({children}) {
             "Secchi_3": {}
         };
 
+        const userDocRef = doc(db, "users", email);
+        
         // new yearly collection with quizzes, scores, and roles documents
         await setDoc(doc (db, currentYear, "Quizzes"), initialQuizProgress);
         await setDoc(doc (db, currentYear, "Scores"), initalQuizScores);
