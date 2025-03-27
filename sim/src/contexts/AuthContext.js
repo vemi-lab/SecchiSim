@@ -8,7 +8,7 @@ import {
     sendEmailVerification,
     updateProfile
 } from 'firebase/auth'
-import { doc, getDoc, setDoc } from "firebase/firestore"
+import { doc, setDoc } from "firebase/firestore"
 
 const AuthContext = React.createContext()
 
@@ -28,45 +28,58 @@ export function AuthProvider({children}) {
         await sendEmailVerification(user);
         await updateProfile(user, { displayName: fullName });
 
-        const currentYear = new Date().getFullYear().toString(); //if 2026, then collection title is 2026
+        const currentYear = new Date().getFullYear().toString(); // e.g., "2026"
 
-        //default access roles
+        // Default access roles
         const defaultAccessRoles = {
             "Secchi Simulator": true,
             "Secchi Videos": true,
             "Quizzes": true
         };
 
-
+        // Initial quiz progress
         const initialQuizProgress = {
             "Secchi_1": false,
             "Secchi_2": false,
             "Secchi_3": false
         };
 
-        const initalQuizScores = {
-            "Secchi_1": {},
-            "Secchi_2": {},
-            "Secchi_3": {}
+        // Initial quiz scores
+        const initialQuizScores = {
+            "Secchi_1": { 1: null, 2: null, 3: null },
+            "Secchi_2": { 1: null, 2: null, 3: null },
+            "Secchi_3": { 1: null, 2: null, 3: null }
         };
 
-        const userDocRef = doc(db, "users", email);
-        
-        // new yearly collection with quizzes, scores, and roles documents
-        await setDoc(doc (db, currentYear, "Quizzes"), initialQuizProgress);
-        await setDoc(doc (db, currentYear, "Scores"), initalQuizScores);
-        await setDoc(doc (db, currentYear, "Roles"), defaultAccessRoles);
-    
-        await setDoc(doc(db, "users", email), {
-            personal: {
-                fullName: fullName,
-                phoneNumber: phoneNumber,
-                email: email
-            },
-            isAdmin: false,
-            isActive: true
-        });
-    
+        try {
+            // Create user document
+            const userDocRef = doc(db, "users", email);
+            await setDoc(userDocRef, {
+                personal: {
+                    fullName: fullName,
+                    phoneNumber: phoneNumber,
+                    email: email
+                },
+                isAdmin: false,
+                isActive: true
+            });
+
+            // Create yearly subcollection and its documents
+            const yearCollectionPath = `users/${email}/${currentYear}`;
+            const rolesDocRef = doc(db, `${yearCollectionPath}/Roles`);
+            const quizzesDocRef = doc(db, `${yearCollectionPath}/Quizzes`);
+            const scoresDocRef = doc(db, `${yearCollectionPath}/Scores`);
+
+            await Promise.all([
+                setDoc(rolesDocRef, defaultAccessRoles),
+                setDoc(quizzesDocRef, initialQuizProgress),
+                setDoc(scoresDocRef, initialQuizScores)
+            ]);
+        } catch (error) {
+            console.error("Error creating user data in Firestore:", error);
+            throw error; // Re-throw the error to handle it in the UI if needed
+        }
+
         return userCredential;
     }
     

@@ -55,11 +55,9 @@ export default function Signup() {
             setLoading(true);
             await signup(emailRef.current.value, password, fullNameRef.current.value, phoneRef.current.value);
             alert("Please check your email to verify your account before logging in.");
-            navigate("/login");
-        } catch {
-            // console.error("Signup Error:", error);
-            setError(error.message);
-            // setLoading(false);
+            navigate("/login"); // Ensure this is called after successful signup
+        } catch (error) {
+            setError(error.message); // Display the error message
         } finally {
             setLoading(false);
         }

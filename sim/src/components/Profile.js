@@ -50,6 +50,31 @@ export default function Profile() {
     return () => unsubscribe(); // Cleanup listener
   }, []);
 
+  useEffect(() => {
+    if (!auth.currentUser) return;
+
+    const currentYear = new Date().getFullYear().toString(); // e.g., "2026"
+    const rolesDocRef = doc(db, `users/${auth.currentUser.email}/${currentYear}/Roles`);
+
+    // Fetch roles data once at first load
+    getDoc(rolesDocRef).then((docSnap) => {
+        if (docSnap.exists()) {
+            setAccessRoles(docSnap.data() || {}); 
+        } else {
+            console.log("No roles data found in Firestore!");
+        }
+    });
+
+    // Listen for real-time updates
+    const unsubscribe = onSnapshot(rolesDocRef, (docSnap) => {
+        if (docSnap.exists()) {
+            setAccessRoles(docSnap.data() || {}); 
+        }
+    });
+
+    return () => unsubscribe(); // Cleanup listener
+  }, []);
+
 
   const validatePassword = (password) => {
     const strength = {
@@ -181,24 +206,20 @@ const handleRoleChange = async (role) => {
                   <p>Loading...</p>
               )}
 
-            <h3 className="accessHeader">Access Roles</h3>
+            {/* Display Access Roles */}
+            <h3 className="accessHeader">Your Access Roles</h3>
             {Object.keys(accessRoles).length > 0 ? (
-              <ul className="access-roles-container">
-                {Object.entries(accessRoles).map(([role, isChecked]) => (
-                  <li key={role}>
-                    <Form.Check
-                      type="checkbox"
-                      label={role}
-                      checked={isChecked}
-                      onChange={() => handleRoleChange(role)}
-                      disabled={!isAdmin} // Only admins can modify
-                      className="access-roles"
-                    />
-                  </li>
-                ))}
-              </ul>
+                <ul className="access-roles-container">
+                    {Object.entries(accessRoles).map(([role, isChecked]) => (
+                        <li key={role}>
+                            <span style={{ color: isChecked ? "green" : "red" }}>
+                                {isChecked ? "✔" : "✘"} {role}
+                            </span>
+                        </li>
+                    ))}
+                </ul>
             ) : (
-              <p>No access roles assigned.</p>
+                <p>No access roles assigned.</p>
             )}
 
               <Button disabled={loading} className="profile-btn" type="submit">

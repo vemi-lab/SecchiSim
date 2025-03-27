@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, setPersistence, browserLocalPersistence } from "firebase/auth";
-import { getFirestore, doc, getDoc, updateDoc } from "firebase/firestore";
+import { getFirestore, doc, getDoc, updateDoc, collection, setDoc } from "firebase/firestore";
 
 // Initialize Firebase
 const firebaseConfig = {
@@ -48,6 +48,54 @@ export async function updateUserData(userEmail, newData) {
   } catch (error) {
     console.error("Error updating user data:", error);
   }
+}
+
+// Function to get data from a subcollection
+export async function getSubcollectionData(userEmail, year, subcollectionName) {
+  try {
+    const subcollectionRef = doc(db, `users/${userEmail}/${year}/${subcollectionName}`);
+    const subcollectionSnap = await getDoc(subcollectionRef);
+    if (subcollectionSnap.exists()) {
+      return subcollectionSnap.data();
+    } else {
+      console.log(`No data found in subcollection: ${subcollectionName}`);
+      return null;
+    }
+  } catch (error) {
+    console.error(`Error fetching subcollection data (${subcollectionName}):`, error);
+  }
+}
+
+// Function to update data in a subcollection
+export async function updateSubcollectionData(userEmail, year, subcollectionName, newData) {
+  try {
+    const subcollectionRef = doc(db, `users/${userEmail}/${year}/${subcollectionName}`);
+    await updateDoc(subcollectionRef, newData);
+    console.log(`Subcollection (${subcollectionName}) data updated successfully!`);
+  } catch (error) {
+    console.error(`Error updating subcollection data (${subcollectionName}):`, error);
+  }
+}
+
+// Function to add a new document to a subcollection
+export async function addDocumentToSubcollection(userEmail, year, subcollectionName, docName, docData) {
+  try {
+    const docRef = doc(db, `users/${userEmail}/${year}/${subcollectionName}/${docName}`);
+    await setDoc(docRef, docData);
+    console.log(`Document (${docName}) added to subcollection (${subcollectionName}) successfully!`);
+  } catch (error) {
+    console.error(`Error adding document to subcollection (${subcollectionName}):`, error);
+  }
+}
+
+// Example: Function to fetch quiz data from the "Quizzes" subcollection
+export async function getQuizData(userEmail, year) {
+  return await getSubcollectionData(userEmail, year, "Quizzes");
+}
+
+// Example: Function to update quiz data in the "Quizzes" subcollection
+export async function updateQuizData(userEmail, year, quizData) {
+  await updateSubcollectionData(userEmail, year, "Quizzes", quizData);
 }
 
 export default app;
