@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Quiz from '../QuizScreen';
 import '../VideoScreen.css';
-import QuizDataSecchi from '../../data/Secchi_1'; // Adjust path as needed
+import QuizDataSecchi from '../../data/Secchi_1'; 
 import Player from '@vimeo/player';
 
 export default function Time({setSecchi1Passed, setDo1Passed, moduleKey }) {
@@ -29,7 +29,7 @@ export default function Time({setSecchi1Passed, setDo1Passed, moduleKey }) {
         player.off('ended', handleEnded);
       };
     }
-  }, [iframeRef.current]);
+  }, [isVideoFinished]);
 
   const restartVideo = () => {
     if (playerRef.current) {
@@ -48,12 +48,6 @@ export default function Time({setSecchi1Passed, setDo1Passed, moduleKey }) {
       } else {
         setRetryCount(retryCount + 1);
         restartVideo();
-      }
-    } else {
-      if(moduleKey === "/secchi_1"){
-        setSecchi1Passed(true);
-      } else if (moduleKey === "/do_1"){
-        setDo1Passed(true);
       }
     }
   };

@@ -46,12 +46,10 @@
   background-color: #4B4E92;
 }
 
-/* Move the hamburger button when the sidebar is open */
 .sidebar.open + .hamburger {
   left: 240px;
 }
 
-/* Main content adjustment */
 .main-content {
   margin-left: 40px;
   transition: margin-left 0.5s ease;
@@ -61,11 +59,10 @@
   margin-left: 280px;
 }
 
-/* Drawer items styles */
 .drawer-items {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 25px;
   margin-left: 10px;
 }
 
@@ -128,8 +125,6 @@
   color: white;
 }
 
-
-/* Logo style */
 .logo-container {
   display: flex;
   justify-content: center;
@@ -143,14 +138,12 @@
   margin-top: 10px;
 }
 
-/* Main Content Area */
 .content {
   flex: 1;
   overflow-y: auto;
   padding: 16px;
 }
 
-/* Responsive Text and Images */
 .content h1 {
   font-size: 2em;
 }
@@ -170,7 +163,6 @@
   height: auto;
 }
 
-/* Responsive Tables */
 .content table {
     width: 100%;
     border-collapse: collapse;
@@ -225,7 +217,6 @@
     box-sizing: border-box;
 }
 
-/* Responsive styles */
 
 /* Large screens (laptops) */
 @media (min-width: 1200px) {
@@ -310,7 +301,7 @@
   .drawer-item,
   .drawer-item-button {
     font-size: 11px;
-    text-align: center; /* Center text within items */
+    text-align: center; 
   }
 
   .subsection-header,
@@ -321,10 +312,9 @@
   .drawer-items {
     display: flex;
     flex-direction: column;
-    /* justify-content: center;  */
-    align-items: center; /* Center items horizontally */
-    height: 100vh; /* Make items take full height to center properly */
-    gap: 20px; /* or any other value */
+    align-items: center; 
+    height: 100vh;
+    gap: 20px;
   }
 
   .logo {

@@ -34,6 +34,7 @@ export default function App() {
           {/* Protected Routes (after login, user lands here with CustomDrawer) */}
           <Route element={<PrivateRoutes />}>
             <Route path="/instructions" element={<InstructionsScreen />} />
+            <Route path="/secchi-sim" element={<SecchiSimScreen />} />
             <Route path="/video" element={<Time />} />
             <Route path="/secchi_1" element={<Secchi_1 />} />
             <Route path="/secchi_2" element={<Secchi_2 />} />
@@ -41,7 +42,6 @@ export default function App() {
             <Route path="/do_1" element={<DO_1 />} />
             <Route path="/do_2" element={<DO_2 />} />
             <Route path="/do_3" element={<DO_3 />} />
-            <Route path="/secchi-sim" element={<SecchiSimScreen />} />
             {/* <Route path="/trainings" element={<TrainingScreen />} /> */}
             <Route path="/dashboard" element={<Dashboard />} />
 

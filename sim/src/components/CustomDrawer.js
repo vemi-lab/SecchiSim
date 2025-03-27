@@ -22,11 +22,12 @@ export default function CustomDrawer() {
   const handleLinkClick = (linkName, linkTo) => {
     setActiveLink(linkName);
 
-    // Special handling for 'Upcoming Trainings' to open in a new tab
+    // If Trainings is selected, the link is opened in a new tab
     if (linkName === 'Upcoming Trainings') {
-      openInNewTab(linkTo); // Open external link in a new tab
+      openInNewTab(linkTo); 
     }
 
+    // If Course Material is selected, the subsections are showed
     if (linkName === 'Course Material') {
       setIsCourseMaterialOpen(!isCourseMaterialOpen);
     } else {
@@ -34,6 +35,7 @@ export default function CustomDrawer() {
     }
   };
 
+  // function to show the secchi and do subsections when selected
   const toggleSubsection = (subsection) => {
     if (subsection === 'Secchi') {
       setIsSecchiOpen(!isSecchiOpen);
@@ -44,10 +46,11 @@ export default function CustomDrawer() {
 
   const links = [
     { to: '/instructions', name: 'Welcome and How to?' },
+    { to: '/secchi-sim', name: 'Secchi Simulator'},
     { name: 'Course Material', hasSubsections: true },
     { to: 'https://lookerstudio.google.com/embed/reporting/5c1a4a70-ef70-4e71-9722-3847e75464e2/page/apkeE', name: 'Upcoming Trainings', isExternal: true },
     { to: '/video', name: 'Video' },
-    { to: '/dashboard', name: 'Dashboard' },
+    { to: '/dashboard', name: 'Dashboard' }
   ];
 
   return (

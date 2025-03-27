@@ -1,5 +1,4 @@
 import React from 'react';
-import './SecchiSimScreen.css';
 
 export default function SecchiSimScreen() {
   return (
