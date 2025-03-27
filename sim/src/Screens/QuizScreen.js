@@ -1,8 +1,9 @@
 // QuizScreen.js
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'
 import './QuizScreen.css';
 
-const QuizScreen = ({ data, watchAgain }) => {
+const QuizScreen = ({ data, watchAgain, nextModule }) => {
   const allQuestions = data;
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState([]);
@@ -10,6 +11,8 @@ const QuizScreen = ({ data, watchAgain }) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [score, setScore] = useState(0);
   const [showScoreModal, setShowScoreModal] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleOptionSelect = (option) => {
     setSelectedOptions((prevSelected) =>
@@ -49,6 +52,10 @@ const QuizScreen = ({ data, watchAgain }) => {
     const passingScore = allQuestions.length / 2;
     const quizPassed = score > passingScore;
     watchAgain(quizPassed);
+
+    if (quizPassed) {
+      navigate(`/${nextModule}`)
+    }
   };
 
   return (

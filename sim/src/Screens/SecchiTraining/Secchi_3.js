@@ -79,7 +79,7 @@ export default function Time() {
           ></iframe>
         </div>
       ) : (
-        <Quiz data={QuizDataSecchi} watchAgain={handleWatchAgain} />
+        <Quiz data={QuizDataSecchi} watchAgain={handleWatchAgain} nextModule={"do_1"}/>
       )}
     </div>
   );

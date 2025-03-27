@@ -4,7 +4,7 @@ import '../VideoScreen.css';
 import QuizDataSecchi from '../../data/Secchi_2';
 import Player from '@vimeo/player';
 
-export default function Time({setSecchi1Passed, setDo1Passed, moduleKey }) {
+export default function Time() {
   const [isVideoFinished, setIsVideoFinished] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
   const [showQuiz, setShowQuiz] = useState(false);
@@ -79,7 +79,7 @@ export default function Time({setSecchi1Passed, setDo1Passed, moduleKey }) {
           ></iframe>
         </div>
       ) : (
-        <Quiz data={QuizDataSecchi} watchAgain={handleWatchAgain} />
+        <Quiz data={QuizDataSecchi} watchAgain={handleWatchAgain} nextModule={"secchi_3"}/>
       )}
     </div>
   );
