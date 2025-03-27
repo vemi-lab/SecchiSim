@@ -46,9 +46,9 @@ export function AuthProvider({children}) {
 
         // Initial quiz scores
         const initialQuizScores = {
-            "Secchi_1": { 1: null, 2: null, 3: null },
-            "Secchi_2": { 1: null, 2: null, 3: null },
-            "Secchi_3": { 1: null, 2: null, 3: null }
+            "Secchi_1 Quiz": {},
+            "Secchi_2 Quiz": {},
+            "Secchi_3 Quiz": {}
         };
 
         try {

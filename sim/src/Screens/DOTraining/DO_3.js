@@ -11,6 +11,17 @@ export default function Time() {
   const iframeRef = useRef(null);
   const currentTimeRef = useRef(0);
   const durationRef = useRef(null);
+  const [retryCount, setRetryCount] = useState(0); // Initialize retryCount to 0
+  const [moduleDisabled, setModuleDisabled] = useState(false); // Add missing state
+
+  const restartVideo = () => { // Add missing function
+    if (playerRef.current) {
+      playerRef.current.setCurrentTime(0).then(() => {
+        playerRef.current.play();
+      });
+    }
+    // Reset any other states as needed
+  };
 
   useEffect(() => {
     if (iframeRef.current) {
@@ -53,6 +64,19 @@ export default function Time() {
       };
     }
   }, [isVideoFinished]);
+
+  const handleWatchAgain = async (quizPassed, score) => {
+    if (!quizPassed) {
+        if (retryCount >= 2) {
+            setModuleDisabled(true);
+        } else {
+            setRetryCount(retryCount + 1); // Increment retry count on failure
+            restartVideo();
+        }
+    } else {
+        setRetryCount(0); // Reset retry count on success
+    }
+  };
 
   return (
     <div className="module-screen-container">
