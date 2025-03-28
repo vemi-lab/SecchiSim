@@ -58,5 +58,5 @@ export default function App() {
 // This component redirects to login if the user is not authenticated
 function AuthRedirect() {
   const { currentUser } = useAuth();
-  return currentUser ? <Navigate to="/login" /> : <Navigate to="/dashboard" />;
+  return currentUser ? <Navigate to="/dashboard" /> : <Navigate to="/login" />;
 }

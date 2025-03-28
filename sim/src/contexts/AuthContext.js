@@ -34,7 +34,7 @@ export function AuthProvider({children}) {
         const defaultAccessRoles = {
             "Secchi Simulator": true,
             "Secchi Videos": true,
-            "Quizzes": true
+            "Secchi Quizzes": true
         };
 
         // Initial quiz progress
