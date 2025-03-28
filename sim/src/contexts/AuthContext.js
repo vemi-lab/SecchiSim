@@ -32,24 +32,21 @@ export function AuthProvider({children}) {
 
         // Default access roles
         const defaultAccessRoles = {
-            "Secchi Simulator": true,
-            "Secchi Videos": true,
-            "Secchi Quizzes": true
+            "Secchi Role": true
         };
 
         // Initial quiz progress
         const initialQuizProgress = {
-            "Secchi_1": false,
-            "Secchi_2": false,
-            "Secchi_3": false
+            "Secchi_1_RetryCount": 3,
+            "Secchi_1_Disabled": false,
+            "Secchi_2_RetryCount": 3,
+            "Secchi_2_Disabled": false,
+            "Secchi_3_RetryCount": 3,
+            "Secchi_3_Disabled": false
         };
 
         // Initial quiz scores
-        const initialQuizScores = {
-            "Secchi_1 Quiz": {},
-            "Secchi_2 Quiz": {},
-            "Secchi_3 Quiz": {}
-        };
+        const initialQuizScores = { };
 
         try {
             // Create user document

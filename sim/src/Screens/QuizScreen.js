@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { auth, db } from '../firebase';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import React, { useState } from 'react';
+import { doc, updateDoc, getDoc } from 'firebase/firestore';
+import { db } from '../firebase';
+import { useAuth } from '../contexts/AuthContext';
 import './QuizScreen.css';
 
-const QuizScreen = ({ data, watchAgain }) => {
+const QuizScreen = ({ data, watchAgain, nextModule, quizName }) => {
   const allQuestions = data;
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState([]);
@@ -11,37 +12,8 @@ const QuizScreen = ({ data, watchAgain }) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [score, setScore] = useState(0);
   const [showScoreModal, setShowScoreModal] = useState(false);
-  const [userHasAccess, setUserHasAccess] = useState(false);
-  const [loading, setLoading] = useState(true);
 
-  //check user access and revoke roles if needed
-  useEffect(() => {
-    async function checkAccess() {
-      if (!auth.currentUser) return;
-      const userDocRef = doc(db, "users", auth.currentUser.email);
-      const userDocSnap = await getDoc(userDocRef);
-
-      if (userDocSnap.exists()) {
-        const userData = userDocSnap.data();
-        const allSecchiVideosCompleted = ["ProgramOverview", "Lakes101a", "Lakes101b"]
-          .every(course => userData.completedCourses?.[course]);
-        const allQuizzesCompleted = userData.completedCourses?.["QuizDataSecchi"];
-
-        //if all Secchi Videos & Quizzes are completed, remove access
-        if (allSecchiVideosCompleted && allQuizzesCompleted) {
-          await updateDoc(userDocRef, {
-            [`accessRoles.Secchi Videos`]: false,
-            [`accessRoles.Quizzes`]: false
-          });
-        }
-
-        setUserHasAccess(userData.accessRoles?.["Quizzes"] && !userData.completedCourses?.["QuizDataSecchi"]);
-      }
-      setLoading(false);
-    }
-
-    checkAccess();
-  }, []);
+  const { currentUser } = useAuth();
 
   const handleOptionSelect = (option) => {
     setSelectedOptions((prevSelected) =>
@@ -51,8 +23,7 @@ const QuizScreen = ({ data, watchAgain }) => {
     );
   };
 
-  // Validate selections when "Next" is clicked
-  const handleNext = async () => {
+  const handleNext = () => {
     if (!isSubmitted) {
       const correct_options = allQuestions[currentQuestionIndex].correct_option;
       setCorrectOptions(correct_options);
@@ -68,31 +39,6 @@ const QuizScreen = ({ data, watchAgain }) => {
     } else {
       if (currentQuestionIndex === allQuestions.length - 1) {
         setShowScoreModal(true);
-
-        if (auth.currentUser) {
-          const userDocRef = doc(db, "users", auth.currentUser.email);
-          const year = new Date().getFullYear().toString() //nsure yearly colleciton
-          const scoresDocRef = doc(db, `users/${auth.currentUser.email}/${year}`, "Scores");
-          const quizzesDocRef = doc(db, `users/${auth.currentUser.email}/${year}`, "Quizzes");
-          const quizName = data.quizName || "Unknown Quiz"; //makes sure quizName exists
-        }
-
-        try {
-          await updateDoc(quizzesDocRef, {
-            [quizName]: true,
-          });
-
-          await updateDoc(scoresDocRef, {
-            [`${quizName}_${Date.now()}`]: score
-          })
-
-          console.log("Quiz completion and score updated in Firestore.")
-        } catch (error) {
-          console.error("Error updating quiz completion and score in Firestore:", error);
-          
-        }
-
-
       } else {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
         setSelectedOptions([]);
@@ -102,20 +48,40 @@ const QuizScreen = ({ data, watchAgain }) => {
     }
   };
 
-  const handleQuizCompletion = () => {
+  const saveScoreToFirestore = async (attemptScore) => {
+    if (currentUser) {
+      const currentYear = new Date().getFullYear();
+      const scoresDocRef = doc(db, `users/${currentUser.email}/${currentYear}/Scores`);
+
+      // Calculate the percentage score
+      const totalQuestions = allQuestions.length;
+      const percentageScore = Math.round((attemptScore / totalQuestions) * 100);
+
+      // Fetch existing scores to calculate the next attempt number
+      const scoresSnapshot = await getDoc(scoresDocRef);
+      const scoresData = scoresSnapshot.exists() ? scoresSnapshot.data() : {};
+      const attemptNumber = Object.keys(scoresData)
+        .filter(key => key.startsWith(quizName))
+        .length + 1; // Start counting attempts from 1
+
+      const attemptKey = `${quizName} Attempt ${attemptNumber}`;
+      await updateDoc(scoresDocRef, {
+        [attemptKey]: percentageScore, // Save the percentage score
+      });
+    }
+  };
+
+  const handleQuizCompletion = async () => {
     setShowScoreModal(false);
     const passingScore = allQuestions.length / 2;
     const quizPassed = score > passingScore;
+
+    // Save the score for the current attempt
+    await saveScoreToFirestore(score);
+
+    // Decrease retry count regardless of quiz result
     watchAgain(quizPassed);
   };
-
-  if (loading){
-    return <p>Loading...</p>
-  }
-
-  if (!userHasAccess) {
-    return <p>Access denied. You have completed this quiz.</p>;
-  }
 
   return (
     <div className="quiz-container">
