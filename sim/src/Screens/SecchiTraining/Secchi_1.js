@@ -1,4 +1,3 @@
-// Time.js (Screens/time.js)
 import React, { useState, useEffect, useRef } from 'react';
 import Quiz from '../QuizScreen';
 import '../VideoScreen.css';
@@ -94,6 +93,21 @@ export default function Time() {
       });
     }
   };
+
+
+  if (moduleDisabled) {
+    return (
+      <div className="module-screen-container">
+        <h1 className="screen-title">Module Disabled</h1>
+        <p>
+          You have reached the max attempts allowed for this quiz. 
+          This module has been disabled.
+          Please contact <a href="mailto:stewards@lakestewardsme.org?subject=Maximum Simulator Quiz Secchi 1 Reached" style={{ color: '#4B4E92', textDecoration: 'underline' }}>
+          stewards@lakestewardsme.org</a> for further assistance.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="module-screen-container">

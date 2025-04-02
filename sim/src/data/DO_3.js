@@ -116,7 +116,33 @@ const data = [
         "Three sets."
       ],
       correct_option: ["Three sets."],
-      image: require("../assets/DIM.jpg")
+      image: require("../assets/DIM.jpg"),
+      announcement: [`
+        In order for your data to be certified, ALL submitted temperature and dissolved oxygen (DO) 
+        field sheets must include Quality Assurance (QA) duplicate temperature and dissolved oxygen readings.
+        `,
+        `
+        For quality assurance purposes, duplicate temperature and DO readings are required for every profile that 
+        you take (entered in boxes in the lower right corner of your field sheet). The number of duplicate sets required 
+        will be dependent on the number of original readings recorded. A minimum of one set of duplicate temperature 
+        and DO readings is always required – even if you have only taken 1 original set. The requirement is for one 
+        set of duplicates FOR every 10 readings. The following illustrates this requirement:
+        `,     
+        `
+        - 1-10 original readings (0-9 meters on data form): 1 set of “dupes” required
+        - 11-20 original readings (10-15 meters & additional blanks on form): 2 sets of dupes
+        - 21-30 originals: 3 sets of dupes; et cetera.
+        `,
+        `
+        Duplicate readings should always be taken at depths where the temperature and DO is stable 
+        (attempt to minimize the difference from one meter to the next). Choosing the correct depths 
+        is particularly critical when the lake is thermally stratified during the summer, as is the 
+        case in the practice profile below.
+        `,  
+        `
+        Duplicate readings should be close in value to the originals (maximum variation +/- 0.3 degrees C, 
+        and +/- 0.3 mg/l). Duplicate readings may take longer to stabilize than the originals.
+      `]
     },
     {
       question: "Based on the instructions for taking duplicate readings, which of the following choice of duplicate readings and depths would be BEST for taking duplicate readings?",
@@ -150,7 +176,9 @@ const data = [
         "C"
       ],
       correct_option: ["B"],
-      image: require("../assets/DO_Profiles.png")
+      image: require("../assets/DO_Profiles.png"),
+      announcement: ['Please note, if for any reason you are unable to calibrate your meter, or if you have questions about whether or not the data that you are gathering is accurate, please contact LSM. We will be happy to help you with any of the following: equipment maintenance questions; problems calibrating your equipment; and, questions regarding your data.'
+      ]
     },
     {
       question: "Which of the temperature and DO profiles displayed above would be typical during the late summer for a lake that is thermally stratified, and is relatively “productive”, as indicated by relatively shallow Secchi readings, and relatively high concentrations of phosphorus and chlorophyll (algal pigment)?",

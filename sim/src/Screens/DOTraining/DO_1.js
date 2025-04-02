@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Quiz from '../QuizScreen';
 import '../VideoScreen.css';
-import QuizDataSecchi from '../../data/DO_1';
+import QuizDataSecchi from '../../data/DO_1'; 
 import Player from '@vimeo/player';
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
@@ -92,12 +92,28 @@ export default function Time() {
         playerRef.current.play();
       });
     }
+    setIsVideoFinished(false);
+    setShowQuiz(false);
   };
+
+  if (moduleDisabled) {
+    return (
+      <div className="module-screen-container">
+        <h1 className="screen-title">Module Disabled</h1>
+        <p>
+          You have reached the max attempts allowed for this quiz. 
+          This module has been disabled.
+          Please contact <a href="mailto:stewards@lakestewardsme.org?subject=Maximum Simulator Quiz DO 1 Reached" style={{ color: '#4B4E92', textDecoration: 'underline' }}>
+          stewards@lakestewardsme.org</a> for further assistance.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="module-screen-container">
       <h1 className="screen-title">LSM Dissolved Oxygen Training Part 1</h1>
-      {!showQuiz ? (
+      {!showQuiz? (
         <div className='video-container'>
           <iframe
             ref={iframeRef}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../App.css';
 import logo from '../assets/avatar.jpg';
@@ -9,10 +9,18 @@ export default function CustomDrawer() {
   const [isCourseMaterialOpen, setIsCourseMaterialOpen] = useState(false);
   const [isSecchiOpen, setIsSecchiOpen] = useState(false);
   const [isDissolvedoxygenOpen, setIsDissolvedoxygenOpen] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Function to handle opening external links in a new tab
   const openInNewTab = (url) => {
@@ -33,6 +41,10 @@ export default function CustomDrawer() {
     } else {
       setIsCourseMaterialOpen(false);
     }
+
+    if (windowWidth <= 768 && linkName !== ('Course Material' || 'Upcoming Tainings')){
+      setIsOpen(false);
+    }
   };
 
   // function to show the secchi and do subsections when selected
@@ -44,13 +56,19 @@ export default function CustomDrawer() {
     }
   };
 
+  const handleSubsection = () => {
+    if (windowWidth <= 768){
+      setIsOpen(false);
+    }
+  }
+
   const links = [
     { to: '/instructions', name: 'Welcome and How to?' },
     { to: '/secchi-sim', name: 'Secchi Simulator'},
     { name: 'Course Material', hasSubsections: true },
     { to: 'https://lookerstudio.google.com/embed/reporting/5c1a4a70-ef70-4e71-9722-3847e75464e2/page/apkeE', name: 'Upcoming Trainings', isExternal: true },
     { to: '/video', name: 'Video' },
-    { to: '/dashboard', name: 'Dashboard' }
+    { to: '/dashboard', name: 'Dashboard' }, 
   ];
   //maybe delete dashboard
 
@@ -99,17 +117,17 @@ export default function CustomDrawer() {
                   </div>
                   {isSecchiOpen && (
                     <div className="subsections">
-                      <Link key="secchi_1" to="/secchi_1" className='subsection-item'>
+                      <Link key="secchi_1" to="/secchi_1" className='subsection-item' onClick={handleSubsection}>
                         <div>
                           <h4>Secchi 1</h4>
                         </div>
                       </Link>
-                      <Link key="secchi_2" to="/secchi_2" className='subsection-item'>
+                      <Link key="secchi_2" to="/secchi_2" className='subsection-item' onClick={handleSubsection}>
                         <div>
                           <h4>Secchi 2</h4>
                         </div>
                       </Link>
-                      <Link key="secchi_3" to="/secchi_3" className='subsection-item'>
+                      <Link key="secchi_3" to="/secchi_3" className='subsection-item' onClick={handleSubsection}>
                         <div>
                           <h4>Secchi 3</h4>
                         </div>
@@ -123,17 +141,17 @@ export default function CustomDrawer() {
                   </div>
                   {isDissolvedoxygenOpen && (
                     <div className="subsections">
-                      <Link key="do_1" to="/do_1" className='subsection-item'>
+                      <Link key="do_1" to="/do_1" className='subsection-item' onClick={handleSubsection}>
                         <div>
                           <h4>DO 1</h4>
                         </div>
                       </Link>
-                      <Link key="do_2" to="/do_2" className='subsection-item'>
+                      <Link key="do_2" to="/do_2" className='subsection-item' onClick={handleSubsection}>
                         <div>
                           <h4>DO 2</h4>
                         </div>
                       </Link>
-                      <Link key="do_3" to="/do_3" className='subsection-item'>
+                      <Link key="do_3" to="/do_3" className='subsection-item' onClick={handleSubsection}>
                         <div>
                           <h4>DO 3</h4>
                         </div>

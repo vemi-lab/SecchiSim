@@ -12,6 +12,9 @@ const QuizScreen = ({ data, watchAgain, nextModule, quizName }) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [score, setScore] = useState(0);
   const [showScoreModal, setShowScoreModal] = useState(false);
+  const [showAnnouncement, setShowAnnouncement] = useState(false);
+
+  const navigate = useNavigate();
 
   const { currentUser } = useAuth();
 
@@ -37,10 +40,14 @@ const QuizScreen = ({ data, watchAgain, nextModule, quizName }) => {
         setScore((prevScore) => prevScore + 1);
       }
     } else {
-      if (currentQuestionIndex === allQuestions.length - 1) {
+      const nextIndex = currentQuestionIndex + 1;
+      
+      if (nextIndex < allQuestions.length && allQuestions[nextIndex].announcement) {
+        setShowAnnouncement(true);
+      } else if (nextIndex >= allQuestions.length) {
         setShowScoreModal(true);
       } else {
-        setCurrentQuestionIndex(currentQuestionIndex + 1);
+        setCurrentQuestionIndex(nextIndex);
         setSelectedOptions([]);
         setCorrectOptions([]);
         setIsSubmitted(false);
@@ -81,52 +88,77 @@ const QuizScreen = ({ data, watchAgain, nextModule, quizName }) => {
 
     // Decrease retry count regardless of quiz result
     watchAgain(quizPassed);
+
+    if (quizPassed) {
+      navigate(`/${nextModule}`);
+    }
   };
 
   return (
     <div className="quiz-container">
-      <div className="progress-bar">
-        <div
-          className="progress"
-          style={{ width: `${((currentQuestionIndex + 1) / allQuestions.length) * 100}%` }}
-        ></div>
-      </div>
-      <div className="question-container">
-        <div className="question-counter">
-          {currentQuestionIndex + 1} / {allQuestions.length}
+      {showAnnouncement ? (
+        <div className='announcement-container'>
+          {allQuestions[currentQuestionIndex + 1]?.announcement?.map((paragraph, index) => (
+            <p key={index}>{paragraph}</p>
+          ))}
+          <button className="next-button" onClick={handleContinueQuiz}>
+            Continue Quiz
+          </button>
         </div>
-        <div className="question-text">
-          {allQuestions[currentQuestionIndex].question}
-        </div>
-        <div className="options-container">
-          {allQuestions[currentQuestionIndex].options.map((option) => {
-            let buttonClass = "";
-            if (isSubmitted) {
-              if (correctOptions.includes(option)) {
-                buttonClass = selectedOptions.includes(option) ? "correct" : "unselected-correct";
-              } else if (selectedOptions.includes(option)) {
-                buttonClass = "incorrect";
-              }
-            } else if (selectedOptions.includes(option)) {
-              buttonClass = "selected";
-            }
+      ) : (      
+        <>
+          <div className="progress-bar">
+            <div
+              className="progress"
+              style={{ width: `${((currentQuestionIndex + 1) / allQuestions.length) * 100}%` }}
+            ></div>
+          </div>
+          <div className="question-container">
+            <div className="question-counter">
+              {currentQuestionIndex + 1} / {allQuestions.length}
+            </div>
+            <div className="question-text">
+              {allQuestions[currentQuestionIndex].question}
+            </div>
+            {allQuestions[currentQuestionIndex].image && (
+              <div className="question-image">
+                <img
+                  src={allQuestions[currentQuestionIndex].image}
+                  alt="Question visual"
+                />
+              </div>
+            )}
+            <div className="options-container">
+              {allQuestions[currentQuestionIndex].options.map((option) => {
+                let buttonClass = "";
+                if (isSubmitted) {
+                  if (correctOptions.includes(option)) {
+                    buttonClass = selectedOptions.includes(option) ? "correct" : "unselected-correct";
+                  } else if (selectedOptions.includes(option)) {
+                    buttonClass = "incorrect";
+                  }
+                } else if (selectedOptions.includes(option)) {
+                  buttonClass = "selected";
+                }
 
-            return (
-              <button
-                key={option}
-                onClick={() => handleOptionSelect(option)}
-                disabled={isSubmitted}
-                className={`option-button ${buttonClass}`}
-              >
-                {option}
-              </button>
-            );
-          })}
-        </div>
-        <button className="next-button" onClick={handleNext}>
-          {isSubmitted ? 'Next' : 'Submit'}
-        </button>
-      </div>
+                return (
+                  <button
+                    key={option}
+                    onClick={() => handleOptionSelect(option)}
+                    disabled={isSubmitted}
+                    className={`option-button ${buttonClass}`}
+                  >
+                    {option}
+                  </button>
+                );
+              })}
+            </div>
+            <button className="next-button" onClick={handleNext}>
+              {isSubmitted ? 'Next' : 'Submit'}
+            </button>
+          </div>
+        </>
+      )}
       {showScoreModal && (
         <div className="modal">
           <div className="modal-content">
@@ -143,3 +175,4 @@ const QuizScreen = ({ data, watchAgain, nextModule, quizName }) => {
 };
 
 export default QuizScreen;
+
