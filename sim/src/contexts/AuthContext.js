@@ -31,8 +31,12 @@ export function AuthProvider({children}) {
         const currentYear = new Date().getFullYear().toString(); // e.g., "2026"
 
         // Default access roles
-        const defaultAccessRoles = {
+        const defaultAccessSecchiRoles = {
             "Secchi Role": true
+        };
+
+        const defaultAccessDoRoles = {
+            "Dissolved Oxygen Role": false
         };
 
         // Initial quiz progress
@@ -68,7 +72,7 @@ export function AuthProvider({children}) {
             const scoresDocRef = doc(db, `${yearCollectionPath}/Scores`);
 
             await Promise.all([
-                setDoc(rolesDocRef, defaultAccessRoles),
+                setDoc(rolesDocRef, defaultAccessSecchiRoles, defaultAccessDoRoles),
                 setDoc(quizzesDocRef, initialQuizProgress),
                 setDoc(scoresDocRef, initialQuizScores)
             ]);

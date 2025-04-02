@@ -3,84 +3,101 @@ import Quiz from '../QuizScreen';
 import '../VideoScreen.css';
 import QuizDataSecchi from '../../data/DO_1';
 import Player from '@vimeo/player';
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { db } from "../../firebase";
+import { useAuth } from "../../contexts/AuthContext";
 
 export default function Time() {
+  const { currentUser } = useAuth();
   const [isVideoFinished, setIsVideoFinished] = useState(false);
-  const [moduleDisabled, setModuleDisabled] = useState(false); // Add missing state
+  const [retryCount, setRetryCount] = useState(3);
+  const [showQuiz, setShowQuiz] = useState(false);
   const playerRef = useRef(null);
   const iframeRef = useRef(null);
-  const currentTimeRef = useRef(0);
-  const durationRef = useRef(null);
-  const [retryCount, setRetryCount] = useState(0); // Initialize retryCount to 0
+  const [moduleDisabled, setModuleDisabled] = useState(false);
+
+  useEffect(() => {
+    if (currentUser) {
+      const fetchQuizData = async () => {
+        const quizDocRef = doc(
+          db,
+          `users/${currentUser.email}/${new Date().getFullYear()}/Quizzes`
+        );
+        const quizDoc = await getDoc(quizDocRef);
+        if (quizDoc.exists()) {
+          const quizData = quizDoc.data();
+          setRetryCount(quizData["DO_1_RetryCount"] ?? 3);
+          setModuleDisabled(quizData["DO_1_Disabled"] ?? false);
+        }
+      };
+      fetchQuizData();
+    }
+  }, [currentUser]);
+
+  const updateQuizData = async (newRetryCount, isDisabled) => {
+    if (currentUser) {
+      const quizDocRef = doc(
+        db,
+        `users/${currentUser.email}/${new Date().getFullYear()}/Quizzes`
+      );
+      await updateDoc(quizDocRef, {
+        DO_1_RetryCount: newRetryCount,
+        DO_1_Disabled: isDisabled,
+      });
+    }
+  };
 
   useEffect(() => {
     if (iframeRef.current) {
       const player = new Player(iframeRef.current);
       playerRef.current = player;
 
-      // Get video duration when loaded
-      player.getDuration().then((duration) => {
-        durationRef.current = duration;
-      });
-
-      // Listen for video end
-      const handleEnded = () => setIsVideoFinished(true);
-      player.on('ended', handleEnded);
-
-      // Prevent seeking
-      const handleTimeUpdate = (data) => {
-        if (!isVideoFinished && durationRef.current) {
-          const { seconds } = data;
-
-          // Ensure the current time is valid and within range
-          if (seconds < currentTimeRef.current || seconds > currentTimeRef.current + 1) {
-            if (currentTimeRef.current >= 0 && currentTimeRef.current < durationRef.current) {
-              player.setCurrentTime(currentTimeRef.current).catch((error) => {
-                console.warn("Error setting time:", error);
-              });
-            }
-          } else {
-            currentTimeRef.current = seconds;
-          }
-        }
+      const handleEnded = () => {
+        setIsVideoFinished(true);
+        setShowQuiz(true);
       };
 
-      player.on('timeupdate', handleTimeUpdate);
+      player.on('ended', handleEnded);
 
       return () => {
         player.off('ended', handleEnded);
-        player.off('timeupdate', handleTimeUpdate);
-        playerRef.current = null;
       };
     }
   }, [isVideoFinished]);
 
-  const restartVideo = () => { // Add missing function
+  const handleWatchAgain = (quizPassed) => {
+    const newRetryCount = retryCount - 1;
+    setRetryCount(newRetryCount);
+
+    // Update Firestore with the new retry count
+    if (newRetryCount === 0) {
+      setModuleDisabled(true);
+      updateQuizData(0, true);
+    } else {
+      updateQuizData(newRetryCount, false);
+    }
+
+    if (quizPassed) {
+      // Navigate to the next module if the quiz is passed
+      window.location.href = `/do_2`;
+      //newRetryCount;
+      return;
+    }
+
+    // Reset quiz state and navigate back to the video
+    setShowQuiz(false);
+    setIsVideoFinished(false);
     if (playerRef.current) {
       playerRef.current.setCurrentTime(0).then(() => {
         playerRef.current.play();
       });
-    }
-    // Reset any other states as needed
-  };
-
-  const handleWatchAgain = async (quizPassed, score) => {
-    if (!quizPassed) {
-        if (retryCount >= 2) {
-            setModuleDisabled(true);
-        } else {
-            setRetryCount(retryCount + 1); // Increment retry count on failure
-            restartVideo();
-        }
-    } else {
-        setRetryCount(0); // Reset retry count on success
     }
   };
 
   return (
     <div className="module-screen-container">
       <h1 className="screen-title">LSM Dissolved Oxygen Training Part 1</h1>
-      {!isVideoFinished ? (
+      {!showQuiz ? (
         <div className='video-container'>
           <iframe
             ref={iframeRef}
@@ -91,8 +108,17 @@ export default function Time() {
             title="LSM Dissolved Oxygen Training Part 1"
           ></iframe>
         </div>
+      ) : moduleDisabled ? (
+        <div className="quiz-locked-message">
+          <p>The quiz is locked as you have reached the maximum attempts.</p>
+        </div>
       ) : (
-        <Quiz data={QuizDataSecchi} />
+        <Quiz 
+          data={QuizDataSecchi}
+          watchAgain={handleWatchAgain}
+          nextModule={"/do_1"} // Navigate to DO_2 after passing the quiz
+          quizName={"Dissolved_Oxygen 1 Quiz"}
+        />
       )}
     </div>
   );

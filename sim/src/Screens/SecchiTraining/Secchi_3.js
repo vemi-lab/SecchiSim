@@ -80,7 +80,7 @@ export default function Time() {
 
     if (quizPassed) {
       // Navigate to the next module if the quiz is passed
-      window.location.href = `/Secchi_3`;
+      window.location.href = `/instructions`;
       //newRetryCount;
       return;
     }
