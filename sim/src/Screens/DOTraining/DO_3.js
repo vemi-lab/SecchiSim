@@ -1,63 +1,74 @@
 import React, { useState, useEffect, useRef } from 'react';
-// import Quiz from '../QuizScreen';
+import Quiz from '../QuizScreen';
 import '../VideoScreen.css';
 import QuizDataSecchi from '../../data/DO_3';
-import DO_3_Quiz from './DO_3_Quiz';
 import Player from '@vimeo/player';
 
 export default function Time() {
   const [isVideoFinished, setIsVideoFinished] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
+  const [showQuiz, setShowQuiz] = useState(false);
   const playerRef = useRef(null);
   const iframeRef = useRef(null);
-  const currentTimeRef = useRef(0);
-  const durationRef = useRef(null);
+  const [moduleDisabled, setModuleDisabled] = useState(false);
 
   useEffect(() => {
     if (iframeRef.current) {
       const player = new Player(iframeRef.current);
       playerRef.current = player;
 
-      // Get video duration when loaded
-      player.getDuration().then((duration) => {
-        durationRef.current = duration;
-      });
-
-      // Listen for video end
-      const handleEnded = () => setIsVideoFinished(true);
-      player.on('ended', handleEnded);
-
-      // Prevent seeking
-      const handleTimeUpdate = (data) => {
-        if (!isVideoFinished && durationRef.current) {
-          const { seconds } = data;
-
-          // Ensure the current time is valid and within range
-          if (seconds < currentTimeRef.current || seconds > currentTimeRef.current + 1) {
-            if (currentTimeRef.current >= 0 && currentTimeRef.current < durationRef.current) {
-              player.setCurrentTime(currentTimeRef.current).catch((error) => {
-                console.warn("Error setting time:", error);
-              });
-            }
-          } else {
-            currentTimeRef.current = seconds;
-          }
-        }
+      const handleEnded = () => {
+        setIsVideoFinished(true);
+        setShowQuiz(true);
       };
 
-      player.on('timeupdate', handleTimeUpdate);
+      player.on('ended', handleEnded);
 
       return () => {
         player.off('ended', handleEnded);
-        player.off('timeupdate', handleTimeUpdate);
-        playerRef.current = null;
       };
     }
   }, [isVideoFinished]);
 
+  const restartVideo = () => {
+    if (playerRef.current) {
+      playerRef.current.setCurrentTime(0).then(() => {
+        playerRef.current.play();
+      });
+    }
+    setIsVideoFinished(false);
+    setShowQuiz(false);
+  };
+
+  const handleWatchAgain = (quizPassed) => {
+    if (!quizPassed) {
+      if (retryCount >= 2) {
+        setModuleDisabled(true);
+      } else {
+        setRetryCount(retryCount + 1);
+        restartVideo();
+      }
+    }
+  };
+
+  if (moduleDisabled) {
+    return (
+      <div className="module-screen-container">
+        <h1 className="screen-title">Module Disabled</h1>
+        <p>
+          You have reached the max attempts allowed for this quiz. 
+          This module has been disabled.
+          Please contact <a href="mailto:stewards@lakestewardsme.org?subject=Maximum Simulator Quiz DO 3 Reached" style={{ color: '#4B4E92', textDecoration: 'underline' }}>
+          stewards@lakestewardsme.org</a> for further assistance.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="module-screen-container">
       <h1 className="screen-title">LSM Dissolved Oxygen Training Part 3</h1>
-      {!isVideoFinished ? (
+      {!showQuiz? (
         <div className='video-container'>
           <iframe
             ref={iframeRef}
@@ -69,7 +80,7 @@ export default function Time() {
           ></iframe>
         </div>
       ) : (
-        <DO_3_Quiz data={QuizDataSecchi} />
+        <Quiz data={QuizDataSecchi} watchAgain={handleWatchAgain} nextModule={"do_1"}/>
       )}
     </div>
   );

@@ -58,7 +58,8 @@ export default function Time() {
         <p>
           You have reached the max attempts allowed for this quiz. 
           This module has been disabled.
-          Please contact your organization for further assistance.
+          Please contact <a href="mailto:stewards@lakestewardsme.org?subject=Maximum Simulator Quiz Secchi 3 Reached" style={{ color: '#4B4E92', textDecoration: 'underline' }}>
+          stewards@lakestewardsme.org</a> for further assistance.
         </p>
       </div>
     );
@@ -79,7 +80,7 @@ export default function Time() {
           ></iframe>
         </div>
       ) : (
-        <Quiz data={QuizDataSecchi} watchAgain={handleWatchAgain} nextModule={"do_1"}/>
+        <Quiz data={QuizDataSecchi} watchAgain={handleWatchAgain} nextModule={"secchi_1"}/>
       )}
     </div>
   );
