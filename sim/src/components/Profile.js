@@ -215,6 +215,11 @@ const handleRoleChange = async (role) => {
                             <span style={{ color: isChecked ? "green" : "red" }}>
                                 {isChecked ? "✔" : "✘"} {role}
                             </span>
+                            {isAdmin && (
+                              <button onClick={() => handleRoleChange(role)}>
+                                {isChecked ? "Revoke Access" : "Grant Access"}
+                              </button>
+                            )}
                         </li>
                     ))}
                 </ul>

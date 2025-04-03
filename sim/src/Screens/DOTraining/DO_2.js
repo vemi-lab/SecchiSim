@@ -14,8 +14,6 @@ export default function Time() {
   const [showQuiz, setShowQuiz] = useState(false);
   const playerRef = useRef(null);
   const iframeRef = useRef(null);
-  const currentTimeRef = useRef(0);
-  const durationRef = useRef(null);
   const [moduleDisabled, setModuleDisabled] = useState(false);
 
     useEffect(() => {
@@ -98,19 +96,6 @@ export default function Time() {
     setShowQuiz(false);
   };
 
-  if (moduleDisabled) {
-    return (
-      <div className="module-screen-container">
-        <h1 className="screen-title">Module Disabled</h1>
-        <p>
-          You have reached the max attempts allowed for this quiz. 
-          This module has been disabled.
-          Please contact <a href="mailto:stewards@lakestewardsme.org?subject=Maximum Simulator Quiz DO 2 Reached" style={{ color: '#4B4E92', textDecoration: 'underline' }}>
-          stewards@lakestewardsme.org</a> for further assistance.
-        </p>
-      </div>
-    );
-  }
 
   return (
     <div className="module-screen-container">
@@ -128,7 +113,12 @@ export default function Time() {
         </div>
       ) : moduleDisabled ? (
         <div className="quiz-locked-message">
-          <p>The quiz is locked as you have reached the maxmimum attempts.</p>
+          <p>
+            You have reached the max attempts allowed for this quiz. 
+            This module has been disabled.
+            Please contact <a href="mailto:stewards@lakestewardsme.org?subject=Maximum Simulator Quiz DO 1 Reached" style={{ color: '#4B4E92', textDecoration: 'underline' }}>
+            stewards@lakestewardsme.org</a> for further assistance.
+          </p>
         </div>
       ) : (
         <Quiz 

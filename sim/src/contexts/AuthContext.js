@@ -8,10 +8,9 @@ import {
     sendEmailVerification,
     updateProfile
 } from 'firebase/auth'
-import { doc, setDoc } from "firebase/firestore"
+import { doc, setDoc, getDoc } from "firebase/firestore"
 
 const AuthContext = React.createContext()
-
 
 export function useAuth(){
     return useContext(AuthContext)
@@ -46,11 +45,24 @@ export function AuthProvider({children}) {
             "Secchi_2_RetryCount": 3,
             "Secchi_2_Disabled": false,
             "Secchi_3_RetryCount": 3,
-            "Secchi_3_Disabled": false
+            "Secchi_3_Disabled": false,
+            "DO_1_RetryCount": 3,
+            "DO_1_Disabled": true,
+            "DO_2_RetryCount": 3,
+            "DO_2_Disabled": true,
+            "DO_3_RetryCount": 3,
+            "DO_3_Disabled": true
         };
 
         // Initial quiz scores
-        const initialQuizScores = { };
+        const initialQuizScores = {
+            "Secchi_1_Score": null,
+            "Secchi_2_Score": null,
+            "Secchi_3_Score": null,
+            "DO_1_Score": null,
+            "DO_2_Score": null,
+            "DO_3_Score": null
+        };
 
         try {
             // Create user document
@@ -72,7 +84,7 @@ export function AuthProvider({children}) {
             const scoresDocRef = doc(db, `${yearCollectionPath}/Scores`);
 
             await Promise.all([
-                setDoc(rolesDocRef, defaultAccessSecchiRoles, defaultAccessDoRoles),
+                setDoc(rolesDocRef, { ...defaultAccessSecchiRoles, ...defaultAccessDoRoles }),
                 setDoc(quizzesDocRef, initialQuizProgress),
                 setDoc(scoresDocRef, initialQuizScores)
             ]);
@@ -83,7 +95,6 @@ export function AuthProvider({children}) {
 
         return userCredential;
     }
-    
 
     function login(email, password) {
         return signInWithEmailAndPassword(auth, email, password)
@@ -97,17 +108,27 @@ export function AuthProvider({children}) {
         return sendPasswordResetEmail(auth, email)
     }
 
-    // function resendVerificationEmail() {
-    //     if (auth.currentUser && !auth.currentUser.emailVerified){
-    //         return sendEmailVerification(auth.currentUser)
-    //             .then(() => {
-    //                 alert("Verification email sent! Check your inbox.");
-    //             })
-    //             .catch((error) => {
-    //                 console.error("Error sending verification email:", error);
-    //             });
-    //     }
-    // }
+    // Function to check role access
+    async function hasAccessToRole(role) {
+        if (!currentUser) return false;
+
+        try {
+            const currentYear = new Date().getFullYear().toString(); // e.g., "2026"
+            const rolesDocRef = doc(db, `users/${currentUser.email}/${currentYear}/Roles`);
+            const rolesDoc = await getDoc(rolesDocRef);
+
+            if (rolesDoc.exists()) {
+                const roles = rolesDoc.data();
+                return roles[role] === true; // Return true if the role is enabled
+            } else {
+                console.warn("Roles document does not exist for the user.");
+                return false;
+            }
+        } catch (error) {
+            console.error("Error checking role access:", error);
+            return false;
+        }
+    }
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(async (user) => {
@@ -128,13 +149,13 @@ export function AuthProvider({children}) {
         return unsubscribe
     }, [])
 
-
     const value = {
         currentUser,
         login,
         signup,
         logout,
-        resetPassword
+        resetPassword,
+        hasAccessToRole // Ensure this is included in the context value
     }
 
     return (

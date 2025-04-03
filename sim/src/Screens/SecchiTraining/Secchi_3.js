@@ -6,9 +6,11 @@ import Player from '@vimeo/player';
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import { useAuth } from "../../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
-export default function Time() {
+export default function Secchi3() {
   const {currentUser} = useAuth();
+  const navigate = useNavigate();
   const [isVideoFinished, setIsVideoFinished] = useState(false);
   const [retryCount, setRetryCount] = useState(2);
   const [showQuiz, setShowQuiz] = useState(false);
@@ -80,8 +82,7 @@ export default function Time() {
 
     if (quizPassed) {
       // Navigate to the next module if the quiz is passed
-      window.location.href = `/instructions`;
-      //newRetryCount;
+      navigate(`/instructions`);
       return;
     }
 
@@ -95,19 +96,6 @@ export default function Time() {
     }
   };
 
-  if (moduleDisabled) {
-    return (
-      <div className="module-screen-container">
-        <h1 className="screen-title">Module Disabled</h1>
-        <p>
-          You have reached the max attempts allowed for this quiz. 
-          This module has been disabled.
-          Please contact <a href="mailto:stewards@lakestewardsme.org?subject=Maximum Simulator Quiz Secchi 3 Reached" style={{ color: '#4B4E92', textDecoration: 'underline' }}>
-          stewards@lakestewardsme.org</a> for further assistance.
-        </p>
-      </div>
-    );
-  }
 
   return (
     <div className="module-screen-container">
@@ -125,7 +113,11 @@ export default function Time() {
         </div>
       ) : moduleDisabled ? (
         <div className="quiz-locked-message">
-          <p>The quiz is locked as you have reached the maximum attempts.</p>
+          <p>
+            You have reached the max attempts allowed for this quiz. 
+            This module has been disabled.
+            Please contact <a href="mailto:stewards@lakestewardsme.org?subject=Maximum Simulator Quiz Secchi 2 Reached" style={{ color: '#4B4E92', textDecoration: 'underline' }}>
+            stewards@lakestewardsme.org</a> for further assistance.</p>
         </div>
       ) : (
         <Quiz 

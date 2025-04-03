@@ -5,13 +5,16 @@ import { useAuth } from "./contexts/AuthContext";
 import CustomDrawer from "./components/CustomDrawer";
 
 const PrivateRoutes = () => {
-  const { currentUser } = useAuth();
+  const { currentUser, hasAccessToRole } = useAuth();
+
+  // Example: Restrict access to DO-related routes
+  const isDOAccessAllowed = hasAccessToRole("Dissolved Oxygen Role");
 
   return currentUser ? (
     <div className="app-container">
       <CustomDrawer />
       <div className="content">
-        <Outlet /> {/* This is where the protected pages will render */}
+        <Outlet context={{ isDOAccessAllowed }} /> {/* Pass role access as context */}
       </div>
     </div>
   ) : (

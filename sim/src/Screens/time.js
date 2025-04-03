@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import Quiz from './DOTraining/DO_3_Quiz'
+import Quiz from '../data/DO_3';
 import './VideoScreen.css';
 import QuizDataSecchi from '../data/DO_3';
 import Player from '@vimeo/player';

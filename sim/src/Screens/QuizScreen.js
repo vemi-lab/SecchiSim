@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from "react-router-dom";
 import './QuizScreen.css';
 
-const QuizScreen = ({ data, watchAgain, nextModule, quizName }) => {
+export default function QuizScreen({ data, watchAgain, nextModule, quizName }) {
   const allQuestions = data;
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState([]);
@@ -16,7 +17,21 @@ const QuizScreen = ({ data, watchAgain, nextModule, quizName }) => {
 
   const navigate = useNavigate();
 
-  const { currentUser } = useAuth();
+  const { currentUser, hasAccessToRole } = useAuth();
+
+  if (quizName.includes("Dissolved_Oxygen") && !hasAccessToRole("Dissolved Oxygen Role")) {
+    return (
+      <div className="access-denied">
+        <p>
+          Access denied. You do not have permission to view this quiz. Please contact{" "}
+          <a href="mailto:stewards@lakestewardsme.org" style={{ color: "#4B4E92", textDecoration: "underline" }}>
+            stewards@lakestewardsme.org
+          </a>{" "}
+          for assistance.
+        </p>
+      </div>
+    );
+  }
 
   const handleOptionSelect = (option) => {
     setSelectedOptions((prevSelected) =>
@@ -53,6 +68,14 @@ const QuizScreen = ({ data, watchAgain, nextModule, quizName }) => {
         setIsSubmitted(false);
       }
     }
+  };
+
+  const handleContinueQuiz = () => {
+    setShowAnnouncement(false);
+    setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
+    setSelectedOptions([]);
+    setCorrectOptions([]);
+    setIsSubmitted(false);
   };
 
   const saveScoreToFirestore = async (attemptScore) => {
@@ -172,7 +195,5 @@ const QuizScreen = ({ data, watchAgain, nextModule, quizName }) => {
       )}
     </div>
   );
-};
-
-export default QuizScreen;
+}
 

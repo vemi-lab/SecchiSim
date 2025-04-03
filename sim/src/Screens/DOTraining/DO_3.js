@@ -47,14 +47,6 @@ export default function Time() {
     }
   };
 
-  const restartVideo = () => {
-    if (playerRef.current) {
-      playerRef.current.setCurrentTime(0).then(() => {
-        playerRef.current.play();
-      });
-    }
-  };
-
   useEffect(() => {
     if (iframeRef.current) {
       const player = new Player(iframeRef.current);
@@ -103,20 +95,6 @@ export default function Time() {
     setShowQuiz(false);
   };
 
-  
-  if (moduleDisabled) {
-    return (
-      <div className="module-screen-container">
-        <h1 className="screen-title">Module Disabled</h1>
-        <p>
-          You have reached the max attempts allowed for this quiz. 
-          This module has been disabled.
-          Please contact <a href="mailto:stewards@lakestewardsme.org?subject=Maximum Simulator Quiz DO 3 Reached" style={{ color: '#4B4E92', textDecoration: 'underline' }}>
-          stewards@lakestewardsme.org</a> for further assistance.
-        </p>
-      </div>
-    );
-  }
 
   return (
     <div className="module-screen-container">
@@ -134,10 +112,15 @@ export default function Time() {
         </div>
       ) : moduleDisabled ? (
         <div className="quiz-locked-message">
-          <p>The quiz is locked as you have reached the maximum attempts.</p>
+          <p>
+            You have reached the max attempts allowed for this quiz. 
+            This module has been disabled.
+            Please contact <a href="mailto:stewards@lakestewardsme.org?subject=Maximum Simulator Quiz DO 1 Reached" style={{ color: '#4B4E92', textDecoration: 'underline' }}>
+            stewards@lakestewardsme.org</a> for further assistance.
+          </p>
         </div>
       ) : (
-        <DO_3_Quiz 
+        <Quiz 
           data={QuizDataSecchi} 
           watchAgain={handleWatchAgain}
           nextModule="/instructions"

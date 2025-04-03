@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import PrivateRoutes from "./PrivateRoutes";
@@ -11,16 +11,27 @@ import SecchiSimScreen from "./Screens/SecchiSimScreen";
 import InstructionsScreen from "./Screens/InstructionsScreen";
 // import TrainingScreen from "./Screens/TrainingScreen";
 import Time from "./Screens/time";
-import Secchi_1 from "./Screens/SecchiTraining/Secchi_1";
-import Secchi_2 from "./Screens/SecchiTraining/Secchi_2";
-import Secchi_3 from "./Screens/SecchiTraining/Secchi_3";
+import Secchi1 from "./Screens/SecchiTraining/Secchi_1";
+import Secchi2 from "./Screens/SecchiTraining/Secchi_2";
+import Secchi3 from "./Screens/SecchiTraining/Secchi_3";
 import DO_1 from "./Screens/DOTraining/DO_1";
 import DO_2 from "./Screens/DOTraining/DO_2";
 import DO_3 from "./Screens/DOTraining/DO_3";
 import "./App.css";
 
-
 export default function App() {
+  const { hasAccessToRole } = useAuth();
+  const [hasDOAccess, setHasDOAccess] = useState(false);
+
+  useEffect(() => {
+    const fetchAccess = async () => {
+      const access = await hasAccessToRole("Dissolved Oxygen Role");
+      setHasDOAccess(access);
+    };
+
+    fetchAccess();
+  }, [hasAccessToRole]);
+
   return (
     <AuthProvider>
       <Router>
@@ -38,16 +49,18 @@ export default function App() {
             <Route path="/instructions" element={<InstructionsScreen />} />
             <Route path="/secchi-sim" element={<SecchiSimScreen />} />
             <Route path="/video" element={<Time />} />
-            <Route path="/secchi_1" element={<Secchi_1 />} />
-            <Route path="/secchi_2" element={<Secchi_2 />} />
-            <Route path="/secchi_3" element={<Secchi_3 />} />
-            <Route path="/do_1" element={<DO_1 />} />
-            <Route path="/do_2" element={<DO_2 />} />
-            <Route path="/do_3" element={<DO_3 />} />
-            {/* <Route path="/trainings" element={<TrainingScreen />} /> */}
+            <Route path="/secchi_1" element={<Secchi1 />} />
+            <Route path="/secchi_2" element={<Secchi2 />} />
+            <Route path="/secchi_3" element={<Secchi3 />} />
+            {hasDOAccess && (
+              <>
+                <Route path="/do_1" element={<DO_1 />} />
+                <Route path="/do_2" element={<DO_2 />} />
+                <Route path="/do_3" element={<DO_3 />} />
+              </>
+            )}
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profile" element={<Profile />} />
-
           </Route>
         </Routes>
       </Router>

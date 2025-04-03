@@ -8,7 +8,12 @@ import { db } from "../../firebase";
 import { useAuth } from "../../contexts/AuthContext";
 
 export default function Time() {
-  const { currentUser } = useAuth();
+  const { currentUser, hasAccessToRole } = useAuth();
+
+  // Check if the user has access to the DO role
+  const hasAccess = hasAccessToRole("Dissolved Oxygen Role");
+
+  // State and refs must be declared unconditionally
   const [isVideoFinished, setIsVideoFinished] = useState(false);
   const [retryCount, setRetryCount] = useState(3);
   const [showQuiz, setShowQuiz] = useState(false);
@@ -80,7 +85,6 @@ export default function Time() {
     if (quizPassed) {
       // Navigate to the next module if the quiz is passed
       window.location.href = `/do_2`;
-      //newRetryCount;
       return;
     }
 
@@ -96,15 +100,16 @@ export default function Time() {
     setShowQuiz(false);
   };
 
-  if (moduleDisabled) {
+  // Render access denied message if the user does not have access
+  if (!hasAccess) {
     return (
-      <div className="module-screen-container">
-        <h1 className="screen-title">Module Disabled</h1>
+      <div className="access-denied">
         <p>
-          You have reached the max attempts allowed for this quiz. 
-          This module has been disabled.
-          Please contact <a href="mailto:stewards@lakestewardsme.org?subject=Maximum Simulator Quiz DO 1 Reached" style={{ color: '#4B4E92', textDecoration: 'underline' }}>
-          stewards@lakestewardsme.org</a> for further assistance.
+          Access denied. You do not have permission to view this content. Please contact{" "}
+          <a href="mailto:stewards@lakestewardsme.org" style={{ color: "#4B4E92", textDecoration: "underline" }}>
+            stewards@lakestewardsme.org
+          </a>{" "}
+          for assistance.
         </p>
       </div>
     );
@@ -113,7 +118,7 @@ export default function Time() {
   return (
     <div className="module-screen-container">
       <h1 className="screen-title">LSM Dissolved Oxygen Training Part 1</h1>
-      {!showQuiz? (
+      {!showQuiz ? (
         <div className='video-container'>
           <iframe
             ref={iframeRef}
@@ -126,13 +131,18 @@ export default function Time() {
         </div>
       ) : moduleDisabled ? (
         <div className="quiz-locked-message">
-          <p>The quiz is locked as you have reached the maximum attempts.</p>
+          <p>
+            You have reached the max attempts allowed for this quiz. 
+            This module has been disabled.
+            Please contact <a href="mailto:stewards@lakestewardsme.org?subject=Maximum Simulator Quiz DO 1 Reached" style={{ color: '#4B4E92', textDecoration: 'underline' }}>
+            stewards@lakestewardsme.org</a> for further assistance.
+          </p>
         </div>
       ) : (
         <Quiz 
           data={QuizDataSecchi}
           watchAgain={handleWatchAgain}
-          nextModule={"/do_1"} // Navigate to DO_2 after passing the quiz
+          nextModule={"/do_1"}
           quizName={"Dissolved_Oxygen 1 Quiz"}
         />
       )}
