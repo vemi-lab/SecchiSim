@@ -1,16 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Quiz from './QuizScreen';
 import Player from '@vimeo/player';
-import DO_data from '../data/DO_1'
+import DO_data from '../data/DO_1';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function VideoScreen({ videoUrl, quizData, title }) {
+  const { currentUser } = useAuth();
+  const hasDORole = currentUser?.roles?.["Dissolved Oxygen Role"] ?? false;
+
   const [isVideoFinished, setIsVideoFinished] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const videoRef = useRef(null);
   const playerRef = useRef(null);
-  const durationRef = useRef(null); 
+  const durationRef = useRef(null);
 
   useEffect(() => {
+    if (!hasDORole) {
+      console.warn("Access denied: User does not have the required role.");
+      return;
+    }
+
     if (!videoRef.current) return; // Ensure the iframe exists before initializing
     const player = new Player(videoRef.current);
     playerRef.current = player;
@@ -56,7 +65,22 @@ export default function VideoScreen({ videoUrl, quizData, title }) {
       player.off('ended', handleEnded);
       playerRef.current = null;
     };
-  }, [videoUrl, isVideoFinished, currentTime]);
+  }, [videoUrl, isVideoFinished, currentTime, hasDORole]);
+
+  if (!hasDORole) {
+    return (
+      <div className="access-denied">
+        <p>
+          You do not have access to this video. Please contact{" "}
+          <a href="mailto:stewards@lakestewardsme.org?subject=Access Request for Dissolved Oxygen Materials">
+            stewards@lakestewardsme.org
+          </a>{" "}
+          for assistance.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="module-screen-container">
       <h2 className="title-overlay">{title}</h2>
@@ -73,7 +97,6 @@ export default function VideoScreen({ videoUrl, quizData, title }) {
         </div>
       ) : (
         <Quiz data={DO_data} />
-
       )}
     </div>
   );

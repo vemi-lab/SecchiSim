@@ -8,12 +8,8 @@ import { db } from "../../firebase";
 import { useAuth } from "../../contexts/AuthContext";
 
 export default function Time() {
-  const { currentUser, hasAccessToRole } = useAuth();
-
-  // Check if the user has access to the DO role
-  const hasAccess = hasAccessToRole("Dissolved Oxygen Role");
-
-  // State and refs must be declared unconditionally
+  const { currentUser } = useAuth();
+  const hasDORole = currentUser?.roles?.["Dissolved Oxygen Role"] ?? false;
   const [isVideoFinished, setIsVideoFinished] = useState(false);
   const [retryCount, setRetryCount] = useState(3);
   const [showQuiz, setShowQuiz] = useState(false);
@@ -39,18 +35,22 @@ export default function Time() {
     }
   }, [currentUser]);
 
-  const updateQuizData = async (newRetryCount, isDisabled) => {
-    if (currentUser) {
-      const quizDocRef = doc(
-        db,
-        `users/${currentUser.email}/${new Date().getFullYear()}/Quizzes`
-      );
-      await updateDoc(quizDocRef, {
-        DO_1_RetryCount: newRetryCount,
-        DO_1_Disabled: isDisabled,
-      });
+  // Enable the quiz if the DO role is granted
+  useEffect(() => {
+    if (hasDORole && moduleDisabled) {
+      const enableQuiz = async () => {
+        const quizDocRef = doc(
+          db,
+          `users/${currentUser.email}/${new Date().getFullYear()}/Quizzes`
+        );
+        await updateDoc(quizDocRef, {
+          DO_1_Disabled: false,
+        });
+        setModuleDisabled(false);
+      };
+      enableQuiz();
     }
-  };
+  }, [hasDORole, moduleDisabled, currentUser]);
 
   useEffect(() => {
     if (iframeRef.current) {
@@ -70,6 +70,19 @@ export default function Time() {
     }
   }, [isVideoFinished]);
 
+  const updateQuizData = async (newRetryCount, isDisabled) => {
+    if (currentUser) {
+      const quizDocRef = doc(
+        db,
+        `users/${currentUser.email}/${new Date().getFullYear()}/Quizzes`
+      );
+      await updateDoc(quizDocRef, {
+        DO_1_RetryCount: newRetryCount,
+        DO_1_Disabled: isDisabled,
+      });
+    }
+  };
+
   const handleWatchAgain = (quizPassed) => {
     const newRetryCount = retryCount - 1;
     setRetryCount(newRetryCount);
@@ -84,7 +97,7 @@ export default function Time() {
 
     if (quizPassed) {
       // Navigate to the next module if the quiz is passed
-      window.location.href = `/do_2`;
+      window.location.href = "/do_2";
       return;
     }
 
@@ -100,13 +113,13 @@ export default function Time() {
     setShowQuiz(false);
   };
 
-  // Render access denied message if the user does not have access
-  if (!hasAccess) {
+  // Render access denied message if the user does not have the DO role
+  if (!hasDORole) {
     return (
       <div className="access-denied">
         <p>
-          Access denied. You do not have permission to view this content. Please contact{" "}
-          <a href="mailto:stewards@lakestewardsme.org" style={{ color: "#4B4E92", textDecoration: "underline" }}>
+          You do not have access to this module. Please contact{" "}
+          <a href="mailto:stewards@lakestewardsme.org?subject=Access Request for Dissolved Oxygen Materials">
             stewards@lakestewardsme.org
           </a>{" "}
           for assistance.
@@ -142,7 +155,7 @@ export default function Time() {
         <Quiz 
           data={QuizDataSecchi}
           watchAgain={handleWatchAgain}
-          nextModule={"/do_1"}
+          nextModule="DO_2"
           quizName={"Dissolved_Oxygen 1 Quiz"}
         />
       )}

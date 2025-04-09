@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import '../App.css';
 import logo from '../assets/avatar.jpg';
 
@@ -10,6 +11,8 @@ export default function CustomDrawer() {
   const [isSecchiOpen, setIsSecchiOpen] = useState(false);
   const [isDissolvedoxygenOpen, setIsDissolvedoxygenOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const { currentUser } = useAuth();
+  const hasDORole = currentUser?.roles?.["Dissolved Oxygen Role"] ?? false;
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -64,13 +67,12 @@ export default function CustomDrawer() {
 
   const links = [
     { to: '/instructions', name: 'Welcome and How to?' },
-    { to: '/secchi-sim', name: 'Secchi Simulator'},
+    { to: '/secchi-sim', name: 'Secchi Simulator' },
     { name: 'Course Material', hasSubsections: true },
     { to: 'https://lookerstudio.google.com/embed/reporting/5c1a4a70-ef70-4e71-9722-3847e75464e2/page/apkeE', name: 'Upcoming Trainings', isExternal: true },
     { to: '/video', name: 'Video' },
-    { to: '/dashboard', name: 'Dashboard' }, 
+    { to: '/dashboard', name: 'Dashboard' }
   ];
-  //maybe delete dashboard
 
   return (
     <div>
@@ -136,10 +138,12 @@ export default function CustomDrawer() {
                   )}
 
                   {/* Dissolved Oxygen Subsection */}
-                  <div className="subsection-header" onClick={() => toggleSubsection('Dissolved Oxygen')}>
-                    <h4>Dissolved Oxygen</h4>
-                  </div>
-                  {isDissolvedoxygenOpen && (
+                  {hasDORole && (
+                    <div className="subsection-header" onClick={() => toggleSubsection('Dissolved Oxygen')}>
+                      <h4>Dissolved Oxygen</h4>
+                    </div>
+                  )}
+                  {hasDORole && isDissolvedoxygenOpen && (
                     <div className="subsections">
                       <Link key="do_1" to="/do_1" className='subsection-item' onClick={handleSubsection}>
                         <div>

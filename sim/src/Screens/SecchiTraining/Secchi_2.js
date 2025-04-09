@@ -79,7 +79,7 @@ export default function Secchi2() {
     }
 
     if (quizPassed) {
-      navigate(`/Secchi_3`); // Use navigate instead of window.location.href
+      navigate("/Secchi_3"); // Use navigate instead of window.location.href
       return;
     }
 

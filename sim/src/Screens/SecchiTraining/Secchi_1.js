@@ -79,7 +79,7 @@ export default function Secchi1() {
 
     if (quizPassed) {
       // Navigate to the next module if the quiz is passed
-      window.location.href = `/Secchi_2`;
+      window.location.href = "/Secchi_2";
       //newRetryCount;
       return;
     }

@@ -9,6 +9,8 @@ import { useAuth } from "../../contexts/AuthContext";
 
 export default function Time() {
   const { currentUser } = useAuth();
+  const hasDORole = currentUser?.roles?.["Dissolved Oxygen Role"] ?? false;
+
   const [isVideoFinished, setIsVideoFinished] = useState(false);
   const [retryCount, setRetryCount] = useState(3);
   const [showQuiz, setShowQuiz] = useState(false);
@@ -33,6 +35,23 @@ export default function Time() {
       fetchQuizData();
     }
   }, [currentUser]);
+
+  // Enable the quiz if the DO role is granted
+  useEffect(() => {
+    if (hasDORole && moduleDisabled) {
+      const enableQuiz = async () => {
+        const quizDocRef = doc(
+          db,
+          `users/${currentUser.email}/${new Date().getFullYear()}/Quizzes`
+        );
+        await updateDoc(quizDocRef, {
+          DO_3_Disabled: false,
+        });
+        setModuleDisabled(false);
+      };
+      enableQuiz();
+    }
+  }, [hasDORole, moduleDisabled, currentUser]);
 
   const updateQuizData = async (newRetryCount, isDisabled) => {
     if (currentUser) {
@@ -79,7 +98,7 @@ export default function Time() {
 
     if (quizPassed) {
       // Navigate to the next module if the quiz is passed
-      window.location.href = `/instructions`;
+      window.location.href = "/instructions";
       return;
     }
 
@@ -94,6 +113,21 @@ export default function Time() {
     setIsVideoFinished(false);
     setShowQuiz(false);
   };
+
+  // Render access denied message if the user does not have the DO role
+  if (!hasDORole) {
+    return (
+      <div className="access-denied">
+        <p>
+          You do not have access to this module. Please contact{" "}
+          <a href="mailto:stewards@lakestewardsme.org?subject=Access Request for Dissolved Oxygen Materials">
+            stewards@lakestewardsme.org
+          </a>{" "}
+          for assistance.
+        </p>
+      </div>
+    );
+  }
 
 
   return (
@@ -123,7 +157,7 @@ export default function Time() {
         <Quiz 
           data={QuizDataSecchi} 
           watchAgain={handleWatchAgain}
-          nextModule="/instructions"
+          nextModule="InstructionsScreen"
           quizName={"Dissolved_Oxygen 3 Quiz"}
         />
       )}

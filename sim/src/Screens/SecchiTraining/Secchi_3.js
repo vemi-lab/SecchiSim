@@ -82,7 +82,7 @@ export default function Secchi3() {
 
     if (quizPassed) {
       // Navigate to the next module if the quiz is passed
-      navigate(`/instructions`);
+      navigate("/instructions"); // Ensure this matches the route defined in App.js
       return;
     }
 
@@ -123,7 +123,7 @@ export default function Secchi3() {
         <Quiz 
           data={QuizDataSecchi} 
           watchAgain={handleWatchAgain} 
-          nextModule="/instructions"
+          nextModule="InstructionsScreen"
           quizName="Secchi_3 Quiz"
         />
       )}

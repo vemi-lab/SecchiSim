@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Quiz from '../QuizScreen';
 import '../VideoScreen.css';
-import QuizDataSecchi from '../../data/DO_1'; 
+import QuizDataSecchi from '../../data/DO_2'; 
 import Player from '@vimeo/player';
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
@@ -9,6 +9,8 @@ import { useAuth } from "../../contexts/AuthContext";
 
 export default function Time() {
   const { currentUser } = useAuth();
+  const hasDORole = currentUser?.roles?.["Dissolved Oxygen Role"] ?? false;
+
   const [isVideoFinished, setIsVideoFinished] = useState(false);
   const [retryCount, setRetryCount] = useState(3);
   const [showQuiz, setShowQuiz] = useState(false);
@@ -16,23 +18,40 @@ export default function Time() {
   const iframeRef = useRef(null);
   const [moduleDisabled, setModuleDisabled] = useState(false);
 
-    useEffect(() => {
-      if (currentUser) {
-        const fetchQuizData = async () => {
-          const quizDocRef = doc(
-            db,
-            `users/${currentUser.email}/${new Date().getFullYear()}/Quizzes`
-          );
-          const quizDoc = await getDoc(quizDocRef);
-          if (quizDoc.exists()) {
-            const quizData = quizDoc.data();
-            setRetryCount(quizData["DO_2_RetryCount"] ?? 3);
-            setModuleDisabled(quizData["DO_2_Disabled"] ?? false);
-          }
-        };
-        fetchQuizData();
-      }
-    }, [currentUser]);
+  useEffect(() => {
+    if (currentUser) {
+      const fetchQuizData = async () => {
+        const quizDocRef = doc(
+          db,
+          `users/${currentUser.email}/${new Date().getFullYear()}/Quizzes`
+        );
+        const quizDoc = await getDoc(quizDocRef);
+        if (quizDoc.exists()) {
+          const quizData = quizDoc.data();
+          setRetryCount(quizData["DO_2_RetryCount"] ?? 3);
+          setModuleDisabled(quizData["DO_2_Disabled"] ?? false);
+        }
+      };
+      fetchQuizData();
+    }
+  }, [currentUser]);
+
+  // Enable the quiz if the DO role is granted
+  useEffect(() => {
+    if (hasDORole && moduleDisabled) {
+      const enableQuiz = async () => {
+        const quizDocRef = doc(
+          db,
+          `users/${currentUser.email}/${new Date().getFullYear()}/Quizzes`
+        );
+        await updateDoc(quizDocRef, {
+          DO_2_Disabled: false,
+        });
+        setModuleDisabled(false);
+      };
+      enableQuiz();
+    }
+  }, [hasDORole, moduleDisabled, currentUser]);
 
   const updateQuizData = async (newRetryCount, isDisabled) => {
     if (currentUser) {
@@ -79,7 +98,7 @@ export default function Time() {
 
     if (quizPassed) {
       // Navigate to the next module if the quiz is passed
-      window.location.href = `/do_2`;
+      window.location.href = "/do_2";
       //newRetryCount;
       return;
     }
@@ -95,6 +114,21 @@ export default function Time() {
     setIsVideoFinished(false);
     setShowQuiz(false);
   };
+
+  // Render access denied message if the user does not have the DO role
+  if (!hasDORole) {
+    return (
+      <div className="access-denied">
+        <p>
+          You do not have access to this module. Please contact{" "}
+          <a href="mailto:stewards@lakestewardsme.org?subject=Access Request for Dissolved Oxygen Materials">
+            stewards@lakestewardsme.org
+          </a>{" "}
+          for assistance.
+        </p>
+      </div>
+    );
+  }
 
 
   return (
@@ -124,7 +158,7 @@ export default function Time() {
         <Quiz 
           data={QuizDataSecchi}
           watchAgain={handleWatchAgain}
-          nextModule={"/do_2"} // Navigate to DO_2 after passing the quiz
+          nextModule="DO_3" // Navigate to DO_2 after passing the quiz
           quizName={"Dissolved_Oxygen 2 Quiz"}
         />
       )}

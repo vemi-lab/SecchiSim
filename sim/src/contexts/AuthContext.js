@@ -35,7 +35,7 @@ export function AuthProvider({children}) {
         };
 
         const defaultAccessDoRoles = {
-            "Dissolved Oxygen Role": false
+            "Dissolved Oxygen Role": false // Default to no access
         };
 
         // Initial quiz progress
@@ -55,14 +55,7 @@ export function AuthProvider({children}) {
         };
 
         // Initial quiz scores
-        const initialQuizScores = {
-            "Secchi_1_Score": null,
-            "Secchi_2_Score": null,
-            "Secchi_3_Score": null,
-            "DO_1_Score": null,
-            "DO_2_Score": null,
-            "DO_3_Score": null
-        };
+        const initialQuizScores = { };
 
         try {
             // Create user document
@@ -93,7 +86,14 @@ export function AuthProvider({children}) {
             throw error; // Re-throw the error to handle it in the UI if needed
         }
 
-        return userCredential;
+        return userCredential; // Remove hasAccess from return
+    }
+
+    async function fetchUserRoles(email) {
+        const currentYear = new Date().getFullYear().toString();
+        const rolesDocRef = doc(db, `users/${email}/${currentYear}/Roles`);
+        const rolesSnapshot = await getDoc(rolesDocRef);
+        return rolesSnapshot.exists() ? rolesSnapshot.data() : {};
     }
 
     function login(email, password) {
@@ -108,28 +108,6 @@ export function AuthProvider({children}) {
         return sendPasswordResetEmail(auth, email)
     }
 
-    // Function to check role access
-    async function hasAccessToRole(role) {
-        if (!currentUser) return false;
-
-        try {
-            const currentYear = new Date().getFullYear().toString(); // e.g., "2026"
-            const rolesDocRef = doc(db, `users/${currentUser.email}/${currentYear}/Roles`);
-            const rolesDoc = await getDoc(rolesDocRef);
-
-            if (rolesDoc.exists()) {
-                const roles = rolesDoc.data();
-                return roles[role] === true; // Return true if the role is enabled
-            } else {
-                console.warn("Roles document does not exist for the user.");
-                return false;
-            }
-        } catch (error) {
-            console.error("Error checking role access:", error);
-            return false;
-        }
-    }
-
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(async (user) => {
             if (user) {
@@ -138,7 +116,8 @@ export function AuthProvider({children}) {
                     alert("Account created!");
                     setCurrentUser(null);
                 } else {
-                setCurrentUser(user); //set the authentificated user properly
+                    const roles = await fetchUserRoles(user.email);
+                    setCurrentUser({ ...user, roles }); // Include roles in the user state
                 }
             } else {
                 setCurrentUser(null);
@@ -155,7 +134,7 @@ export function AuthProvider({children}) {
         signup,
         logout,
         resetPassword,
-        hasAccessToRole // Ensure this is included in the context value
+        fetchUserRoles // Expose fetchUserRoles for other components
     }
 
     return (

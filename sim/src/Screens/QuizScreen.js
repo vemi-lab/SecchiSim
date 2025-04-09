@@ -17,21 +17,7 @@ export default function QuizScreen({ data, watchAgain, nextModule, quizName }) {
 
   const navigate = useNavigate();
 
-  const { currentUser, hasAccessToRole } = useAuth();
-
-  if (quizName.includes("Dissolved_Oxygen") && !hasAccessToRole("Dissolved Oxygen Role")) {
-    return (
-      <div className="access-denied">
-        <p>
-          Access denied. You do not have permission to view this quiz. Please contact{" "}
-          <a href="mailto:stewards@lakestewardsme.org" style={{ color: "#4B4E92", textDecoration: "underline" }}>
-            stewards@lakestewardsme.org
-          </a>{" "}
-          for assistance.
-        </p>
-      </div>
-    );
-  }
+  const { currentUser } = useAuth();
 
   const handleOptionSelect = (option) => {
     setSelectedOptions((prevSelected) =>

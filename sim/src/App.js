@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import PrivateRoutes from "./PrivateRoutes";
@@ -20,18 +20,6 @@ import DO_3 from "./Screens/DOTraining/DO_3";
 import "./App.css";
 
 export default function App() {
-  const { hasAccessToRole } = useAuth();
-  const [hasDOAccess, setHasDOAccess] = useState(false);
-
-  useEffect(() => {
-    const fetchAccess = async () => {
-      const access = await hasAccessToRole("Dissolved Oxygen Role");
-      setHasDOAccess(access);
-    };
-
-    fetchAccess();
-  }, [hasAccessToRole]);
-
   return (
     <AuthProvider>
       <Router>
@@ -52,13 +40,9 @@ export default function App() {
             <Route path="/secchi_1" element={<Secchi1 />} />
             <Route path="/secchi_2" element={<Secchi2 />} />
             <Route path="/secchi_3" element={<Secchi3 />} />
-            {hasDOAccess && (
-              <>
-                <Route path="/do_1" element={<DO_1 />} />
-                <Route path="/do_2" element={<DO_2 />} />
-                <Route path="/do_3" element={<DO_3 />} />
-              </>
-            )}
+            <Route path="/do_1" element={<DO_1 />} />
+            <Route path="/do_2" element={<DO_2 />} />
+            <Route path="/do_3" element={<DO_3 />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profile" element={<Profile />} />
           </Route>
