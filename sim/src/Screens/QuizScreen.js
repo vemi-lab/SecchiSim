@@ -89,8 +89,8 @@ export default function QuizScreen({ data, watchAgain, nextModule, quizName }) {
 
   const handleQuizCompletion = async () => {
     setShowScoreModal(false);
-    const passingScore = allQuestions.length / 2;
-    const quizPassed = score > passingScore;
+    const passingScore = Math.ceil(allQuestions.length * 0.7); // 70% threshold
+    const quizPassed = score >= passingScore;
 
     // Save the score for the current attempt
     await saveScoreToFirestore(score);
@@ -171,10 +171,10 @@ export default function QuizScreen({ data, watchAgain, nextModule, quizName }) {
       {showScoreModal && (
         <div className="modal">
           <div className="modal-content">
-            <h2>{score > allQuestions.length / 2 ? 'Congratulations!' : 'Oops!'}</h2>
+            <h2>{score >= Math.ceil(allQuestions.length * 0.7) ? 'Congratulations!' : 'Oops!'}</h2>
             <p>Your Score: {score} / {allQuestions.length}</p>
             <button className="retry-button" onClick={handleQuizCompletion}>
-              {score > allQuestions.length / 2 ? 'Continue' : 'Watch Video Again'}
+              {score >= Math.ceil(allQuestions.length * 0.7) ? 'Continue' : 'Watch Video Again'}
             </button>
           </div>
         </div>

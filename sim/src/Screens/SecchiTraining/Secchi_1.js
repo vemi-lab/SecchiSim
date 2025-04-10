@@ -9,6 +9,7 @@ import { useAuth } from "../../contexts/AuthContext";
 
 export default function Secchi1() {
   const { currentUser } = useAuth();
+  const hasSecchiRole = currentUser?.roles?.["Secchi Role"] ?? false;
   const [isVideoFinished, setIsVideoFinished] = useState(false);
   const [retryCount, setRetryCount] = useState(3);
   const [showQuiz, setShowQuiz] = useState(false);
@@ -33,6 +34,23 @@ export default function Secchi1() {
       fetchQuizData();
     }
   }, [currentUser]);
+
+  // Enable the quiz if the DO role is granted
+  useEffect(() => {
+    if (hasSecchiRole && moduleDisabled && retryCount > 0) {
+      const enableQuiz = async () => {
+        const quizDocRef = doc(
+          db,
+          `users/${currentUser.email}/${new Date().getFullYear()}/Quizzes`
+        );
+        await updateDoc(quizDocRef, {
+          DO_1_Disabled: false,
+        });
+        setModuleDisabled(false);
+      };
+      enableQuiz();
+    }
+  }, [hasSecchiRole, moduleDisabled, retryCount, currentUser]);
 
   const updateQuizData = async (newRetryCount, isDisabled) => {
     if (currentUser) {
@@ -94,6 +112,19 @@ export default function Secchi1() {
     }
   };
 
+  if (!hasSecchiRole) {
+    return (
+      <div className="access-denied">
+        <p>
+          You do not have access to this module. Please contact{" "}
+          <a href="mailto:stewards@lakestewardsme.org?subject=Access Request for Secchi Materials">
+            stewards@lakestewardsme.org
+          </a>{" "}
+          for assistance.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="module-screen-container">

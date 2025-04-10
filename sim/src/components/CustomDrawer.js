@@ -13,6 +13,7 @@ export default function CustomDrawer() {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const { currentUser } = useAuth();
   const hasDORole = currentUser?.roles?.["Dissolved Oxygen Role"] ?? false;
+  const hasSecchiRole = currentUser?.roles?.["Secchi Role"] ?? false;
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -66,7 +67,7 @@ export default function CustomDrawer() {
   }
 
   const links = [
-    { to: '/instructions', name: 'Welcome and How to?' },
+    { to: '/Instructions', name: 'Welcome and How to?' },
     { to: '/secchi-sim', name: 'Secchi Simulator' },
     { name: 'Course Material', hasSubsections: true },
     { to: 'https://lookerstudio.google.com/embed/reporting/5c1a4a70-ef70-4e71-9722-3847e75464e2/page/apkeE', name: 'Upcoming Trainings', isExternal: true },
@@ -114,10 +115,12 @@ export default function CustomDrawer() {
               {link.name === 'Course Material' && isCourseMaterialOpen && (
                 <div className="subsections">
                   {/* Secchi Subsection */}
-                  <div className="subsection-header" onClick={() => toggleSubsection('Secchi')}>
-                    <h4>Secchi</h4>
-                  </div>
-                  {isSecchiOpen && (
+                  {hasSecchiRole && (
+                    <div className="subsection-header" onClick={() => toggleSubsection('Secchi')}>
+                      <h4>Secchi</h4>
+                    </div>
+                  )}
+                  {hasSecchiRole && isSecchiOpen && (
                     <div className="subsections">
                       <Link key="secchi_1" to="/secchi_1" className='subsection-item' onClick={handleSubsection}>
                         <div>

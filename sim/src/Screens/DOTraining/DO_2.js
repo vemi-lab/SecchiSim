@@ -38,7 +38,7 @@ export default function Time() {
 
   // Enable the quiz if the DO role is granted
   useEffect(() => {
-    if (hasDORole && moduleDisabled) {
+    if (hasDORole && moduleDisabled && retryCount > 0) {
       const enableQuiz = async () => {
         const quizDocRef = doc(
           db,
@@ -51,7 +51,7 @@ export default function Time() {
       };
       enableQuiz();
     }
-  }, [hasDORole, moduleDisabled, currentUser]);
+  }, [hasDORole, moduleDisabled, retryCount, currentUser]);
 
   const updateQuizData = async (newRetryCount, isDisabled) => {
     if (currentUser) {
@@ -94,6 +94,7 @@ export default function Time() {
       updateQuizData(0, true);
     } else {
       updateQuizData(newRetryCount, false);
+    
     }
 
     if (quizPassed) {

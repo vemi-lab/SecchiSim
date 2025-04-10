@@ -96,6 +96,58 @@ export function AuthProvider({children}) {
         return rolesSnapshot.exists() ? rolesSnapshot.data() : {};
     }
 
+    async function ensureYearlyCollection(email) {
+        const currentYear = new Date().getFullYear().toString();
+        const yearCollectionPath = `users/${email}/${currentYear}`;
+
+        const rolesDocRef = doc(db, `${yearCollectionPath}/Roles`);
+        const quizzesDocRef = doc(db, `${yearCollectionPath}/Quizzes`);
+        const scoresDocRef = doc(db, `${yearCollectionPath}/Scores`);
+
+        const rolesSnapshot = await getDoc(rolesDocRef);
+
+        if (!rolesSnapshot.exists()) {
+            // Default access roles
+            const defaultAccessSecchiRoles = {
+                "Secchi Role": true
+            };
+
+            const defaultAccessDoRoles = {
+                "Dissolved Oxygen Role": false // Default to no access
+            };
+
+            // Initial quiz progress
+            const initialQuizProgress = {
+                "Secchi_1_RetryCount": 3,
+                "Secchi_1_Disabled": false,
+                "Secchi_2_RetryCount": 3,
+                "Secchi_2_Disabled": false,
+                "Secchi_3_RetryCount": 3,
+                "Secchi_3_Disabled": false,
+                "DO_1_RetryCount": 3,
+                "DO_1_Disabled": true,
+                "DO_2_RetryCount": 3,
+                "DO_2_Disabled": true,
+                "DO_3_RetryCount": 3,
+                "DO_3_Disabled": true
+            };
+
+            // Initial quiz scores
+            const initialQuizScores = {};
+
+            try {
+                await Promise.all([
+                    setDoc(rolesDocRef, { ...defaultAccessSecchiRoles, ...defaultAccessDoRoles }),
+                    setDoc(quizzesDocRef, initialQuizProgress),
+                    setDoc(scoresDocRef, initialQuizScores)
+                ]);
+            } catch (error) {
+                console.error("Error creating yearly collection:", error);
+                throw error;
+            }
+        }
+    }
+
     function login(email, password) {
         return signInWithEmailAndPassword(auth, email, password)
     }
@@ -116,7 +168,9 @@ export function AuthProvider({children}) {
                     alert("Account created!");
                     setCurrentUser(null);
                 } else {
-                    const roles = await fetchUserRoles(user.email);
+                    const email = user.email;
+                    await ensureYearlyCollection(email); // Ensure the yearly collection exists
+                    const roles = await fetchUserRoles(email);
                     setCurrentUser({ ...user, roles }); // Include roles in the user state
                 }
             } else {

@@ -37,7 +37,7 @@ export default function Time() {
 
   // Enable the quiz if the DO role is granted
   useEffect(() => {
-    if (hasDORole && moduleDisabled) {
+    if (hasDORole && moduleDisabled && retryCount > 0) {
       const enableQuiz = async () => {
         const quizDocRef = doc(
           db,
@@ -50,7 +50,7 @@ export default function Time() {
       };
       enableQuiz();
     }
-  }, [hasDORole, moduleDisabled, currentUser]);
+  }, [hasDORole, moduleDisabled, retryCount, currentUser]);
 
   useEffect(() => {
     if (iframeRef.current) {
@@ -87,27 +87,27 @@ export default function Time() {
     const newRetryCount = retryCount - 1;
     setRetryCount(newRetryCount);
 
-    // Update Firestore with the new retry count
     if (newRetryCount === 0) {
-      setModuleDisabled(true);
-      updateQuizData(0, true);
+        // Immediately disable the module to prevent further attempts
+        setModuleDisabled(true);
+        updateQuizData(0, true);
     } else {
-      updateQuizData(newRetryCount, false);
+        updateQuizData(newRetryCount, false);
     }
 
     if (quizPassed) {
-      // Navigate to the next module if the quiz is passed
-      window.location.href = "/do_2";
-      return;
+        // Navigate to the next module if the quiz is passed
+        window.location.href = "/do_2";
+        return;
     }
 
     // Reset quiz state and navigate back to the video
     setShowQuiz(false);
     setIsVideoFinished(false);
     if (playerRef.current) {
-      playerRef.current.setCurrentTime(0).then(() => {
-        playerRef.current.play();
-      });
+        playerRef.current.setCurrentTime(0).then(() => {
+            playerRef.current.play();
+        });
     }
     setIsVideoFinished(false);
     setShowQuiz(false);
