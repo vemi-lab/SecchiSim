@@ -57,7 +57,7 @@ export default function Time() {
         <h1 className="screen-title">Module Disabled</h1>
         <p>
           You have reached the max attempts allowed for this quiz. 
-          This module has been disabled.
+          This module has been disabled. <br />
           Please contact <a href="mailto:stewards@lakestewardsme.org?subject=Maximum Simulator Quiz DO 3 Reached" style={{ color: '#4B4E92', textDecoration: 'underline' }}>
           stewards@lakestewardsme.org</a> for further assistance.
         </p>

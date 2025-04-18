@@ -80,10 +80,7 @@ export default function CustomDrawer() {
         <div className="logo-container">
           <img src={logo} alt="Logo" className="logo" />
         </div>
-        <div className="text">Water Quality Monitoring Dashboard</div>
-        <div className="text" style={{ marginBottom: '20px' }}>
-          Lake Stewards of Maine
-        </div>
+        <div className="text">Water Quality Monitoring Dashboard <br />Lake Stewards of Maine</div>
 
         {/* Sidebar Links */}
         <nav className="drawer-items">
