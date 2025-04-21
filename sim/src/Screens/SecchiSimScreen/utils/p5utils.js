@@ -2,7 +2,7 @@
 export const CONSTANTS = {
   MIN_DEPTH: 0,
   MAX_DEPTH: 7, // 10 meters max depth
-  DISK_DIAMETER: 300, // Increased from 200 to 300 for larger disk
+  DISK_DIAMETER: 650, // Increased from 200 to 300 for larger disk
   DISK_SEGMENTS: 4, // Number of segments in the Secchi disk
   WATER_ATTENUATION: 0.2,  // Light attenuation coefficient in water
   DISK_COLOR: [255, 255, 255],  // White color for Secchi disk
@@ -18,7 +18,11 @@ export const preload = (p5) => {
 
 // Calculate visibility based on depth and turbidity
 export const calculateVisibility = (depth, turbidity) => {
-  // Visibility decreases with depth and turbidity
+  // Force disk disappearance at depth 5.30 if turbidity is high enough.
+  const turbidityThreshold = 1.7 / 5.30; // ~0.32075
+  if(depth >= 5.30 && turbidity >= turbidityThreshold) {
+    return 0;
+  }
   const maxVisibility = 1;
   const visibilityFactor = Math.exp(-turbidity * depth / 2);
   return Math.max(0, Math.min(maxVisibility, visibilityFactor));
@@ -48,81 +52,53 @@ export const drawSecchiDisk = (p, x, y, visibility, size = CONSTANTS.DISK_DIAMET
   const horizontalOffset = p.cos(time * 1.5) * 5;
   
   // Draw disk with floating motion
-  p.translate(x + horizontalOffset, y + verticalOffset);
+  p.translate(x/2.6 + horizontalOffset, y - 130 + verticalOffset);
   
   // Draw measuring tape first
   p.push();
+  // Added rotation to fix tape angle
+  const tapeAngle = p.radians(5); // adjust angle as needed
+  p.rotate(tapeAngle);
+  
   // Create gradient measuring tape with larger dimensions
   const tapeStart = -x * 1.2; // Extended tape start position
-  const tapeEnd = -x * 0.1; // Moved tape end closer to disk
-  const tapeWidth = size * 0.08; // Increased tape width
+  const tapeEnd = -x * 0.001; // Moved tape end closer to disk
+  const tapeWidth = size * 0.5; // Base tape width
   
-  // Draw the main tape line with gradient
-  p.push();
-  const grad = p.drawingContext.createLinearGradient(tapeStart, -25, tapeEnd, y);
-  grad.addColorStop(0, p.color(255, 255, 255, opacity));
-  grad.addColorStop(1, p.color(255, 255, 255, opacity));
-  p.drawingContext.fillStyle = grad;
+  // New: Compute a taper factor so the tape's end gets smaller as the disk gets smaller.
+  // Assuming deep disks yield a smaller 'size' (min ~20) and shallow disks larger (up to CONSTANTS.DISK_DIAMETER)
+  const endTaper = p.map(size, CONSTANTS.DISK_DIAMETER, 10, 1, 0.3);
   
-  // Draw tape rectangle
+  // Draw tape rectangle with tapered end width
   p.noStroke();
   p.beginShape();
   p.vertex(tapeStart, -tapeWidth);
-  p.vertex(tapeEnd, -tapeWidth/2);
-  p.vertex(tapeEnd, tapeWidth/2);
+  p.vertex(tapeEnd, -tapeWidth * endTaper / 2);
+  p.vertex(tapeEnd, tapeWidth * endTaper / 40);
   p.vertex(tapeStart, tapeWidth);
   p.endShape(p.CLOSE);
   p.pop();
-  
-  // // Draw tick marks with larger dimensions
-  // for(let i = 1; i <= CONSTANTS.MAX_DEPTH; i++) {
-  //   const tickX = p.map(i, 0, CONSTANTS.MAX_DEPTH, tapeEnd, tapeStart);
-  //   p.stroke(255, opacity);
-  //   p.strokeWeight(3); // Increased stroke weight for tick marks
-  //   p.line(tickX, -tapeWidth, tickX, tapeWidth);
-    
-  //   // Add numbers with larger text
-  //   if(y > 0.68) {
-  //     p.textSize(size * 0.12); // Increased text size
-  //     p.fill(255, opacity);
-  //     p.noStroke();
-  //     p.textAlign(p.CENTER, p.BOTTOM);
-  //     p.text(i, tickX, tapeWidth * 2);
-  //   } else {
-  //     p.textSize(size * 0.12); // Increased text size
-  //     p.fill(255, opacity);
-  //     p.noStroke();
-  //     p.textAlign(p.CENTER, p.TOP);
-  //     p.text(i, tickX, -tapeWidth * 2);
-  //   }
-  // }
-  p.pop();
-  
+
   // Draw the larger disk
   p.noStroke();
   
   // Draw the four quadrants
-  // Top-right quadrant (white)
+
+    // Bottom-right quadrant (black)
   p.fill(255, opacity);
-  p.arc(0, 0, size, size, -p.HALF_PI, 0);
+  p.arc(0, 0, size*1.5, size*1.5, 0, p.HALF_PI);
   
-  // Bottom-right quadrant (black)
+  // Top-right quadrant (white)
   p.fill(0, opacity);
-  p.arc(0, 0, size, size, 0, p.HALF_PI);
+  p.arc(0, 0, size*1.5, size*1.5, -p.HALF_PI, 0);
   
   // Bottom-left quadrant (white)
-  p.fill(255, opacity);
-  p.arc(0, 0, size, size, p.HALF_PI, p.PI);
+  p.fill(0, opacity);
+  p.arc(0, 0, size*1.5, size*1.5, p.HALF_PI, p.PI);
   
   // Top-left quadrant (black)
-  p.fill(0, opacity);
-  p.arc(0, 0, size, size, p.PI, -p.HALF_PI);
-  
-  // Add outer ring with thicker stroke
-  p.noFill();
-  p.stroke(255, opacity);
-  p.strokeWeight(4); // Increased stroke weight for disk outline
-  p.ellipse(0, 0, size, size);
+  p.fill(255, opacity);
+  p.arc(0, 0, size*1.5, size*1.5, p.PI, -p.HALF_PI);
   
   p.pop();
 };

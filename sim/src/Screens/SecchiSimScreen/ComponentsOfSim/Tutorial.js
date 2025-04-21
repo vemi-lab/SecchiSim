@@ -1,7 +1,6 @@
 import React from "react";
 
 const Tutorial = () => {
-    // Define styles as JavaScript objects
     const styles = {
         container: {
             padding: '20px',
