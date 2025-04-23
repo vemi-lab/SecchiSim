@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './InstructionsScreen.css';
 import lakeView from '../assets/frozenLake.jpg';
 import simulator from '../assets/simulator.jpeg';
@@ -7,10 +8,24 @@ import material from '../assets/maerial.jpg';
 import volunteers from '../assets/volunteers.jpg';
 import sunset from '../assets/sunset.jpg';
 import lake from '../assets/lake.jpg'
+import userDark from '../assets/user-dark.png';
+import userLight from '../assets/user-light.png';
+import { useTheme } from "../contexts/ThemeContext";
+
 
 export default function InstructionsScreen() {
+  const navigate = useNavigate();
+  const { darkMode } = useTheme();  
+
   return (
     <div className="scroll-container">
+      {/* Header with Settings Icon and Profile */}
+      <div className="header">
+        {/* <FiSettings className="setting-icon" /> */}
+        <div onClick={() => navigate("/profile")} className="profile">
+          <img src={darkMode ? userLight : userDark} alt="User Icon" />
+        </div>
+      </div>
 
       <section className="welcome-section scroll-section">
         <img src={lakeView} alt="Scenic lake" className="welcome-image" />
@@ -33,7 +48,7 @@ export default function InstructionsScreen() {
       <section className="functionality-section scroll-section">
         <h2>What You Can Do Here: </h2>
         <ul>
-          <li>
+          <li> 
             <img src={simulator} alt="simulator" className="functionality-image" />
             <h3 style={{marginTop: '10px'}}>Secchi Simulator:</h3>
             Practice taking Secchi disk readings in a simulated lake environment.
@@ -88,9 +103,7 @@ export default function InstructionsScreen() {
               stewards@lakestewardsme.org</a> or reach out to Tristan or Jonnie.
           </p>
         </div>
-
       </section>
-
     </div>
   );
 }

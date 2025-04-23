@@ -15,6 +15,35 @@
   text-align: center;
 }
 
+.header {
+  position: fixed; 
+  top: 10px;    
+  right: 10px;  
+  display: flex;   
+  align-items: center; 
+  z-index: 1000;   
+  background-color: transparent;
+}
+
+.profile {
+  margin-top: 10px;
+  margin-right: 20px;
+  width: 40px;
+  height: 40px;
+}
+
+/* Style for the settings icon */
+.setting-icon {
+  font-size: 24px; /* Adjust size as needed */
+  color: #555;      /* Adjust color as needed */
+  cursor: pointer;
+  margin-right: 15px; /* Space between icon and profile */
+}
+
+.setting-icon:hover {
+  color: #333; /* Darker color on hover */
+}
+
 /************************/
 /**** Welcome Section ***/
 /************************/
@@ -130,13 +159,11 @@
 }
 
 .functionality-section li {
-  background: white;
+  background: var(--secondary-color);
   border-radius: 10px;
   padding: 20px;
   width: 30%;
   text-align: center;
-  /* font-size: medium; */
-  /* box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.1); */
   transition: transform 0.2s ease-in-out;
 }
 
@@ -172,7 +199,7 @@
 }
 
 .instructions-section ol {
-  background: white;
+  background: var(--secondary-color);
   border-radius: 10px;
   padding: 20px;
   box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.1);
