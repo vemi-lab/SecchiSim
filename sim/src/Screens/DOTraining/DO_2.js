@@ -1,16 +1,70 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Quiz from '../QuizScreen';
 import '../VideoScreen.css';
-import QuizDataSecchi from '../../data/DO_1'; 
+import QuizDataSecchi from '../../data/DO_2'; 
 import Player from '@vimeo/player';
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { db } from "../../firebase";
+import { useAuth } from "../../contexts/AuthContext";
 
-export default function Time( ) {
+export default function Time() {
+  const { currentUser } = useAuth();
+  const hasDORole = currentUser?.roles?.["Dissolved Oxygen Role"] ?? false;
+
   const [isVideoFinished, setIsVideoFinished] = useState(false);
-  const [retryCount, setRetryCount] = useState(0);
+  const [retryCount, setRetryCount] = useState(3);
   const [showQuiz, setShowQuiz] = useState(false);
   const playerRef = useRef(null);
   const iframeRef = useRef(null);
   const [moduleDisabled, setModuleDisabled] = useState(false);
+
+  useEffect(() => {
+    if (currentUser) {
+      const fetchQuizData = async () => {
+        const quizDocRef = doc(
+          db,
+          `users/${currentUser.email}/${new Date().getFullYear()}/Quizzes`
+        );
+        const quizDoc = await getDoc(quizDocRef);
+        if (quizDoc.exists()) {
+          const quizData = quizDoc.data();
+          setRetryCount(quizData["DO_2_RetryCount"] ?? 3);
+          setModuleDisabled(quizData["DO_2_Disabled"] ?? false);
+        }
+      };
+      fetchQuizData();
+    }
+  }, [currentUser]);
+
+  // Enable the quiz if the DO role is granted
+  useEffect(() => {
+    if (hasDORole && moduleDisabled && retryCount > 0) {
+      const enableQuiz = async () => {
+        const quizDocRef = doc(
+          db,
+          `users/${currentUser.email}/${new Date().getFullYear()}/Quizzes`
+        );
+        await updateDoc(quizDocRef, {
+          DO_2_Disabled: false,
+        });
+        setModuleDisabled(false);
+      };
+      enableQuiz();
+    }
+  }, [hasDORole, moduleDisabled, retryCount, currentUser]);
+
+  const updateQuizData = async (newRetryCount, isDisabled) => {
+    if (currentUser) {
+      const quizDocRef = doc(
+        db,
+        `users/${currentUser.email}/${new Date().getFullYear()}/Quizzes`
+      );
+      await updateDoc(quizDocRef, {
+        DO_2_RetryCount: newRetryCount,
+        DO_2_Disabled: isDisabled,
+      });
+    }
+  };
 
   useEffect(() => {
     if (iframeRef.current) {
@@ -30,7 +84,29 @@ export default function Time( ) {
     }
   }, [isVideoFinished]);
 
-  const restartVideo = () => {
+  const handleWatchAgain = (quizPassed) => {
+    const newRetryCount = retryCount - 1;
+    setRetryCount(newRetryCount);
+
+    // Update Firestore with the new retry count
+    if (newRetryCount === 0) {
+      setModuleDisabled(true);
+      updateQuizData(0, true);
+    } else {
+      updateQuizData(newRetryCount, false);
+    
+    }
+
+    if (quizPassed) {
+      // Navigate to the next module if the quiz is passed
+      window.location.href = "/do_2";
+      //newRetryCount;
+      return;
+    }
+
+    // Reset quiz state and navigate back to the video
+    setShowQuiz(false);
+    setIsVideoFinished(false);
     if (playerRef.current) {
       playerRef.current.setCurrentTime(0).then(() => {
         playerRef.current.play();
@@ -40,21 +116,10 @@ export default function Time( ) {
     setShowQuiz(false);
   };
 
-  const handleWatchAgain = (quizPassed) => {
-    if (!quizPassed) {
-      if (retryCount >= 2) {
-        setModuleDisabled(true);
-      } else {
-        setRetryCount(retryCount + 1);
-        restartVideo();
-      }
-    }
-  };
-
-  if (moduleDisabled) {
+  // Render access denied message if the user does not have the DO role
+  if (!hasDORole) {
     return (
-      <div className="module-screen-container">
-        <h1 className="screen-title">Module Disabled</h1>
+      <div className="access-denied">
         <p>
           You have reached the max attempts allowed for this quiz. 
           This module has been disabled. <br />
@@ -64,6 +129,7 @@ export default function Time( ) {
       </div>
     );
   }
+
 
   return (
     <div className="module-screen-container">
@@ -79,8 +145,22 @@ export default function Time( ) {
             title="LSM Dissolved Oxygen Training PArt 2"
           ></iframe>
         </div>
+      ) : moduleDisabled ? (
+        <div className="quiz-locked-message">
+          <p>
+            You have reached the max attempts allowed for this quiz. 
+            This module has been disabled.
+            Please contact <a href="mailto:stewards@lakestewardsme.org?subject=Maximum Simulator Quiz DO 1 Reached" style={{ color: '#4B4E92', textDecoration: 'underline' }}>
+            stewards@lakestewardsme.org</a> for further assistance.
+          </p>
+        </div>
       ) : (
-        <Quiz data={QuizDataSecchi} watchAgain={handleWatchAgain} nextModule={'do_3'}/>
+        <Quiz 
+          data={QuizDataSecchi}
+          watchAgain={handleWatchAgain}
+          nextModule="DO_3" // Navigate to DO_2 after passing the quiz
+          quizName={"Dissolved_Oxygen 2 Quiz"}
+        />
       )}
     </div>
   );

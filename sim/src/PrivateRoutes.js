@@ -11,7 +11,7 @@ const PrivateRoutes = () => {
     <div className="app-container">
       <CustomDrawer />
       <div className="content">
-        <Outlet /> {/* This is where the protected pages will render */}
+        <Outlet /> {/* Removed role access context */}
       </div>
     </div>
   ) : (

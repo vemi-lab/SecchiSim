@@ -1,0 +1,146 @@
+/* Center the sign up card */
+.body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: Verdana, sans-serif;
+    min-height: auto;
+    padding: 10px;
+}
+
+/* Card styling */
+.card {
+    width: 90%; /* Make it responsive */
+    max-width: 450px; /* Prevents it from getting too wide */
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    background-color: #e3e3e3b9;
+    padding: 30px;
+    margin: auto;
+    margin-top: 2%;
+}
+
+.invert-lsm-logo{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 350px;
+    max-height: 350px;
+    margin: 0%;
+}
+
+/* Login Header */
+.sign-up-header {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+/* Form styling */
+form {
+    width: 100%;
+}
+
+form .form-group {
+    margin-bottom: 15px;
+
+}
+
+form label {
+    font-weight: bold;
+}
+
+form .form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+/* Password checker color */
+.password-strength p {
+    font-size: 14px;
+    margin: 3px 0;
+}
+
+.valid {
+    color: green;
+    font-weight: bold;
+}
+
+.invalid {
+    color: red;
+}
+
+
+/* Submit button */
+.submit-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #6367a3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+.submit-btn:hover {
+    background-color: #3f4268;
+}
+
+/* Log-in section */
+.login-div {
+    /* display: flex;
+    flex-direction: column; */
+    text-align: center;
+    margin: auto;
+    font-size: medium;
+    font-family: Verdana, sans-serif;
+}
+
+.login-div a {
+    color: #00458f;
+    text-decoration: none;
+}
+
+.login-div a:hover {
+    text-decoration: underline;
+}
+
+/* ================= Responsive Design ================= */
+
+/* For tablets and smaller screens */
+@media (max-width: 768px) {
+    .card {
+        width: 95%;
+        padding: 20px;
+    }
+
+    .sign-up-header {
+        font-size: 22px;
+    }
+
+    .submit-btn {
+        font-size: 14px;
+    }
+}
+
+/* For mobile screens */
+@media (max-width: 480px) {
+    .card {
+        width: 100%;
+        padding: 15px;
+    }
+
+    .sign-up-header {
+        font-size: 20px;
+    }
+
+    .submit-btn {
+        font-size: 14px;
+    }
+}

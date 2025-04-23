@@ -1,9 +1,11 @@
-// QuizScreen.js
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { doc, updateDoc, getDoc } from 'firebase/firestore';
+import { db } from '../firebase';
+import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from "react-router-dom";
 import './QuizScreen.css';
 
-const QuizScreen = ({ data, watchAgain, nextModule }) => {
+export default function QuizScreen({ data, watchAgain, nextModule, quizName }) {
   const allQuestions = data;
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState([]);
@@ -14,6 +16,8 @@ const QuizScreen = ({ data, watchAgain, nextModule }) => {
   const [showAnnouncement, setShowAnnouncement] = useState(false);
 
   const navigate = useNavigate();
+
+  const { currentUser } = useAuth();
 
   const handleOptionSelect = (option) => {
     setSelectedOptions((prevSelected) =>
@@ -54,16 +58,44 @@ const QuizScreen = ({ data, watchAgain, nextModule }) => {
 
   const handleContinueQuiz = () => {
     setShowAnnouncement(false);
-    setCurrentQuestionIndex((prev) => prev + 1);
+    setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
     setSelectedOptions([]);
     setCorrectOptions([]);
     setIsSubmitted(false);
   };
 
-  const handleQuizCompletion = () => {
+  const saveScoreToFirestore = async (attemptScore) => {
+    if (currentUser) {
+      const currentYear = new Date().getFullYear();
+      const scoresDocRef = doc(db, `users/${currentUser.email}/${currentYear}/Scores`);
+
+      // Calculate the percentage score
+      const totalQuestions = allQuestions.length;
+      const percentageScore = Math.round((attemptScore / totalQuestions) * 100);
+
+      // Fetch existing scores to calculate the next attempt number
+      const scoresSnapshot = await getDoc(scoresDocRef);
+      const scoresData = scoresSnapshot.exists() ? scoresSnapshot.data() : {};
+      const attemptNumber = Object.keys(scoresData)
+        .filter(key => key.startsWith(quizName))
+        .length + 1; // Start counting attempts from 1
+
+      const attemptKey = `${quizName} Attempt ${attemptNumber}`;
+      await updateDoc(scoresDocRef, {
+        [attemptKey]: percentageScore, // Save the percentage score
+      });
+    }
+  };
+
+  const handleQuizCompletion = async () => {
     setShowScoreModal(false);
-    const passingScore = allQuestions.length / 2;
-    const quizPassed = score > passingScore;
+    const passingScore = Math.ceil(allQuestions.length * 0.7); // 70% threshold
+    const quizPassed = score >= passingScore;
+
+    // Save the score for the current attempt
+    await saveScoreToFirestore(score);
+
+    // Decrease retry count regardless of quiz result
     watchAgain(quizPassed);
 
     if (quizPassed) {
@@ -139,17 +171,15 @@ const QuizScreen = ({ data, watchAgain, nextModule }) => {
       {showScoreModal && (
         <div className="modal">
           <div className="modal-content">
-            <h2>{score > allQuestions.length / 2 ? 'Congratulations!' : 'Oops!'}</h2>
+            <h2>{score >= Math.ceil(allQuestions.length * 0.7) ? 'Congratulations!' : 'Oops!'}</h2>
             <p>Your Score: {score} / {allQuestions.length}</p>
             <button className="retry-button" onClick={handleQuizCompletion}>
-              {score > allQuestions.length / 2 ? 'Continue' : 'Watch Video Again'}
+              {score >= Math.ceil(allQuestions.length * 0.7) ? 'Continue' : 'Watch Video Again'}
             </button>
           </div>
         </div>
       )}
     </div>
   );
-};
-
-export default QuizScreen;
+}
 
