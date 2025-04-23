@@ -13,7 +13,7 @@ const Clear = forwardRef(({ settings, onSettingChange }, ref) => {
   const depthRef = useRef(settings.depth);
   const [animationDepth, setAnimationDepth] = useState(settings.depth);
   const [diskPosition, setDiskPosition] = useState({ x: 400, y: 300 });
-  const moveAmount = 0.03; // Reduced movement speed for slower velocity
+  const moveAmount = 0.03; 
   const frameRef = useRef();
   const [canvasSize, setCanvasSize] = useState({ width: 800, height: 600 });
 
@@ -39,7 +39,7 @@ const Clear = forwardRef(({ settings, onSettingChange }, ref) => {
       const isMobile = window.innerWidth < 768;
       if (isMobile) {
         setCanvasSize({
-          width: window.innerWidth - 40, // 40px for padding
+          width: window.innerWidth - 40, 
           height: Math.min(window.innerHeight * 0.6, 600)
         });
       } else {
@@ -48,7 +48,7 @@ const Clear = forwardRef(({ settings, onSettingChange }, ref) => {
     };
 
     window.addEventListener('resize', handleResize);
-    handleResize(); // Initial size
+    handleResize(); 
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
@@ -56,12 +56,10 @@ const Clear = forwardRef(({ settings, onSettingChange }, ref) => {
     sketchRef.current = new p5((p) => {
 
       p.preload = () => {
-        // Load water image before setup and assign to p instance
         p.waterImage = p.loadImage('/clearLake.png');
       };
 
       p.setup = () => {
-        // Only create canvas if container exists
         if (canvasRef.current) {
           const canvas = p.createCanvas(canvasSize.width, canvasSize.height);
           canvas.parent(canvasRef.current);
@@ -80,7 +78,7 @@ const Clear = forwardRef(({ settings, onSettingChange }, ref) => {
         // Draw background image if loaded
         if (p.waterImage) { 
           p.push();
-          p.tint(255); // Full opacity for background
+          p.tint(255); 
           p.image(p.waterImage, 0, 0, p.width, p.height);
           p.pop();
         }
@@ -88,7 +86,7 @@ const Clear = forwardRef(({ settings, onSettingChange }, ref) => {
         // Draw dark overlay
         p.push();
         p.noStroke();
-        p.fill(0, 400); // Changed from 150 to 400 for full black
+        p.fill(0, 400); 
         p.rect(0, 0, p.width, p.height);
         p.pop();
 
@@ -119,15 +117,12 @@ const Clear = forwardRef(({ settings, onSettingChange }, ref) => {
           p.pop();
         }
 
-        // Calculate visibility using the ref value
+        // Calculate visibility 
         const visibility = utils.calculateVisibility(depthRef.current, settings.turbidity);
         const diskSize = p.map(depthRef.current, 0, utils.CONSTANTS.MAX_DEPTH, 200, 20);
         
         // Change mapping so the disk moves further right as depth increases
         let diskX = p.map(depthRef.current, 0, utils.CONSTANTS.MAX_DEPTH, diskPosition.x / 1.5, p.width + 400);
-        
-        // New: map y position so the disk moves at an angle.
-        // Here the disk moves from its initial y to initial y plus 100 pixels as depth increases.
         let diskY = p.map(depthRef.current, 0, utils.CONSTANTS.MAX_DEPTH, diskPosition.y, diskPosition.y + 150);
         
         // Draw the disk using the new x and y values
@@ -145,7 +140,6 @@ const Clear = forwardRef(({ settings, onSettingChange }, ref) => {
           
           depthRef.current = targetDepth;
 
-          // Only update state if we've moved a significant amount
           if (Math.abs(targetDepth - animationDepth) > 0.01) {
             cancelAnimationFrame(frameRef.current);
             frameRef.current = requestAnimationFrame(() => {
@@ -158,7 +152,6 @@ const Clear = forwardRef(({ settings, onSettingChange }, ref) => {
         p.pop();
 
         p.push();
-        // Static depth indicator bar (no floating offset)
         p.stroke(255);
         p.strokeWeight(2);
         p.line(p.width - 50, 100, p.width - 50, p.height - 100);
@@ -205,7 +198,7 @@ const Clear = forwardRef(({ settings, onSettingChange }, ref) => {
       }
       cancelAnimationFrame(frameRef.current);
     };
-  }, [settings.turbidity, diskPosition, canvasSize]); // Add canvasSize dependency
+  }, [settings.turbidity, diskPosition, canvasSize]); 
 
   return (
     <div className="clear-lake-container">

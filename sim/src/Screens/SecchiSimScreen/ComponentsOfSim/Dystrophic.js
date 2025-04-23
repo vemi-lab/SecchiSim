@@ -13,7 +13,7 @@ const Clear = forwardRef(({ settings, onSettingChange }, ref) => {
   const depthRef = useRef(settings.depth);
   const [animationDepth, setAnimationDepth] = useState(settings.depth);
   const [diskPosition, setDiskPosition] = useState({ x: 400, y: 300 });
-  const moveAmount = 0.03; // Reduced movement speed for slower velocity
+  const moveAmount = 0.03; 
   const frameRef = useRef();
 
   const handleArrowClick = (direction) => {
