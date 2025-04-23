@@ -15,6 +15,7 @@ const Clear = forwardRef(({ settings, onSettingChange }, ref) => {
   const [diskPosition, setDiskPosition] = useState({ x: 400, y: 300 });
   const moveAmount = 0.03; // Reduced movement speed for slower velocity
   const frameRef = useRef();
+  const [canvasSize, setCanvasSize] = useState({ width: 800, height: 600 });
 
   const handleArrowClick = (direction) => {
     if (direction === 'up') {
@@ -34,6 +35,24 @@ const Clear = forwardRef(({ settings, onSettingChange }, ref) => {
   }));
 
   useEffect(() => {
+    const handleResize = () => {
+      const isMobile = window.innerWidth < 768;
+      if (isMobile) {
+        setCanvasSize({
+          width: window.innerWidth - 40, // 40px for padding
+          height: Math.min(window.innerHeight * 0.6, 600)
+        });
+      } else {
+        setCanvasSize({ width: 800, height: 600 });
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize(); // Initial size
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
     sketchRef.current = new p5((p) => {
 
       p.preload = () => {
@@ -44,7 +63,7 @@ const Clear = forwardRef(({ settings, onSettingChange }, ref) => {
       p.setup = () => {
         // Only create canvas if container exists
         if (canvasRef.current) {
-          const canvas = p.createCanvas(800, 600);
+          const canvas = p.createCanvas(canvasSize.width, canvasSize.height);
           canvas.parent(canvasRef.current);
           p.colorMode(p.RGB);
           p.frameRate(60);
@@ -186,16 +205,20 @@ const Clear = forwardRef(({ settings, onSettingChange }, ref) => {
       }
       cancelAnimationFrame(frameRef.current);
     };
-  }, [settings.turbidity, diskPosition]); // Remove animationDepth dependency
+  }, [settings.turbidity, diskPosition, canvasSize]); // Add canvasSize dependency
 
   return (
     <div className="clear-lake-container">
       {/* <button onClick={() => navigate('/')} style={{ marginBottom: '20px' }}>Back to Simulator</button> */}
       <div className="simulation-area">
-        <div className="canvas-wrapper" style={{ position: 'relative', width: '800px', height: '600px' }}>
+        <div className="canvas-wrapper" style={{ 
+          position: 'relative', 
+          width: canvasSize.width, 
+          height: canvasSize.height 
+        }}>
           <div ref={canvasRef} className="secchi-simulator" style={{ width: '100%', height: '100%', outline: 'none' }} />
         </div>
-        <div className="controls-wrapper" style={{ marginLeft: '20px' }}>
+        <div className="controls-wrapper">
           <Controls 
             settings={settings}
             onSettingChange={onSettingChange}
@@ -216,17 +239,29 @@ const Clear = forwardRef(({ settings, onSettingChange }, ref) => {
         }
         .simulation-area {
           display: flex;
-          align-items: flex-start; /* Align items at the top */
+          flex-direction: column;
+          align-items: center;
+          width: 100%;
         }
         .canvas-wrapper {
           border: 1px solid #ccc;
           border-radius: 8px;
           overflow: hidden;
+          margin-bottom: 20px;
         }
         .controls-wrapper {
-          display: flex;
-          flex-direction: column; /* Stack controls vertically */
-          width: 200px; /* Set a fixed width for the controls */
+          width: 100%;
+          max-width: 400px;
+        }
+        @media (min-width: 768px) {
+          .simulation-area {
+            flex-direction: row;
+            align-items: flex-start;
+          }
+          .controls-wrapper {
+            margin-left: 20px;
+            width: 200px;
+          }
         }
       `}</style>
     </div>
