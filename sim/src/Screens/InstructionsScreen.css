@@ -1,83 +1,294 @@
-/* InstructionsScreen.css */
-.instructions-container {
-  padding: 20px;
-  max-width: 90%;
-  margin: 0 auto;
-  font-family: "Times New Roman", Times, serif;
+
+.scroll-container {
+  scroll-snap-type: y mandatory;
+  overflow-y: scroll;
+  height: 100vh;
 }
 
-@media (min-width: 1200px) {
-  .instructions-container {
-    max-width: 1000px;
-  }
+.scroll-section {
+  scroll-snap-align: start;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; 
+  align-items: center;
+  text-align: center;
 }
+
+.header {
+  position: fixed; 
+  top: 10px;    
+  right: 10px;  
+  display: flex;   
+  align-items: center; 
+  z-index: 1000;   
+  background-color: transparent;
+}
+
+.profile {
+  margin-top: 10px;
+  margin-right: 20px;
+  width: 40px;
+  height: 40px;
+}
+
+/* Style for the settings icon */
+.setting-icon {
+  font-size: 24px; /* Adjust size as needed */
+  color: #555;      /* Adjust color as needed */
+  cursor: pointer;
+  margin-right: 15px; /* Space between icon and profile */
+}
+
+.setting-icon:hover {
+  color: #333; /* Darker color on hover */
+}
+
+/************************/
+/**** Welcome Section ***/
+/************************/
 
 .welcome-section {
   position: relative;
-  text-align: center;
-  margin-bottom: 30px;
+  width: 100%;
+  overflow: hidden;
+  z-index: 0;
 }
 
-.welcome-section h1,
-.welcome-section p {
+.welcome-image {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: white;
-  width: 80%;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  min-height: 100vh;
+  object-fit: cover;
+  filter: brightness(70%);
 }
 
 .welcome-section h1 {
-  font-size: 2em;
-  top: 40%;
+  position: relative;
+  color: #f0f0f0;
+  font-size: 3em;
+  font-weight: normal;
+  width: 60%;
+  line-height: 1.2;
 }
 
-.welcome-section p {
-  top: 60%;
+.welcome-section div{
+  position: absolute;
+  bottom: 0;
+  color: white;
+  font-size: 1.5em;
+  width: 80%;
 }
 
-.hero-image {
+.email{
+  color: #1B331F;
+  text-decoration: 'underline';
+}
+
+/************************/
+/***** Quote Section ****/
+/************************/
+
+.quote.scroll-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center; 
+  min-height: 100vh; 
+  scroll-snap-align: start;
+}
+
+.quote.scroll-section div:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10%;
+}
+
+.quote.scroll-section div:first-child p {
+  text-align: center;
+  line-height: 1.5;
+  font-size: 1.8em;
+}
+
+.quote.scroll-section .image-section {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.quote.scroll-section .image-section img {
   width: 100%;
-  max-height: 400px;
+  height: 100%;
   object-fit: cover;
-  display: block;
-  border-radius: 10px; /* Rounded corners */
-  filter: brightness(80%); /* Dim the image */
 }
 
-.content-box {
-  background-color: #f0f0f0;
-  padding: 20px;
-  margin-bottom: 30px;
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-}
+/*****************************/
+/*** Functionality Section ***/
+/*****************************/
 
-.functionality-section,
-.instructions-section {
-  margin-bottom: 30px;
+.functionality-section{ 
+  display: flex;
+  flex: 1
 }
 
 .functionality-section h2,
 .instructions-section h2 {
-  color: #7DA6E7;
+  color: #6F73B3;
+  font-size: 2em;
   border-bottom: 1px solid #ddd;
   padding-bottom: 10px;
   margin-bottom: 15px;
 }
 
-.functionality-section ul,
-.instructions-section ol {
-  list-style-position: inside;
-  padding-left: 0;
+.functionality-section h3 {
+  color: #6F73B3;
+  font-size: 1.5em;
+  padding-bottom: 10px;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
-.functionality-section li,
-.instructions-section li {
-  margin-bottom: 10px;
+.functionality-section ul {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-left: 20px;
+  margin-right: 20px;
 }
+
+.functionality-section li {
+  background: var(--secondary-color);
+  border-radius: 10px;
+  padding: 20px;
+  width: 30%;
+  text-align: center;
+  transition: transform 0.2s ease-in-out;
+}
+
+.functionality-image {
+  width: 100%;
+  margin-bottom: 15px;
+  border-radius: 10px;
+}
+
+/****************************/
+/*** Instructions Section ***/
+/****************************/
+
+.instructions-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center; 
+  min-height: 100vh; 
+  scroll-snap-align: start;
+}
+
+.instructions-section .image-section {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.instructions-section .image-section img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.instructions-section ol {
+  background: var(--secondary-color);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+  list-style-position: outside;
+  line-height: 150%;
+  text-align: left;
+}
+
+.instructions-section li{
+  margin-bottom: 30px;
+  margin-left: 20px;
+  font-size: 1.2em;
+}
+
+/*********************/
+/*** Media Queries ***/
+/*********************/
+
+@media (max-width: 767px) {
+
+  /***** Quote ****/
+  .quote.scroll-section {
+    display: flex;
+    align-items: center; 
+    min-height: 100vh; 
+    scroll-snap-align: start;
+  }
+  .quote.scroll-section div:first-child p {
+    text-align: center;
+    line-height: 1;
+    font-size: 1.2em;
+  }
+
+  .quote.scroll-section .image-section {
+    display: none
+  }
   
-  
+  /***** Fucntionality ****/
+  .functionality-section ul {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .functionality-section li {
+    width: 90%;
+  }
+
+  /***** Instructions ****/
+  .instructions-section {
+    display: block;
+    /* padding: 20px; */
+    min-height: auto;
+    scroll-snap-align: start;
+  }
+
+  .instructions-section ol {
+    background: white;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.1);
+    list-style-position: outside;
+    line-height: 150%;
+    text-align: left;
+    font-size: 1em;
+  }
+
+  .instructions-section li {
+    margin-bottom: 15px;
+    margin-left: 10px;
+    font-size: 1em;
+  }
+
+  .instructions-section .image-section {
+    display: none;
+  }
+
+  /***** Reach out ****/
+  .welcome-section div{
+    position: relative;
+    justify-self: center;
+    color: white;
+    font-size: 1.2em;
+    width: 80%;
+  }
+  .email{
+    color: #999EA5;
+    text-decoration: 'underline';
+  }
+}
+

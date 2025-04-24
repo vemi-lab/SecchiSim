@@ -1,11 +1,12 @@
 .module-screen-container {
   display: flex;
   flex-direction: column;
-  margin-left: 15px;
+  margin-left: 40px;
+  width: 100%; /* Ensures it fills the width of its parent */
   min-height: 100vh;
-  overflow: auto;
-  background-color: white;
+  overflow: auto; /* Ensures content can scroll if needed */
 }
+
 
 .video-container {
   position: relative;

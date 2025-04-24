@@ -37,7 +37,7 @@ export default function Login() {
                 return;
             }
 
-            navigate('/dashboard'); //allow access if only had verified
+            navigate('/Instructions'); //allow access if only had verified
 
         } catch {
             console.error("Login Error:", error);

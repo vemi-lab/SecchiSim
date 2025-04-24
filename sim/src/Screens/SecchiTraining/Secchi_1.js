@@ -116,11 +116,10 @@ export default function Secchi1() {
     return (
       <div className="access-denied">
         <p>
-          You do not have access to this module. Please contact{" "}
-          <a href="mailto:stewards@lakestewardsme.org?subject=Access Request for Secchi Materials">
-            stewards@lakestewardsme.org
-          </a>{" "}
-          for assistance.
+          You have reached the max attempts allowed for this quiz. 
+          This module has been disabled. <br />
+          Please contact <a href="mailto:stewards@lakestewardsme.org?subject=Maximum Simulator Quiz Secchi 1 Reached" style={{ color: '#4B4E92', textDecoration: 'underline' }}>
+          stewards@lakestewardsme.org</a> for further assistance.
         </p>
       </div>
     );

@@ -2,7 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import '../App.css';
-import logo from '../assets/avatar.jpg';
+import logoLight from '../assets/logo-light.jpg';
+import logoDark from '../assets/logo-dark.png';
+import { useTheme } from "../contexts/ThemeContext";
+
 
 export default function CustomDrawer() {
   const [isOpen, setIsOpen] = useState(false);
@@ -14,17 +17,36 @@ export default function CustomDrawer() {
   const { currentUser } = useAuth();
   const hasDORole = currentUser?.roles?.["Dissolved Oxygen Role"] ?? false;
   const hasSecchiRole = currentUser?.roles?.["Secchi Role"] ?? false;
-
-  const toggleSidebar = () => {
-    setIsOpen(!isOpen);
-  };
+  const { darkMode } = useTheme();  
 
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener('resize', handleResize);
 
+    // Set the sidebar to open if the window width is large enough on mount
+    if (window.innerWidth > 1024) { // You can adjust this breakpoint
+      setIsOpen(true);
+    }
+
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  useEffect(() => {
+    // Update the open state based on window width changes
+    if (windowWidth > 1024) { // Adjust this breakpoint as needed
+      setIsOpen(true);
+    } else {
+      setIsOpen(false);
+      // Close submenus when the sidebar collapses
+      setIsCourseMaterialOpen(false);
+      setIsSecchiOpen(false);
+      setIsDissolvedoxygenOpen(false);
+    }
+  }, [windowWidth]);
+
+  const toggleSidebar = () => {
+    setIsOpen(!isOpen);
+  };
 
   // Function to handle opening external links in a new tab
   const openInNewTab = (url) => {
@@ -36,7 +58,7 @@ export default function CustomDrawer() {
 
     // If Trainings is selected, the link is opened in a new tab
     if (linkName === 'Upcoming Trainings') {
-      openInNewTab(linkTo); 
+      openInNewTab(linkTo);
     }
 
     // If Course Material is selected, the subsections are showed
@@ -46,7 +68,7 @@ export default function CustomDrawer() {
       setIsCourseMaterialOpen(false);
     }
 
-    if (windowWidth <= 768 && linkName !== ('Course Material' || 'Upcoming Tainings')){
+    if (windowWidth <= 1024 && linkName !== 'Course Material' && linkName !== 'Upcoming Trainings') {
       setIsOpen(false);
     }
   };
@@ -61,18 +83,18 @@ export default function CustomDrawer() {
   };
 
   const handleSubsection = () => {
-    if (windowWidth <= 768){
+    if (windowWidth <= 1024) {
       setIsOpen(false);
     }
-  }
+  };
 
   const links = [
     { to: '/Instructions', name: 'Welcome and How to?' },
     { to: '/secchi-sim', name: 'Secchi Simulator' },
     { name: 'Course Material', hasSubsections: true },
     { to: 'https://lookerstudio.google.com/embed/reporting/5c1a4a70-ef70-4e71-9722-3847e75464e2/page/apkeE', name: 'Upcoming Trainings', isExternal: true },
-    { to: '/video', name: 'Video' },
-    { to: '/dashboard', name: 'Dashboard' }
+    // { to: '/video', name: 'Video' },
+    // { to: '/dashboard', name: 'Dashboard' }
   ];
 
   return (
@@ -82,12 +104,9 @@ export default function CustomDrawer() {
 
         {/* Logo */}
         <div className="logo-container">
-          <img src={logo} alt="Logo" className="logo" />
+          <img src={darkMode ? logoDark : logoLight} alt="Logo" className="logo" />
         </div>
-        <div className="text">Water Quality Monitoring Dashboard</div>
-        <div className="text" style={{ marginBottom: '20px' }}>
-          Lake Stewards of Maine
-        </div>
+        <div className="text">Water Quality Monitoring Dashboard <br />Lake Stewards of Maine</div>
 
         {/* Sidebar Links */}
         <nav className="drawer-items">
@@ -121,7 +140,7 @@ export default function CustomDrawer() {
                     </div>
                   )}
                   {hasSecchiRole && isSecchiOpen && (
-                    <div className="subsections">
+                    <div className="nested-subsections">
                       <Link key="secchi_1" to="/secchi_1" className='subsection-item' onClick={handleSubsection}>
                         <div>
                           <h4>Secchi 1</h4>
@@ -147,7 +166,7 @@ export default function CustomDrawer() {
                     </div>
                   )}
                   {hasDORole && isDissolvedoxygenOpen && (
-                    <div className="subsections">
+                    <div className="nested-subsections">
                       <Link key="do_1" to="/do_1" className='subsection-item' onClick={handleSubsection}>
                         <div>
                           <h4>DO 1</h4>
@@ -178,10 +197,12 @@ export default function CustomDrawer() {
       </button>
 
       {/* Main Content */}
-      <div className={`main-content ${isOpen ? 'shifted' : ''}`}></div>
+      <div className={`main-content ${isOpen ? 'shifted' : ''}`}>
+        {/* Your main content will go here */}
+      </div>
 
       {/* Overlay */}
-      {isOpen && <div className="overlay" onClick={toggleSidebar}></div>}
+      {isOpen && windowWidth <= 1024 && <div className="overlay" onClick={toggleSidebar}></div>}
     </div>
   );
 }
