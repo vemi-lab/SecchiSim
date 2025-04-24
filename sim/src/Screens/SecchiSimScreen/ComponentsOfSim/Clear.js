@@ -204,12 +204,8 @@ const Clear = forwardRef(({ settings, onSettingChange }, ref) => {
     <div className="clear-lake-container">
       {/* <button onClick={() => navigate('/')} style={{ marginBottom: '20px' }}>Back to Simulator</button> */}
       <div className="simulation-area">
-        <div className="canvas-wrapper" style={{ 
-          position: 'relative', 
-          width: canvasSize.width, 
-          height: canvasSize.height 
-        }}>
-          <div ref={canvasRef} className="secchi-simulator" style={{ width: '100%', height: '100%', outline: 'none' }} />
+        <div className="canvas-wrapper">
+          <div ref={canvasRef} className="secchi-simulator"/>
         </div>
         <div className="controls-wrapper">
           <Controls 

@@ -1,4 +1,3 @@
-// src/contexts/ThemeContext.js
 import React, { createContext, useState, useContext, useEffect } from "react";
 
 const ThemeContext = createContext();
@@ -17,7 +16,6 @@ export function ThemeProvider({ children }) {
   );
 }
 
-// Custom hook to use theme anywhere
 export function useTheme() {
   return useContext(ThemeContext);
 }

@@ -7,7 +7,6 @@ import Intermediate from './ComponentsOfSim/Intermediate';
 import Productive from './ComponentsOfSim/Productive';
 import Dystrophic from './ComponentsOfSim/Dystrophic';
 import DystrophicProductive from './ComponentsOfSim/DystrophicProductive';
-// import avatar from '../../assets/avatar.jpg';
 import './SecchiSimScreen.css';
 
 const SecchiSimScreen = () => {
@@ -48,8 +47,6 @@ const SecchiSimScreen = () => {
 
   return (
     <div className="secchi-sim-screen">
-      {/* <img src={avatar} alt="Logo" className="sim-logo" />
-      <h1 className='headline'>Secchi Disk Simulator</h1> */}
       <div className="simulator-container">
         {renderPage()}
       </div>

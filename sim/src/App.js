@@ -8,7 +8,7 @@ import ForgotPassword from "./components/ForgotPassword";
 import Signup from "./components/Signup";
 // import Dashboard from "./components/Dashboard";
 import Profile from "./components/Profile";
-import SecchiSimScreen from "./Screens/SecchiSimScreen";
+import SecchiSimScreen from "./Screens/SecchiSimScreen/SecchiSimScreen";
 import InstructionsScreen from "./Screens/InstructionsScreen";
 // import Time from "./Screens/time";
 import Secchi1 from "./Screens/SecchiTraining/Secchi_1";

@@ -3,7 +3,7 @@
 */
 
 import React, { useState } from 'react';
-import avatar from '../../../assets/avatar.jpg';
+import avatar from '../../../assets/logo-light.jpg';
 
 import { 
     CONSTANTS, 

@@ -118,7 +118,8 @@ export default function Secchi1() {
         <p>
           You have reached the max attempts allowed for this quiz. 
           This module has been disabled. <br />
-          Please contact <a href="mailto:stewards@lakestewardsme.org?subject=Maximum Simulator Quiz Secchi 1 Reached" style={{ color: '#4B4E92', textDecoration: 'underline' }}>
+          Please contact <a href="mailto:stewards@lakestewardsme.org?subject=Maximum Simulator Quiz Secchi 1 Reached" 
+          style={{ color: '#4B4E92', textDecoration: 'underline' }}>
           stewards@lakestewardsme.org</a> for further assistance.
         </p>
       </div>

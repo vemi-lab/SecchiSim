@@ -3,7 +3,8 @@
   --text-color: #000000;
   --primary-color: #007BFF;
   --sidebar-bg: white; /* light cyan */
-  --secondary-color: white;
+  --secondary-color: #f4f4f9;
+  --green: rgb(112, 187, 112);
 }
 
 body.dark-mode {
@@ -11,7 +12,8 @@ body.dark-mode {
   --text-color: #f5f5f5;
   --primary-color: #90caf9;
   --sidebar-bg: #1D1D1B;
-  --secondary-color: #1D1D1B;
+  --secondary-color: black;
+  --green: rgb(69, 152, 69);
 }
 
 body {
