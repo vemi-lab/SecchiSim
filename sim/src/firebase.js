@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, setPersistence, browserLocalPersistence } from "firebase/auth";
-import { getFirestore, doc, getDoc, updateDoc, setDoc } from "firebase/firestore";
+import { getFirestore, doc, getDoc, updateDoc, setDoc, collection, getDocs } from "firebase/firestore";
 
 // Initialize Firebase
 const firebaseConfig = {
@@ -96,6 +96,17 @@ export async function getQuizData(userEmail, year) {
 // Example: Function to update quiz data in the "Quizzes" subcollection
 export async function updateQuizData(userEmail, year, quizData) {
   await updateSubcollectionData(userEmail, year, "Quizzes", quizData);
+}
+
+// Function to fetch all user emails
+export async function getAllUserEmails() {
+  try {
+    const usersSnapshot = await getDocs(collection(db, "users"));
+    return usersSnapshot.docs.map((doc) => doc.data().personal?.email);
+  } catch (error) {
+    console.error("Error fetching user emails:", error);
+    return [];
+  }
 }
 
 export default app;
