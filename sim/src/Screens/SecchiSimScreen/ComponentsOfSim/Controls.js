@@ -3,7 +3,7 @@
 */
 
 import React, { useState } from 'react';
-import avatar from '../../../assets/avatar.jpg';
+// import avatar from '../../../assets/avatar.jpg';
 
 import { 
     CONSTANTS, 
@@ -19,7 +19,7 @@ const Controls = ({ settings, onSettingChange, onDirectionClick, onDirectionRele
   return (
     <div className="controls">
       <div className="water-quality">
-        <img src={avatar} alt="Logo" className="sim-logo" />
+        {/* <img src={avatar} alt="Logo" className="sim-logo" /> */}
         <h4>Secchi Disk Simulator</h4>
         <h3>Attempts Left: {attemptsLeft}</h3>
         <h4>{message}</h4>
