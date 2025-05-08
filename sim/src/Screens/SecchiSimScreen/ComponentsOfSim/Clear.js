@@ -97,9 +97,10 @@ const Clear = forwardRef(({ settings, onSettingChange }, ref) => {
         p.rect(0, 0, p.width, p.height);
         p.pop();
 
-        const circleX = diskPosition.x/1.3;
-        const circleY = diskPosition.y;
-        const circleDiameter = 400;
+        // Calculate responsive circle position and size
+        const circleX = p.width * 0.4; // Position at 40% of canvas width
+        const circleY = p.height * 0.5; // Center vertically
+        const circleDiameter = Math.min(p.width, p.height) * 0.6; // Scale circle based on smallest canvas dimension
 
         p.push();
         p.erase();
@@ -126,11 +127,20 @@ const Clear = forwardRef(({ settings, onSettingChange }, ref) => {
 
         // Calculate visibility 
         const visibility = utils.calculateVisibility(depthRef.current, settings.turbidity);
-        const diskSize = p.map(depthRef.current, 0, utils.CONSTANTS.MAX_DEPTH, 200, 20);
         
-        // Change mapping so the disk moves further right as depth increases
-        let diskX = p.map(depthRef.current, 0, utils.CONSTANTS.MAX_DEPTH, diskPosition.x / 1.5, p.width + 400);
-        let diskY = p.map(depthRef.current, 0, utils.CONSTANTS.MAX_DEPTH, diskPosition.y, diskPosition.y + 150);
+        // Make disk size responsive to canvas size
+        const maxDiskSize = Math.min(p.width, p.height) * 0.3;
+        const minDiskSize = Math.min(p.width, p.height) * 0.03;
+        const diskSize = p.map(depthRef.current, 0, utils.CONSTANTS.MAX_DEPTH, maxDiskSize, minDiskSize);
+        
+        // Calculate responsive disk position
+        const startX = p.width * 0.3;
+        const endX = p.width * 1.2;
+        const startY = p.height * 0.5;
+        const endY = p.height * 0.75;
+        
+        let diskX = p.map(depthRef.current, 0, utils.CONSTANTS.MAX_DEPTH, startX, endX);
+        let diskY = p.map(depthRef.current, 0, utils.CONSTANTS.MAX_DEPTH, startY, endY);
         
         // Draw the disk 
         utils.drawSecchiDisk(p, diskX, diskY, visibility, diskSize);
@@ -158,20 +168,31 @@ const Clear = forwardRef(({ settings, onSettingChange }, ref) => {
 
         p.pop();
 
+        // Draw depth indicator with responsive positioning
+        const depthBarWidth = Math.min(50, p.width * 0.06);
+        const depthBarRight = p.width - depthBarWidth;
+        const depthBarTop = p.height * 0.15;
+        const depthBarBottom = p.height * 0.85;
+        const textOffset = depthBarWidth + 15;
+
         p.push();
         p.stroke(255);
-        p.strokeWeight(2);
-        p.line(p.width - 50, 100, p.width - 50, p.height - 100);
+        p.strokeWeight(Math.max(1, p.width * 0.002));
+        p.line(depthBarRight, depthBarTop, depthBarRight, depthBarBottom);
+        
         p.stroke(255, 0, 0);
-        const depthY = p.map(depthRef.current, 0, utils.CONSTANTS.MAX_DEPTH, 100, p.height - 100);
-        p.line(p.width - 60, depthY, p.width - 40, depthY);
+        const depthY = p.map(depthRef.current, 0, utils.CONSTANTS.MAX_DEPTH, depthBarTop, depthBarBottom);
+        p.line(depthBarRight - 10, depthY, depthBarRight + 10, depthY);
+        
         p.noStroke();
         p.fill(255);
         p.textAlign(p.RIGHT, p.CENTER);
+        p.textSize(Math.max(12, p.width * 0.015)); // Responsive text size
+        
         for (let depth = 0; depth <= utils.CONSTANTS.MAX_DEPTH; depth += 1) {
-          const y = p.map(depth, 0, utils.CONSTANTS.MAX_DEPTH, 100, p.height - 100);
-          p.line(p.width - 55, y, p.width - 45, y);
-          p.text(depth + 'm', p.width - 65, y);
+          const y = p.map(depth, 0, utils.CONSTANTS.MAX_DEPTH, depthBarTop, depthBarBottom);
+          p.line(depthBarRight - 5, y, depthBarRight + 5, y);
+          p.text(depth + 'm', depthBarRight - 15, y);
         }
         p.pop();
       };
