@@ -9,6 +9,7 @@ export const CONSTANTS = {
   WATER_COLOR: [0, 105, 148],  
   NUM_PIXELS: 50,
   EASING: 0.05,
+  VISIBILITY_THRESHOLD: 0.05, // Lowered threshold for more precise disappearance
 };
 
 let waterImage;
@@ -16,16 +17,20 @@ export const preload = (p5) => {
     waterImage = p5.loadImage('/clearLake.png');
 };
 
-// Calculate visibility based on depth and turbidity
-export const calculateVisibility = (depth, turbidity) => {
-  // Force disk disappearance at depth 5.30 if turbidity is high enough.
-  const turbidityThreshold = 1.7 / 5.30; // ~0.32075
-  if(depth >= 5.30 && turbidity >= turbidityThreshold) {
-    return 0;
-  }
-  const maxVisibility = 1;
-  const visibilityFactor = Math.exp(-turbidity * depth / 2);
-  return Math.max(0, Math.min(maxVisibility, visibilityFactor));
+// Calculate visibility based on depth and target depth
+export const calculateVisibility = (depth, turbidity, targetDepth) => {
+  // Use a steeper exponential decay as we approach target depth
+  const visibilityRate = -Math.log(CONSTANTS.VISIBILITY_THRESHOLD) / targetDepth;
+  
+  // Enhanced exponential decay formula with sharper falloff near target depth
+  const normalizedDepth = depth / targetDepth;
+  const visibility = Math.exp(-visibilityRate * normalizedDepth * depth);
+  
+  // Add extra dampening as we approach target depth
+  const dampening = Math.max(0, 1 - Math.pow(normalizedDepth, 2));
+  
+  // Ensure visibility is between 0 and 1 with enhanced precision near disappearance
+  return Math.max(0, Math.min(1, visibility * dampening));
 };
 
 // Draw water with depth gradient

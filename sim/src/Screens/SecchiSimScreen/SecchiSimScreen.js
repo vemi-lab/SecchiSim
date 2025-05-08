@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Routes, Route, Link } from 'react-router-dom';
 import Clear from './ComponentsOfSim/Clear';
 import Tutorial from './ComponentsOfSim/Tutorial';
@@ -6,6 +6,9 @@ import Intermediate from './ComponentsOfSim/Intermediate';
 import Productive from './ComponentsOfSim/Productive';
 import Dystrophic from './ComponentsOfSim/Dystrophic';
 import DystrophicProductive from './ComponentsOfSim/DystrophicProductive';
+import { db } from "../../firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { useAuth } from "../../contexts/AuthContext";
 // import avatar from '../../assets/avatar.jpg';
 import './SecchiSimScreen.css';
 
@@ -14,14 +17,55 @@ const SecchiSimScreen = () => {
     depth: 0,
     turbidity: 1,
   });
+  const { currentUser } = useAuth();
+  const [moduleStatus, setModuleStatus] = useState({
+    clear: false,
+    intermediate: false,
+    productive: false,
+    dystrophic: false,
+    dystrophicproductive: false
+  });
 
   const simulatorRef = useRef(null);
+
+  useEffect(() => {
+    const loadModuleStatus = async () => {
+      if (!currentUser) return;
+
+      try {
+        const currentYear = new Date().getFullYear().toString();
+        const quizDocRef = doc(db, `users/${currentUser.email}/${currentYear}/Quizzes`);
+        const quizDoc = await getDoc(quizDocRef);
+
+        if (quizDoc.exists()) {
+          const data = quizDoc.data();
+          setModuleStatus(prev => ({
+            ...prev,
+            clear: data.Clear_Disabled || false,
+            intermediate: data.Intermediate_Disabled || false,
+            productive: data.Productive_Disabled || false,
+            dystrophic: data.Dystrophic_Disabled || false,
+            dystrophicproductive: data.DystrophicProductive_Disabled || false
+          }));
+        }
+      } catch (error) {
+        console.error("Error loading module status:", error);
+      }
+    };
+
+    loadModuleStatus();
+  }, [currentUser]);
 
   const handleSettingChange = (setting, value) => {
     setSettings(prev => ({
       ...prev,
       [setting]: value
     }));
+  };
+
+  const getCompletionStatus = (moduleType) => {
+    if (!currentUser) return "Please Login";
+    return moduleStatus[moduleType] ? "Complete" : "Incomplete";
   };
 
   return (
@@ -60,8 +104,8 @@ const SecchiSimScreen = () => {
                     <td style={{ border: '1px solid #ccc', padding: '10px' }}>
                       Bluish color, with readings deeper than 4 meters
                     </td>
-                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>
-                      Incomplete
+                    <td style={{ border: '1px solid #ccc', padding: '10px', color: moduleStatus.clear ? 'green' : 'inherit' }}>
+                      {getCompletionStatus('clear')}
                     </td>
                   </tr>
                   <tr>
@@ -73,8 +117,8 @@ const SecchiSimScreen = () => {
                     <td style={{ border: '1px solid #ccc', padding: '10px' }}>
                       Blue or green-brown, with readings between 4 and 7 meters
                     </td>
-                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>
-                      Incomplete
+                    <td style={{ border: '1px solid #ccc', padding: '10px', color: moduleStatus.intermediate ? 'green' : 'inherit' }}>
+                      {getCompletionStatus('intermediate')}
                     </td>
                   </tr>
                   <tr>
@@ -86,8 +130,8 @@ const SecchiSimScreen = () => {
                     <td style={{ border: '1px solid #ccc', padding: '10px' }}>
                       Green Background, high algae content, readings shallower than 3 meters
                     </td>
-                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>
-                      Incomplete
+                    <td style={{ border: '1px solid #ccc', padding: '10px', color: moduleStatus.productive ? 'green' : 'inherit' }}>
+                      {getCompletionStatus('productive')}
                     </td>
                   </tr>
                   <tr>
@@ -99,8 +143,8 @@ const SecchiSimScreen = () => {
                     <td style={{ border: '1px solid #ccc', padding: '10px' }}>
                       Distinct tea or rootbeer color, readings shallower than 3 meters
                     </td>
-                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>
-                      Incomplete
+                    <td style={{ border: '1px solid #ccc', padding: '10px', color: moduleStatus.dystrophic ? 'green' : 'inherit' }}>
+                      {getCompletionStatus('dystrophic')}
                     </td>
                   </tr>
                   <tr>
@@ -112,8 +156,8 @@ const SecchiSimScreen = () => {
                     <td style={{ border: '1px solid #ccc', padding: '10px' }}>
                       Green-brown and murky, readings shallower than 3 meters
                     </td>
-                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>
-                      Incomplete
+                    <td style={{ border: '1px solid #ccc', padding: '10px', color: moduleStatus.dystrophicproductive ? 'green' : 'inherit' }}>
+                      {getCompletionStatus('dystrophicproductive')}
                     </td>
                   </tr>
                 </tbody>
