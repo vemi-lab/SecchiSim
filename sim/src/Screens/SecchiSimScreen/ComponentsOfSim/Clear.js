@@ -15,7 +15,6 @@ const Clear = forwardRef(({ settings, onSettingChange }, ref) => {
   const canvasRef = useRef(null);
   const sketchRef = useRef(null);
   const velocityRef = useRef(0);
-  // const lastUpdateRef = useRef(Date.now());
   const depthRef = useRef(settings.depth);
   const [animationDepth, setAnimationDepth] = useState(settings.depth);
   const [diskPosition, setDiskPosition] = useState({ x: 400, y: 300 });
