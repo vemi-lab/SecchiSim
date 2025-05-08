@@ -48,7 +48,7 @@ function AppContent() {
           <Route path="/signup" element={<Signup />} />
           <Route element={<PrivateRoutes />}>
             <Route path="/Instructions" element={<InstructionsScreen />} />
-            <Route path="/secchi-sim" element={<SecchiSimScreen />} />
+            <Route path="/secchi-sim/*" element={<SecchiSimScreen />} />
             {/* <Route path="/video" element={<Time />} /> */}
             <Route path="/secchi_1" element={<Secchi1 />} />
             <Route path="/secchi_2" element={<Secchi2 />} />

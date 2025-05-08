@@ -1,14 +1,15 @@
 // Constants for the simulation
 export const CONSTANTS = {
   MIN_DEPTH: 0,
-  MAX_DEPTH: 7, // 10 meters max depth
-  DISK_DIAMETER: 650, // Increased from 200 to 300 for larger disk
-  DISK_SEGMENTS: 4, // Number of segments in the Secchi disk
-  WATER_ATTENUATION: 0.2,  // Light attenuation coefficient in water
-  DISK_COLOR: [255, 255, 255],  // White color for Secchi disk
-  WATER_COLOR: [0, 105, 148],  // Blue color for water
+  MAX_DEPTH: 7, 
+  DISK_DIAMETER: 650, 
+  DISK_SEGMENTS: 4, 
+  WATER_ATTENUATION: 0.2,  
+  DISK_COLOR: [255, 255, 255],  
+  WATER_COLOR: [0, 105, 148],  
   NUM_PIXELS: 50,
   EASING: 0.05,
+  VISIBILITY_THRESHOLD: 0.05, // Lowered threshold for more precise disappearance
 };
 
 let waterImage;
@@ -16,16 +17,20 @@ export const preload = (p5) => {
     waterImage = p5.loadImage('/clearLake.png');
 };
 
-// Calculate visibility based on depth and turbidity
-export const calculateVisibility = (depth, turbidity) => {
-  // Force disk disappearance at depth 5.30 if turbidity is high enough.
-  const turbidityThreshold = 1.7 / 5.30; // ~0.32075
-  if(depth >= 5.30 && turbidity >= turbidityThreshold) {
-    return 0;
-  }
-  const maxVisibility = 1;
-  const visibilityFactor = Math.exp(-turbidity * depth / 2);
-  return Math.max(0, Math.min(maxVisibility, visibilityFactor));
+// Calculate visibility based on depth and target depth
+export const calculateVisibility = (depth, turbidity, targetDepth) => {
+  // Use a steeper exponential decay as we approach target depth
+  const visibilityRate = -Math.log(CONSTANTS.VISIBILITY_THRESHOLD) / targetDepth;
+  
+  // Enhanced exponential decay formula with sharper falloff near target depth
+  const normalizedDepth = depth / targetDepth;
+  const visibility = Math.exp(-visibilityRate * normalizedDepth * depth);
+  
+  // Add extra dampening as we approach target depth
+  const dampening = Math.max(0, 1 - Math.pow(normalizedDepth, 2));
+  
+  // Ensure visibility is between 0 and 1 with enhanced precision near disappearance
+  return Math.max(0, Math.min(1, visibility * dampening));
 };
 
 // Draw water with depth gradient
@@ -52,67 +57,65 @@ export const drawSecchiDisk = (p, x, y, visibility, size = CONSTANTS.DISK_DIAMET
   const horizontalOffset = p.cos(time * 1.5) * 5;
   
   // Draw disk with floating motion
-  p.translate(x/2.6 + horizontalOffset, y - 130 + verticalOffset);
+  p.translate(x/2.4+ horizontalOffset, y - 130 + verticalOffset);
   
   // Draw measuring tape first
   p.push();
-  // Added rotation to fix tape angle
-  const tapeAngle = p.radians(5); // adjust angle as needed
+  const tapeAngle = p.radians(15);
   p.rotate(tapeAngle);
   
-  // Create gradient measuring tape with larger dimensions
-  const tapeStart = -x * 1.2; // Extended tape start position
-  const tapeEnd = -x * 0.001; // Moved tape end closer to disk
-  const tapeWidth = size * 0.5; // Base tape width
+  // Define tape 
+  const tapeLength = x * 1.4;
+  const tapeStart = -tapeLength;
+  const tapeEnd = 0;
+  const maxTapeWidth = size * 1.5;
+  const minTapeWidth = size * 0.025;
   
-  // New: Compute a taper factor so the tape's end gets smaller as the disk gets smaller.
-  // Assuming deep disks yield a smaller 'size' (min ~20) and shallow disks larger (up to CONSTANTS.DISK_DIAMETER)
-  const endTaper = p.map(size, CONSTANTS.DISK_DIAMETER, 10, 1, 0.3);
-  
-  // Draw tape rectangle with tapered end width
+  // gradient 
+  const steps = 20;
   p.noStroke();
-  p.beginShape();
-  p.vertex(tapeStart, -tapeWidth);
-  p.vertex(tapeEnd, -tapeWidth * endTaper / 2);
-  p.vertex(tapeEnd, tapeWidth * endTaper / 40);
-  p.vertex(tapeStart, tapeWidth);
-  p.endShape(p.CLOSE);
+  
+  for (let i = 0; i < steps; i++) {
+    const progress = i / steps;
+    const nextProgress = (i + 1) / steps;
+    
+    const xPos = p.lerp(tapeStart, tapeEnd, progress);
+    const nextXPos = p.lerp(tapeStart, tapeEnd, nextProgress);
+    const width = p.lerp(maxTapeWidth, minTapeWidth, progress);
+    const nextWidth = p.lerp(maxTapeWidth, minTapeWidth, nextProgress);
+    const sectionOpacity = p.lerp(255, opacity, Math.pow(progress, 0.5));
+    
+    p.fill(255, sectionOpacity);
+    p.beginShape();
+    p.vertex(xPos, -width);
+    p.vertex(nextXPos, -nextWidth);
+    p.vertex(nextXPos, nextWidth);
+    p.vertex(xPos, width);
+    p.endShape(p.CLOSE);
+  }
+  
   p.pop();
 
-  // Draw the larger disk
   p.noStroke();
-  
-  // Draw the four quadrants
-
-    // Bottom-right quadrant (black)
   p.fill(255, opacity);
   p.arc(0, 0, size*1.5, size*1.5, 0, p.HALF_PI);
-  
-  // Top-right quadrant (white)
   p.fill(0, opacity);
   p.arc(0, 0, size*1.5, size*1.5, -p.HALF_PI, 0);
-  
-  // Bottom-left quadrant (white)
   p.fill(0, opacity);
   p.arc(0, 0, size*1.5, size*1.5, p.HALF_PI, p.PI);
-  
-  // Top-left quadrant (black)
   p.fill(255, opacity);
   p.arc(0, 0, size*1.5, size*1.5, p.PI, -p.HALF_PI);
-  
   p.pop();
 };
 
-// Calculate the Secchi depth (depth at which disk disappears) based on turbidity
+// Calculate the Secchi depth 
 export const calculateSecchiDepth = (turbidity) => {
-  // Empirical relationship between turbidity and Secchi depth
   return 1.7 / turbidity;
 };
 
 // Draw depth markers
 export const drawDepthMarkers = (p5, width, height, currentDepth, maxDepth) => {
   const markerSpacing = height / 10; // Draw markers every meter
-  
   p5.stroke(255);
   p5.strokeWeight(1);
   p5.fill(255);
