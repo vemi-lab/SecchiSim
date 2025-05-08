@@ -1,7 +1,6 @@
 import React, { useState, useRef } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Link } from 'react-router-dom';
 import Clear from './ComponentsOfSim/Clear';
-import Instructions from './ComponentsOfSim/Instructions';
 import Tutorial from './ComponentsOfSim/Tutorial';
 import Intermediate from './ComponentsOfSim/Intermediate';
 import Productive from './ComponentsOfSim/Productive';
@@ -11,7 +10,6 @@ import DystrophicProductive from './ComponentsOfSim/DystrophicProductive';
 import './SecchiSimScreen.css';
 
 const SecchiSimScreen = () => {
-  const [currentPage, setCurrentPage] = useState('instructions');
   const [settings, setSettings] = useState({
     depth: 0,
     turbidity: 1,
@@ -26,32 +24,109 @@ const SecchiSimScreen = () => {
     }));
   };
 
-  const renderPage = () => {
-    switch (currentPage) {
-      case 'clear':
-        return <Clear settings={settings} onSettingChange={handleSettingChange} ref={simulatorRef} />;
-      case 'tutorial':
-        return <Tutorial settings={settings} onSettingChange={handleSettingChange} ref={simulatorRef}/>;
-      case 'intermediate':
-        return <Intermediate settings={settings} onSettingChange={handleSettingChange} ref={simulatorRef}/>;
-      case 'productive':
-        return <Productive settings={settings} onSettingChange={handleSettingChange} ref={simulatorRef}/>;
-      case 'dystrophic':
-        return <Dystrophic settings={settings} onSettingChange={handleSettingChange} ref={simulatorRef}/>;
-      case 'dystrophicproductive':
-        return <DystrophicProductive settings={settings} onSettingChange={handleSettingChange} ref={simulatorRef}/>;
-      case 'instructions':
-      default:
-        return <Instructions setCurrentPage={setCurrentPage} />;
-    }
-  };
-
   return (
     <div className="secchi-sim-screen">
       {/* <img src={avatar} alt="Logo" className="sim-logo" />
       <h1 className='headline'>Secchi Disk Simulator</h1> */}
       <div className="simulator-container">
-        {renderPage()}
+        <Routes>
+          <Route path="/" element={
+            <div>
+              <h1>Instructions</h1>
+              <h2>
+                Volunteers need to take only one qualifying reading for re-certification.
+                Please select a lake type that is most similar to the lake that you monitor.
+                (If you are not sure what lake is closest to the one you monitor please select the Clear Lake)
+              </h2>
+              <h3>Before you start, read the tutorial</h3>
+              <Link to="tutorial">
+                <button style={{ padding: '10px 20px', cursor: 'pointer' }}>Tutorial</button>
+              </Link>
+              <table style={{ width: '100%', marginTop: '20px', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr>
+                    <th style={{ border: '1px solid #ccc', padding: '10px' }}>Lake Type</th>
+                    <th style={{ border: '1px solid #ccc', padding: '10px' }}>Description</th>
+                    <th style={{ border: '1px solid #ccc', padding: '10px' }}>Completion Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>
+                      <Link to="clear">
+                        <button style={{ padding: '10px 20px', cursor: 'pointer' }}>Clear</button>
+                      </Link>
+                    </td>
+                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>
+                      Bluish color, with readings deeper than 4 meters
+                    </td>
+                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>
+                      Incomplete
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>
+                      <Link to="intermediate">
+                        <button style={{ padding: '10px 20px', cursor: 'pointer' }}>Intermediate</button>
+                      </Link>
+                    </td>
+                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>
+                      Blue or green-brown, with readings between 4 and 7 meters
+                    </td>
+                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>
+                      Incomplete
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>
+                      <Link to="productive">
+                        <button style={{ padding: '10px 20px', cursor: 'pointer' }}>Productive</button>
+                      </Link>
+                    </td>
+                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>
+                      Green Background, high algae content, readings shallower than 3 meters
+                    </td>
+                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>
+                      Incomplete
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>
+                      <Link to="dystrophic">
+                        <button style={{ padding: '10px 20px', cursor: 'pointer' }}>Dystrophic</button>
+                      </Link>
+                    </td>
+                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>
+                      Distinct tea or rootbeer color, readings shallower than 3 meters
+                    </td>
+                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>
+                      Incomplete
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>
+                      <Link to="dystrophicproductive">
+                        <button style={{ padding: '10px 20px', cursor: 'pointer' }}>Dystrophic Productive</button>
+                      </Link>
+                    </td>
+                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>
+                      Green-brown and murky, readings shallower than 3 meters
+                    </td>
+                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>
+                      Incomplete
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          } />
+          <Route path="clear" element={<Clear settings={settings} onSettingChange={handleSettingChange} ref={simulatorRef} />} />
+          <Route path="tutorial" element={<Tutorial ref={simulatorRef} />} />
+          <Route path="intermediate" element={<Intermediate settings={settings} onSettingChange={handleSettingChange} ref={simulatorRef} />} />
+          <Route path="productive" element={<Productive settings={settings} onSettingChange={handleSettingChange} ref={simulatorRef} />} />
+          <Route path="dystrophic" element={<Dystrophic settings={settings} onSettingChange={handleSettingChange} ref={simulatorRef} />} />
+          <Route path="dystrophicproductive" element={<DystrophicProductive settings={settings} onSettingChange={handleSettingChange} ref={simulatorRef} />} />
+        </Routes>
       </div>
     </div>
   );

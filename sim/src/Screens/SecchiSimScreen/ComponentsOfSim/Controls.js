@@ -11,7 +11,14 @@ import {
     calculateSecchiDepth 
 } from '../utils/p5utils';
 
-const Controls = ({ settings, onSettingChange, onDirectionClick, onDirectionRelease }) => {
+const Controls = ({ 
+  settings, 
+  onSettingChange, 
+  onDirectionClick, 
+  onDirectionRelease,
+  onAttemptSubmit,
+  retryCount
+}) => {
   const waterQuality = calculateWaterQuality(calculateSecchiDepth(settings.turbidity));
   const [attemptsLeft, setAttemptsLeft] = useState(3);
   const [message, setMessage] = useState("Please begin");
@@ -21,7 +28,7 @@ const Controls = ({ settings, onSettingChange, onDirectionClick, onDirectionRele
       <div className="water-quality">
         {/* <img src={avatar} alt="Logo" className="sim-logo" /> */}
         <h4>Secchi Disk Simulator</h4>
-        <h3>Attempts Left: {attemptsLeft}</h3>
+        <h3>Attempts Left: {retryCount}</h3>
         <h4>{message}</h4>
         <h4>Current Depth: {settings.depth.toFixed(2)} Meters</h4>
         {/* <p>Quality: {waterQuality.quality}</p>
@@ -106,19 +113,12 @@ const Controls = ({ settings, onSettingChange, onDirectionClick, onDirectionRele
      
          <button className='submit-button'
             onClick={() => {
-              if (attemptsLeft > 0) {
-                setAttemptsLeft(attemptsLeft - 1);
-                onSettingChange('depth', settings.depth);
-                if (settings.depth < 3) {
-                  setMessage("You are too shallow, Try again");
-                } else if (settings.depth > 3) {
-                  setMessage("You are too deep, try again");
-                } else if (settings.depth = 3.5) {
-                  setMessage("Correct!");
-                }
-              }
+              // First ensure movement is stopped
+              onDirectionRelease();
+              // Then submit the attempt
+              onAttemptSubmit();
             }}
-            disabled={attemptsLeft === 0}
+            disabled={retryCount === 0}
             style={{
               padding: '10px',
               cursor: 'pointer',
@@ -128,7 +128,8 @@ const Controls = ({ settings, onSettingChange, onDirectionClick, onDirectionRele
               color: 'white',
               width: '100%',
               height: '100%',
-              flex: '1'
+              flex: '1',
+              opacity: retryCount === 0 ? 0.5 : 1
             }}
             >Submit</button>
       </div>

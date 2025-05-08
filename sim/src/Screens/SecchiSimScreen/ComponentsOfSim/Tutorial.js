@@ -1,6 +1,6 @@
-import React from "react";
+import React, { forwardRef } from "react";
 
-const Tutorial = () => {
+const Tutorial = forwardRef((props, ref) => {
     const styles = {
         container: {
             padding: '20px',
@@ -31,7 +31,7 @@ const Tutorial = () => {
     };
 
     return (
-        <div style={styles.container}>
+        <div style={styles.container} ref={ref}>
             <h1 style={styles.title}>How to Use the Secchi Disk Simulator</h1>
             <h2 style={styles.subtitle}>Controls</h2>
             <p style={styles.text}>The up and down arrows on your keyboard control the movement of the secchi disk.</p>
@@ -41,6 +41,8 @@ const Tutorial = () => {
             <p style={styles.text}>You will have three attempts to take a proper measurement.</p>
         </div>
     );  
-};
+});
+
+Tutorial.displayName = 'Tutorial'; // Add display name for better debugging
 
 export default Tutorial;
