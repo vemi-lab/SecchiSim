@@ -214,33 +214,6 @@ const Controls = ({
         gap: `${controlSize.padding}px`,
         padding: `${controlSize.padding}px 0`
       }}>
-         <button className='reset-button'
-            onClick={(e) => {
-                e.preventDefault();
-                onSettingChange('depth', 0);
-            }}
-            style={{
-              padding: `${controlSize.padding}px`,
-              cursor: 'pointer',
-              backgroundColor: '#2FA1D6',
-              border: 'none',
-              borderRadius: '4px',
-              color: 'white',
-              flex: '1',
-              maxWidth: '45%',
-              fontSize: `${controlSize.fontSize * 0.7}px`,
-              touchAction: 'manipulation',
-              transition: 'all 0.2s ease',
-              boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-              ':hover': {
-                backgroundColor: '#2589b6',
-                transform: 'translateY(-1px)'
-              },
-              ':active': {
-                transform: 'translateY(1px)'
-              }
-            }}
-            >Reset</button>
      
          <button className='submit-button'
             onClick={(e) => {
