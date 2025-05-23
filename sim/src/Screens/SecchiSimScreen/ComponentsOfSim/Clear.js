@@ -29,16 +29,6 @@ const Clear = forwardRef(({ settings, onSettingChange }, ref) => {
   const [userRoles, setUserRoles] = useState(null);
   const lakeConfig = LAKE_CONFIGS.CLEAR;
 
-  // Add navigation effect at the component level
-  useEffect(() => {
-    if (moduleDisabled && !showPopup) {
-      const timer = setTimeout(() => {
-        navigate('/secchi-sim');
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [moduleDisabled, navigate, showPopup]);
-
   const [targetDepth] = useState(() => {
     // Generate random target depth within the lake's configured range
     const min = lakeConfig.targetRange.min;
@@ -99,18 +89,21 @@ const Clear = forwardRef(({ settings, onSettingChange }, ref) => {
   useEffect(() => {
     const handleResize = () => {
       const isMobile = window.innerWidth < 768;
-      if (isMobile) {
-        setCanvasSize({
-          width: window.innerWidth - 40, 
-          height: Math.min(window.innerHeight * 0.6, 600)
-        });
+      const isLandscape = window.innerWidth > window.innerHeight;
+      
+      if (isLandscape) {
+        const height = Math.min(window.innerHeight * 0.8, 700);
+        const width = height * (4/3); 
+        setCanvasSize({ width, height });
       } else {
-        setCanvasSize({ width: 800, height: 600 });
+        const width = Math.min(window.innerWidth * 0.9, 800);
+        const height = width * (3/4);
+        setCanvasSize({ width, height });
       }
     };
 
     window.addEventListener('resize', handleResize);
-    handleResize(); 
+    handleResize();
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
@@ -290,7 +283,8 @@ const Clear = forwardRef(({ settings, onSettingChange }, ref) => {
       return;
     }
 
-    if (retryCount <= 0 || moduleDisabled) {
+    if (retryCount <= 0 ) {
+      // if (retryCount <= 0 || moduleDisabled) {
       setPopupMessage("You have no attempts remaining. Please try again next year.");
       setCurrentMessageIndex(0);
       setShowPopup(true);
@@ -306,8 +300,8 @@ const Clear = forwardRef(({ settings, onSettingChange }, ref) => {
       const currentDepth = Number(parseFloat(depthRef.current).toFixed(2));
       
       // Calculate absolute difference from target depth
-      const TOLERANCE = 0.10; // ±0.10 meters tolerance
-      const difference = Math.abs(currentDepth - targetDepth);
+      const TOLERANCE = 0.20;
+      const difference = Number(Math.abs(currentDepth - targetDepth).toFixed(2));
       const isPassed = difference <= TOLERANCE;
       const newRetryCount = retryCount - 1;
       
@@ -364,7 +358,7 @@ const Clear = forwardRef(({ settings, onSettingChange }, ref) => {
           quizUpdates.Clear_TargetDepth = targetDepth;
         }
 
-        // Update quiz document
+        // Update quiz data
         transaction.set(quizDocRef, quizUpdates, { merge: true });
 
         // Update scores document
@@ -388,7 +382,7 @@ const Clear = forwardRef(({ settings, onSettingChange }, ref) => {
         setShowPopup(true);
       } else {
         const depthHint = currentDepth > targetDepth ? "too deep" : "too shallow";
-        setPopupMessage(`Incorrect. You're ${depthHint}. You have ${newRetryCount} ${newRetryCount === 1 ? 'attempt' : 'attempts'} remaining. Try again!`);
+        setPopupMessage(`Incorrect. You're ${depthHint}. There is a difference of ± ${difference}m. You have ${newRetryCount} ${newRetryCount === 1 ? 'attempt' : 'attempts'} remaining. Try again!`);
         setShowPopup(true);
       }
 
@@ -405,11 +399,6 @@ const Clear = forwardRef(({ settings, onSettingChange }, ref) => {
       e.stopPropagation();
 
       setShowPopup(false);
-      
-      if (moduleDisabled) {
-        // Let the useEffect handle navigation after popup is closed
-        return;
-      }
       
       // For failed attempts with remaining tries, reset the simulation
       velocityRef.current = 0;
@@ -497,16 +486,18 @@ const Clear = forwardRef(({ settings, onSettingChange }, ref) => {
     return (
       <div className="module-locked">
         <p style={{ padding: '50px' }}>
-          You have reached the max attempts allowed for this module. 
-          Try again next year
+          You have reached the max attempts allowed for this quiz. 
+          This module has been disabled. <br />
+          Please contact <a href="mailto:stewards@lakestewardsme.org?subject=Maximum Simulator Quiz Secchi 1 Reached" style={{ color: '#4B4E92', textDecoration: 'underline' }}>
+          stewards@lakestewardsme.org</a> for further assistance.
         </p>
+        <button onClick={() => navigate('/secchi-sim')} style={{ marginBottom: '20px' }}>Back to Simulator</button> 
       </div>
     );
   }
 
   return (
     <div className="clear-lake-container">
-      {/* <button onClick={() => navigate('/')} style={{ marginBottom: '20px' }}>Back to Simulator</button> */}
       <div className="simulation-area">
         <div className="canvas-wrapper" style={{ 
           position: 'relative', 
@@ -535,33 +526,68 @@ const Clear = forwardRef(({ settings, onSettingChange }, ref) => {
           flex-direction: column;
           align-items: center;
           width: 100%;
-          height: 100%;
-          padding: 20px;
+          min-height: 100vh;
+          padding: 10px;
+          box-sizing: border-box;
+          overflow: hidden;
         }
         .simulation-area {
           display: flex;
           flex-direction: column;
           align-items: center;
           width: 100%;
+          height: 100%;
+          justify-content: center;
+          gap: 20px;
         }
         .canvas-wrapper {
           border: 1px solid #ccc;
           border-radius: 8px;
           overflow: hidden;
-          margin-bottom: 20px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
         }
         .controls-wrapper {
           width: 100%;
           max-width: 400px;
         }
-        @media (min-width: 768px) {
+        @media (orientation: landscape) {
+          .clear-lake-container {
+            padding: 10px;
+          }
           .simulation-area {
             flex-direction: row;
-            align-items: flex-start;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            height: 100%;
+          }
+          .canvas-wrapper {
+            margin: 0;
+            flex: 0 0 auto;
           }
           .controls-wrapper {
-            margin-left: 20px;
-            width: 200px;
+            margin: 0;
+            flex: 0 0 auto;
+            max-width: 250px;
+            max-height: 85vh;
+            overflow: hidden;
+          }
+        }
+        @media (orientation: portrait) {
+          .simulation-area {
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 0;
+          }
+          .canvas-wrapper {
+            margin-bottom: 20px;
+          }
+          .controls-wrapper {
+            width: 100%;
+            max-width: 400px;
           }
         }
         `}

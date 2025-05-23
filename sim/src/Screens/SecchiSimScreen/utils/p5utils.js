@@ -72,7 +72,7 @@ export const drawSecchiDisk = (p, x, y, visibility, size = CONSTANTS.DISK_DIAMET
   const minTapeWidth = size * 0.025;
   
   // gradient 
-  const steps = 20;
+  const steps = 1000;
   p.noStroke();
   
   for (let i = 0; i < steps; i++) {
