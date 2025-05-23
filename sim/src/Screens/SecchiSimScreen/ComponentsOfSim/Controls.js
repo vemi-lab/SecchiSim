@@ -3,10 +3,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 // import avatar from '../../../assets/avatar.jpg';
 
-// import {  
-//     calculateWaterQuality, 
-//     calculateSecchiDepth 
-// } from '../utils/p5utils';
+import { 
+    CONSTANTS, 
+    calculateWaterQuality, 
+    calculateSecchiDepth 
+} from '../utils/p5utils';
 
 const Controls = ({ 
   settings, 
@@ -202,7 +203,7 @@ const Controls = ({
           style={{
             padding: `${controlSize.padding}px`,
             cursor: retryCount === 0 ? 'not-allowed' : 'pointer',
-            backgroundColor: '#2FA1D6',
+            backgroundColor: '#6F73B3',
             border: 'none',
             borderRadius: '4px',
             color: 'white',
@@ -233,22 +234,22 @@ const Controls = ({
         <h4 style={{
           fontSize: `${controlSize.fontSize * 0.8}px`,
           margin: `${controlSize.padding/2}px 0`,
-          color: '#ffffff'
+          color: '#000000'
         }}>Secchi Disk Simulator</h4>
         <h3 style={{
           fontSize: `${controlSize.fontSize}px`,
           margin: `${controlSize.padding/2}px 0`,
-          color: '#ffffff'
+          color: '#000000'
         }}>Attempts Left: {retryCount}</h3>
         <h4 style={{
           fontSize: `${controlSize.fontSize * 0.8}px`,
           margin: `${controlSize.padding/2}px 0`,
-          color: '#ffffff'
+          color: '#000000'
         }}>{message}</h4>
         <h4 style={{
           fontSize: `${controlSize.fontSize * 0.8}px`,
           margin: `${controlSize.padding/2}px 0`,
-          color: '#ffffff'
+          color: '#000000'
         }}>Current Depth: {settings.depth.toFixed(2)} Meters</h4>
       </div>
     </div>

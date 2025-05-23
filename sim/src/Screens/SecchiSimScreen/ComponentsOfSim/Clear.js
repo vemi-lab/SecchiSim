@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import p5 from 'p5';
 import * as utils from '../utils/p5utils';
 import { LAKE_CONFIGS } from '../utils/lakeConfigs';
@@ -10,7 +10,6 @@ import { useAuth } from "../../../contexts/AuthContext";
 import firebase from 'firebase/app';
 
 const Clear = forwardRef(({ settings, onSettingChange }, ref) => {
-  const navigate = useNavigate();
   const { currentUser, fetchUserRoles } = useAuth();
   const canvasRef = useRef(null);
   const sketchRef = useRef(null);
@@ -491,16 +490,18 @@ const Clear = forwardRef(({ settings, onSettingChange }, ref) => {
           Please contact <a href="mailto:stewards@lakestewardsme.org?subject=Maximum Simulator Quiz Secchi 1 Reached" style={{ color: '#4B4E92', textDecoration: 'underline' }}>
           stewards@lakestewardsme.org</a> for further assistance.
         </p>
-        <button onClick={() => navigate('/secchi-sim')} style={{ marginBottom: '20px' }}>Back to Simulator</button> 
+        <Link to="/secchi-sim">
+          <button style={{ marginBottom: '20px' }}>Back to Simulator</button>
+        </Link>
       </div>
     );
   }
 
   return (
     <div className="clear-lake-container">
-      <button className="back-button" onClick={() => navigate('/')}>
+      {/* <button className="back-button" onClick={() => navigate('/')}>
         ← Back to Simulator
-      </button>
+      </button> */}
 
       <div className="simulation-area">
         <div className="canvas-wrapper">
