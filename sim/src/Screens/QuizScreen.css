@@ -29,7 +29,6 @@
 
 .question-container {
   margin-bottom: 20px;
-  /* font-family: "Times New Roman", Times, serif;   */
 }
 
 .question-counter {
@@ -56,7 +55,8 @@
   border-radius: 5px;
   cursor: pointer;
   transition: all 0.3s;
-  color: black; 
+  background-color: var(--sidebar-bg);
+  color: var(--text-color); 
 }
 
 .option-button:hover {
@@ -109,7 +109,7 @@
 }
 
 .modal-content {
-  background: white;
+  background: var(--sidebar-bg);
   padding: 20px;
   border-radius: 10px;
   text-align: center;

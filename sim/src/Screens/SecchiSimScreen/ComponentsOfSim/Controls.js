@@ -3,11 +3,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 // import avatar from '../../../assets/avatar.jpg';
 
-import { 
-    CONSTANTS, 
-    calculateWaterQuality, 
-    calculateSecchiDepth 
-} from '../utils/p5utils';
+// import {  
+//     calculateWaterQuality, 
+//     calculateSecchiDepth 
+// } from '../utils/p5utils';
 
 const Controls = ({ 
   settings, 

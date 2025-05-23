@@ -70,8 +70,6 @@ const SecchiSimScreen = () => {
 
   return (
     <div className="secchi-sim-screen">
-      {/* <img src={avatar} alt="Logo" className="sim-logo" />
-      <h1 className='headline'>Secchi Disk Simulator</h1> */}
       <div className="simulator-container">
         <Routes>
           <Route path="/" element={

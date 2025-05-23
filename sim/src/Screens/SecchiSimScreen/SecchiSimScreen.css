@@ -1,33 +1,74 @@
-.secchi-sim-screen {
-  text-align: center;
-  padding: 10px;
-  background-color: #1a1a1a;
-  color: white;
-  position: fixed; 
-  overflow-y: auto;
-  box-sizing: border-box; 
-  width: 100vw;          
-  height: 100vh;          
-  min-height: 100vh;
+/* Prevent scroll on entire body */
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
 }
 
+/* Main screen */
+.secchi-sim-screen {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  margin-top: 60;
+  margin: 0 auto;
+  padding: 10px 40px;
+  background-color: var(--secondary-color); /* Debug color */
+  color: var(--text-color);
+  min-height: 100vh;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+table {
+  background-color: var(--sidebar-bg);
+}
+
+.secchi-sim-screen button {
+  padding: 10px 20px;
+  background-color: #6F73B3;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Container for sim + controls */
 .simulator-container {
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
   gap: 20px;
-  margin-top: 10px;
-  flex-wrap: wrap; 
+  margin-top: 50px;
   padding: 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
+/* Control panel */
 .controls {
-    background: #2a2a2a;
+  background: var(--sidebar-bg);
   padding: 20px;
   border-radius: 8px;
-  min-width: 200px;
-  color: white;
+  flex: 1 1 300px;
+  max-width: 100%;
+  color: var(--text-color);
+  box-sizing: border-box;
 }
 
+/* The simulator panel */
+.secchi-simulator {
+  border: 1px solid var(--sidebar-bg);
+  border-radius: 8px;
+  overflow: hidden;
+  flex: 1 1 300px;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Remaining styles (unchanged) */
 .control-group {
   margin-bottom: 15px;
 }
@@ -47,13 +88,14 @@
 .water-quality {
   margin-top: 20px;
   padding: 15px;
-  background: #333;
+  background: var(--sidebar-bg);
   border-radius: 4px;
+  box-sizing: border-box;
 }
 
 .water-quality h3 {
   margin: 0 0 10px 0;
-  color: #2FA1D6;
+  color: #6F73B3;
 }
 
 .water-quality p {
@@ -61,50 +103,33 @@
   font-size: 0.9em;
 }
 
-.secchi-simulator {
-  border: 1px solid #333;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
 .arrow-controls button {
   transition: background-color 0.2s;
+  background-color: #6F73B3 !important
 }
 
 .arrow-controls button:hover {
-  background-color: #2583ac !important;
+  background-color: #565ba7 !important;
 }
 
 .arrow-controls button:active {
-  background-color: #1b6080 !important;
+  background-color: #565ba7 !important;
 }
 
 .arrow-controls button:focus {
-  outline: 2px solid #4db8e8;
+  outline: 2px solid #6F73B3;
   outline-offset: 2px;
-} 
+}
 
-.sim-logo{
+.sim-logo {
   width: 50px;
   border-radius: 50%;
 }
 
-/* .headline{
-  padding-top: -2%;
-} */
-
 @media (max-width: 768px) {
-  .secchi-sim-screen {
-    padding: 10px;
-  }
-
   .controls {
     width: 100%;
     max-width: 400px;
     margin: 10px auto;
-  }
-
-  .simulator-container {
-    margin-top: 10px;
   }
 }
